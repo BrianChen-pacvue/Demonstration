@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social SOV — Social Trends</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #F0F2F5; color: #1E293B; font-size: 14px; line-height: 1.5; }
+    .app { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar { width: 232px; background: #131C2B; color: #94A3B8; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { padding: 18px 20px; border-bottom: 1px solid #1E2D42; display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 34px; height: 34px; background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-text { font-size: 15px; font-weight: 700; color: #F1F5F9; line-height: 1.2; }
+    .logo-sub { font-size: 10.5px; color: #475569; font-weight: 400; }
+    .sidebar-nav { padding: 12px 0; flex: 1; overflow-y: auto; }
+    .nav-group-label { padding: 12px 16px 5px; font-size: 10px; font-weight: 600; letter-spacing: 0.9px; text-transform: uppercase; color: #3D5065; }
+    .nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 20px; cursor: pointer; transition: all 0.12s; font-size: 13px; font-weight: 500; color: #7A96AE; border-left: 3px solid transparent; margin: 1px 0; }
+    .nav-item:hover { background: #1A2840; color: #C8D8E8; }
+    .nav-item.active { background: rgba(99,102,241,0.15); color: #A5B4FC; border-left-color: #6366F1; }
+    .nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.8; }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .nav-badge { margin-left: auto; background: #3B4E6B; color: #94A3B8; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 8px; }
+    .sidebar-footer { padding: 14px 20px; border-top: 1px solid #1E2D42; display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #6366F1, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .avatar-name { font-size: 12.5px; font-weight: 600; color: #C8D8E8; }
+    .avatar-role { font-size: 10.5px; color: #475569; }
+
+    /* Main */
+    .main { margin-left: 232px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Topbar */
+    .topbar { background: #FFFFFF; border-bottom: 1px solid #E2E8F0; padding: 0 28px; height: 60px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 50; }
+    .topbar-left { flex: 1; }
+    .topbar-title { font-size: 17px; font-weight: 700; color: #0F172A; }
+    .topbar-breadcrumb { font-size: 12px; color: #94A3B8; margin-top: 1px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; transition: all 0.12s; font-family: inherit; }
+    .btn-primary { background: #6366F1; color: white; }
+    .btn-primary:hover { background: #5254CC; }
+    .btn-secondary { background: #F8FAFC; color: #475569; border: 1px solid #E2E8F0; }
+    .btn-secondary:hover { background: #F1F5F9; }
+    .btn-ghost { background: transparent; color: #64748B; border: 1px solid #E2E8F0; }
+    .btn-ghost:hover { background: #F8FAFC; }
+
+    /* Filter bar */
+    .filter-bar { background: white; border-bottom: 1px solid #E2E8F0; padding: 10px 28px; display: flex; align-items: center; gap: 10px; }
+    .filter-label { font-size: 12px; font-weight: 600; color: #64748B; margin-right: 4px; }
+    .seg-group { display: flex; background: #F1F5F9; border-radius: 7px; padding: 2px; gap: 2px; }
+    .seg-btn { padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #64748B; font-family: inherit; transition: all 0.12s; }
+    .seg-btn.active { background: white; color: #1E293B; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .filter-divider { width: 1px; height: 20px; background: #E2E8F0; margin: 0 4px; }
+    .platform-toggle { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 7px; border: 1px solid #E2E8F0; font-size: 12px; cursor: pointer; font-weight: 500; }
+    .platform-toggle.active-p { border-color: #E60023; background: #FFF0F0; color: #C0001A; }
+    .platform-toggle.active-r { border-color: #FF4500; background: #FFF4EE; color: #C03400; }
+    .platform-toggle.all { border-color: #6366F1; background: #EEF2FF; color: #4F46E5; }
+    .p-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Content */
+    .content { padding: 22px 28px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Section header */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .section-title { font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 7px; }
+    .section-sub { font-size: 11.5px; color: #94A3B8; font-weight: 400; margin-left: 4px; }
+
+    /* Card */
+    .card { background: #FFFFFF; border-radius: 10px; border: 1px solid #E2E8F0; overflow: hidden; }
+    .card-head { padding: 14px 18px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 13.5px; font-weight: 700; color: #0F172A; }
+    .card-sub { font-size: 11px; color: #94A3B8; margin-top: 1px; }
+    .card-body { padding: 18px; }
+    .card-link { font-size: 11.5px; color: #6366F1; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+
+    /* Badge */
+    .badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 20px; font-size: 10.5px; font-weight: 600; }
+    .b-emerging { background: #FEF3C7; color: #B45309; }
+    .b-growing   { background: #DCFCE7; color: #15803D; }
+    .b-hot       { background: #FEE2E2; color: #B91C1C; }
+    .b-new       { background: #EEF2FF; color: #4F46E5; }
+    .b-p { background: #FFF0F0; color: #C0001A; }
+    .b-r { background: #FFF4EE; color: #C03400; }
+    .b-pr { background: #F5F0FF; color: #7C3AED; }
+    .b-cat { background: #F1F5F9; color: #475569; }
+
+    /* Topic grid */
+    .topic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .topic-card { border: 1px solid #E8ECF2; border-radius: 9px; padding: 14px; cursor: pointer; transition: all 0.15s; position: relative; }
+    .topic-card:hover { border-color: #A5B4FC; box-shadow: 0 0 0 3px #EEF2FF; transform: translateY(-1px); }
+    .topic-card.expanded { border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+    .tc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+    .tc-name { font-size: 13px; font-weight: 700; color: #0F172A; line-height: 1.3; }
+    .tc-cat { font-size: 11px; color: #94A3B8; margin-bottom: 8px; }
+    .tc-metrics { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .tc-index { font-size: 20px; font-weight: 800; color: #0F172A; line-height: 1; }
+    .tc-index-label { font-size: 10px; color: #94A3B8; margin-top: 1px; }
+    .tc-change { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 2px; }
+    .up { color: #16A34A; } .down { color: #DC2626; }
+    .tc-platforms { display: flex; gap: 4px; margin-top: 8px; }
+    .mini-bar { height: 3px; border-radius: 2px; background: #F1F5F9; margin-top: 8px; overflow: hidden; }
+    .mini-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #6366F1, #8B5CF6); }
+
+    /* Expanded panel */
+    .topic-expand-panel { background: #FAFBFF; border: 1px solid #E0E7FF; border-radius: 9px; padding: 16px; margin-top: 10px; display: none; }
+    .topic-expand-panel.show { display: block; }
+    .expand-title { font-size: 12px; font-weight: 700; color: #4F46E5; margin-bottom: 10px; }
+    .expand-samples { display: flex; flex-direction: column; gap: 8px; }
+    .sample-item { display: flex; gap: 8px; align-items: flex-start; }
+    .sample-icon { width: 24px; height: 24px; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 700; }
+    .si-pinterest { background: #FFF0F0; color: #C0001A; }
+    .si-reddit { background: #FFF4EE; color: #C03400; }
+    .sample-text { font-size: 11.5px; color: #374151; line-height: 1.5; }
+    .sample-meta { font-size: 10.5px; color: #94A3B8; margin-top: 1px; }
+    .expand-actions { margin-top: 12px; display: flex; gap: 8px; }
+
+    /* Category table */
+    table { width: 100%; border-collapse: collapse; }
+    thead th { text-align: left; padding: 9px 14px; font-size: 10.5px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #F1F5F9; background: #FAFBFC; }
+    tbody td { padding: 11px 14px; font-size: 12.5px; color: #374151; border-bottom: 1px solid #F8FAFC; vertical-align: middle; }
+    tbody tr:hover td { background: #FAFBFF; cursor: pointer; }
+    tbody tr:last-child td { border-bottom: none; }
+    .t-name { font-weight: 600; color: #0F172A; }
+    .t-sub { font-size: 10.5px; color: #94A3B8; margin-top: 1px; }
+    .trend-up   { color: #15803D; font-weight: 700; }
+    .trend-down { color: #B91C1C; font-weight: 700; }
+    .trend-bar { display: flex; align-items: center; gap: 8px; }
+    .mini-progress { flex: 1; height: 5px; background: #F1F5F9; border-radius: 3px; overflow: hidden; max-width: 80px; }
+    .mini-progress-fill { height: 100%; border-radius: 3px; }
+    .mp-up { background: linear-gradient(90deg, #6366F1, #8B5CF6); }
+    .mp-down { background: #F87171; }
+    .index-val { font-size: 13px; font-weight: 700; color: #0F172A; }
+
+    /* Chart side panel */
+    .cat-row { display: grid; grid-template-columns: 1fr 400px; gap: 0; }
+    .chart-panel { border-left: 1px solid #F1F5F9; padding: 18px; overflow-y: auto; max-height: 560px; }
+    .chart-panel-title { font-size: 12px; font-weight: 700; color: #0F172A; margin-bottom: 4px; }
+    .chart-panel-sub { font-size: 11px; color: #94A3B8; margin-bottom: 12px; }
+    .chart-wrap { position: relative; height: 160px; }
+    .time-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+    .time-tab { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #E2E8F0; color: #64748B; background: white; font-family: inherit; }
+    .time-tab.active { background: #EEF2FF; color: #4F46E5; border-color: #C7D2FE; }
+    /* Panel sub-sections */
+    .panel-section { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; }
+    .panel-section-title { font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+    .demo-row { display: flex; gap: 14px; }
+    .demo-col { flex: 1; min-width: 0; }
+    .demo-label { font-size: 10px; color: #64748B; font-weight: 600; margin-bottom: 6px; }
+    .age-bar-list { display: flex; flex-direction: column; gap: 4px; }
+    .age-bar-item { display: flex; align-items: center; gap: 5px; }
+    .age-bar-label { font-size: 9.5px; color: #64748B; width: 34px; flex-shrink: 0; }
+    .age-bar-track { flex: 1; height: 5px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
+    .age-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #6366F1, #8B5CF6); }
+    .age-bar-pct { font-size: 9.5px; color: #64748B; width: 24px; text-align: right; flex-shrink: 0; }
+    .gender-wrap { display: flex; flex-direction: column; gap: 7px; }
+    .gender-item { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .gender-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .gender-name { font-size: 10.5px; color: #475569; flex: 1; }
+    .gender-pct { font-size: 11.5px; font-weight: 700; color: #0F172A; }
+    .gender-bar-track { width: 100%; height: 4px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+    .gender-bar-fill { height: 100%; border-radius: 3px; }
+    .prod-list { display: flex; flex-direction: column; gap: 5px; }
+    .prod-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: #FAFBFF; border-radius: 6px; }
+    .prod-rank { font-size: 10.5px; font-weight: 700; color: #94A3B8; width: 12px; flex-shrink: 0; }
+    .prod-name { flex: 1; font-size: 11px; font-weight: 600; color: #0F172A; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prod-mentions { font-size: 10px; color: #6366F1; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+
+    /* Holiday section */
+    .holiday-list { display: flex; flex-direction: column; gap: 0; }
+    .holiday-item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid #F8FAFC; cursor: pointer; transition: background 0.1s; }
+    .holiday-item:last-child { border-bottom: none; }
+    .holiday-item:hover { background: #FAFBFF; }
+    .holiday-countdown { width: 52px; text-align: center; flex-shrink: 0; }
+    .hc-days { font-size: 22px; font-weight: 800; color: #6366F1; line-height: 1; }
+    .hc-label { font-size: 9.5px; color: #94A3B8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+    .holiday-divider { width: 1px; height: 40px; background: #F1F5F9; flex-shrink: 0; }
+    .holiday-info { flex: 1; }
+    .holiday-name { font-size: 13px; font-weight: 700; color: #0F172A; }
+    .holiday-date { font-size: 11px; color: #94A3B8; margin-top: 1px; }
+    .holiday-keywords { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+    .hkw { padding: 2px 7px; background: #F1F5F9; border-radius: 4px; font-size: 10.5px; color: #475569; font-weight: 500; }
+    .holiday-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .holiday-badge { padding: 2px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 600; }
+    .hb-shopping { background: #FEF3C7; color: #B45309; }
+    .hb-holiday  { background: #EFF6FF; color: #1D4ED8; }
+    .hb-seasonal { background: #F0FDF4; color: #15803D; }
+    .hb-urgent   { background: #FEE2E2; color: #B91C1C; }
+    .remind-btn { display: flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #E2E8F0; border-radius: 6px; font-size: 11px; font-weight: 600; color: #64748B; cursor: pointer; background: white; font-family: inherit; white-space: nowrap; }
+    .remind-btn:hover { border-color: #6366F1; color: #6366F1; background: #EEF2FF; }
+    .remind-btn.set { border-color: #6366F1; color: #6366F1; background: #EEF2FF; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .modal-overlay.show { display: flex; }
+    .modal { background: white; border-radius: 12px; width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-head { padding: 18px 20px; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 14px; font-weight: 700; color: #0F172A; }
+    .modal-close { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #E2E8F0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; font-size: 16px; }
+    .modal-body { padding: 20px; }
+    .modal-foot { padding: 14px 20px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 8px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .form-group { margin-bottom: 14px; }
+    .form-select { width: 100%; padding: 8px 12px; border: 1px solid #E2E8F0; border-radius: 7px; font-size: 13px; font-family: inherit; color: #1E293B; background: white; appearance: none; cursor: pointer; }
+    .group-option-list { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
+    .group-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E2E8F0; border-radius: 8px; cursor: pointer; transition: all 0.1s; }
+    .group-option:hover { border-color: #A5B4FC; background: #F8F9FF; }
+    .group-option.selected { border-color: #6366F1; background: #EEF2FF; }
+    .go-name { font-size: 12.5px; font-weight: 600; color: #0F172A; }
+    .go-kws { font-size: 11px; color: #94A3B8; margin-top: 1px; }
+    .go-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #CBD5E1; margin-left: auto; flex-shrink: 0; }
+    .group-option.selected .go-radio { border-color: #6366F1; background: #6366F1; box-shadow: inset 0 0 0 3px white; }
+    .or-divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+    .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+    .or-divider span { font-size: 11px; color: #94A3B8; }
+    .new-group-input { width: 100%; padding: 8px 12px; border: 1px solid #E2E8F0; border-radius: 7px; font-size: 13px; font-family: inherit; color: #1E293B; }
+    .new-group-input:focus { outline: none; border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    .added-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; background: #EEF2FF; border: 1px solid #C7D2FE; border-radius: 5px; font-size: 11.5px; color: #4F46E5; font-weight: 500; }
+
+    /* Keyword filter tabs */
+    .kw-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .kw-tab { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #E2E8F0; color: #64748B; background: white; font-family: inherit; transition: all 0.12s; }
+    .kw-tab:hover { border-color: #A5B4FC; color: #4F46E5; background: #F8F9FF; }
+    .kw-tab.active { background: #6366F1; color: white; border-color: #6366F1; }
+
+    /* For You relevance badge */
+    .b-foryou { background: #EEF2FF; color: #4338CA; border: 1px solid #C7D2FE; }
+
+    /* Keyword Insight in modal */
+    .kw-insight-box { background: #FAFBFF; border: 1px solid #E0E7FF; border-radius: 9px; padding: 12px 14px; margin-bottom: 14px; }
+    .kw-insight-box-label { font-size: 10px; font-weight: 700; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px; display: flex; align-items: center; gap: 5px; }
+    .kw-insight-box-text { font-size: 12.5px; color: #374151; line-height: 1.65; }
+    .insight-kw-table { width: 100%; border-collapse: collapse; }
+    .insight-kw-table thead th { text-align: left; padding: 7px 10px; font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #F1F5F9; background: #FAFBFC; white-space: nowrap; }
+    .insight-kw-table tbody td { padding: 9px 10px; font-size: 12px; border-bottom: 1px solid #F8FAFC; vertical-align: middle; }
+    .insight-kw-table tbody tr:last-child td { border-bottom: none; }
+    .insight-kw-table tbody tr:hover td { background: #F8FAFF; }
+    .ikt-kw-code { font-family: ui-monospace, 'SF Mono', monospace; font-size: 11.5px; background: #F1F5F9; padding: 2px 7px; border-radius: 4px; color: #1E293B; }
+    .match-badge { display: inline-flex; padding: 2px 8px; border-radius: 5px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+    .match-broad  { background: #FEF3C7; color: #92400E; }
+    .match-phrase { background: #DBEAFE; color: #1E40AF; }
+    .match-exact  { background: #DCFCE7; color: #14532D; }
+    .comp-low    { color: #15803D; font-size: 11.5px; font-weight: 600; }
+    .comp-medium { color: #B45309; font-size: 11.5px; font-weight: 600; }
+    .comp-high   { color: #B91C1C; font-size: 11.5px; font-weight: 600; }
+    .insight-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; }
+
+    /* Keyword detail modal */
+    .kw-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+    .kw-overlay.show { display: flex; }
+    .kw-modal { background: white; border-radius: 14px; width: 700px; max-width: calc(100vw - 48px); max-height: calc(100vh - 60px); display: flex; flex-direction: column; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
+    .kw-modal-head { padding: 18px 22px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+    .kw-modal-title { font-size: 16px; font-weight: 700; color: #0F172A; }
+    .kw-modal-meta-row { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+    .kw-modal-body { padding: 20px 22px; overflow-y: auto; flex: 1; }
+    .kw-section { margin-bottom: 20px; }
+    .kw-section:last-child { margin-bottom: 0; }
+    .kw-section-title { font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px; }
+    .kw-chart-wrap { position: relative; height: 160px; }
+    .kw-demo-row { display: flex; gap: 20px; }
+    .kw-demo-col { flex: 1; min-width: 0; }
+    .pin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .pin-card { border-radius: 8px; overflow: hidden; background: #F1F5F9; cursor: pointer; position: relative; }
+    .pin-card img { width: 100%; display: block; object-fit: cover; }
+    .pin-saves { position: absolute; bottom: 5px; right: 5px; background: rgba(15,23,42,0.72); color: white; font-size: 9.5px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">Social SOV</div>
+        <div class="logo-sub">by Pacvue</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+        Social Trends
+      </div>
+      <div class="nav-item" onclick="location.href='02-research-groups.html'">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Research Groups
+        <span class="nav-badge">8</span>
+      </div>
+      <div class="nav-item" onclick="location.href='03-category-trends.html'">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Category Trends
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="avatar">SC</div>
+      <div>
+        <div class="avatar-name">Sarah Chen</div>
+        <div class="avatar-role">Media Planner</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Social Trends</div>
+        <div class="topbar-breadcrumb">What's trending on Pinterest & Reddit right now</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Time Range</span>
+      <div class="seg-group">
+        <button class="seg-btn" onclick="setTimeRange(this, '7d')">7 Days</button>
+        <button class="seg-btn active" onclick="setTimeRange(this, '30d')">30 Days</button>
+        <button class="seg-btn" onclick="setTimeRange(this, '90d')">90 Days</button>
+      </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Section A: Trending Topics & Styles -->
+      <div>
+        <div class="section-header">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Trending Topics & Styles
+            <span class="section-sub">Top 20 by trend index · Last 30 days</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11.5px;color:#94A3B8;">Sort by</span>
+            <select style="padding:4px 8px;border:1px solid #E2E8F0;border-radius:6px;font-size:11.5px;font-family:inherit;color:#374151;background:white;">
+              <option>Trend Index</option>
+              <option>Growth Rate</option>
+              <option>Mentions</option>
+            </select>
+            <a class="card-link">View all 47 →</a>
+          </div>
+        </div>
+
+        <div class="kw-tabs" style="justify-content:space-between;">
+          <div style="display:flex;gap:6px;">
+            <button class="kw-tab active" onclick="switchKwTab(this,'toprank')">Top Rank</button>
+            <button class="kw-tab" onclick="switchKwTab(this,'growing')">Growing Trends</button>
+            <button class="kw-tab" onclick="switchKwTab(this,'seasonal')">Seasonal Trends</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11.5px;color:#94A3B8;font-weight:500;">Show</span>
+            <div class="seg-group" id="relevanceGroup">
+              <button class="seg-btn active" onclick="filterRelevance(this,'all')">All</button>
+              <button class="seg-btn" onclick="filterRelevance(this,'relevant')" style="display:flex;align-items:center;gap:4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="#6366F1" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                For You
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="topic-grid" id="topicGrid">
+
+          <div class="topic-card" data-tab="growing" onclick="openKwDetail('Cottagecore Aesthetic')">
+            <div class="tc-top">
+              <span class="badge b-hot">🔥 Hot</span>
+              <div style="display:flex;gap:4px;">
+                <span class="badge b-p">P</span>
+                <span class="badge b-r">R</span>
+              </div>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Cottagecore Aesthetic</div>
+            <div class="tc-cat">Home Decor · Lifestyle</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">94</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +186% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">248K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:94%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="growing" onclick="openKwDetail('Quiet Luxury Fashion')">
+            <div class="tc-top">
+              <span class="badge b-emerging">⭐ Emerging</span>
+              <span class="badge b-p">P</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Quiet Luxury Fashion</div>
+            <div class="tc-cat">Apparel · Fashion</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">87</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +234% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">183K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:87%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="growing" data-relevant="true" onclick="openKwDetail('Anti-Aging Skincare Routine')">
+            <div class="tc-top">
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span class="badge b-growing">Growing</span>
+                <span class="badge b-foryou">★ For You</span>
+              </div>
+              <span class="badge b-r">R</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Anti-Aging Skincare Routine</div>
+            <div class="tc-cat">Beauty · Skincare</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">82</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +97% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">156K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:82%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="growing" data-relevant="true" onclick="openKwDetail('Mushroom Coffee &amp; Adaptogens')">
+            <div class="tc-top">
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span class="badge b-emerging">⭐ Emerging</span>
+                <span class="badge b-foryou">★ For You</span>
+              </div>
+              <div style="display:flex;gap:4px;"><span class="badge b-p">P</span><span class="badge b-r">R</span></div>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Mushroom Coffee & Adaptogens</div>
+            <div class="tc-cat">Food & Beverage · Wellness</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">78</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +312% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">134K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:78%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="seasonal" onclick="openKwDetail('Clean Girl Makeup Look')">
+            <div class="tc-top">
+              <span class="badge b-growing">Growing</span>
+              <span class="badge b-p">P</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Clean Girl Makeup Look</div>
+            <div class="tc-cat">Beauty · Makeup</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">73</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +68% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">118K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:73%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="growing" onclick="openKwDetail('Home Gym Setup 2026')">
+            <div class="tc-top">
+              <span class="badge b-new">New</span>
+              <span class="badge b-r">R</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Home Gym Setup 2026</div>
+            <div class="tc-cat">Sports & Fitness · Equipment</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">69</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +143% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">97K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:69%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="seasonal" onclick="openKwDetail('Trail Running Gear')">
+            <div class="tc-top">
+              <span class="badge b-hot">🔥 Hot</span>
+              <span class="badge b-r">R</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Trail Running Gear</div>
+            <div class="tc-cat">Sports · Running & Outdoors</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">65</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +87% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">89K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:65%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="seasonal" onclick="openKwDetail('Minimalist Room Aesthetic')">
+            <div class="tc-top">
+              <span class="badge b-emerging">⭐ Emerging</span>
+              <span class="badge b-p">P</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Minimalist Room Aesthetic</div>
+            <div class="tc-cat">Home Decor · Interior Design</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">63</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +52% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">76K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:63%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="seasonal" data-relevant="true" onclick="openKwDetail('Gut Health &amp; Prebiotics')">
+            <div class="tc-top">
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span class="badge b-growing">Growing</span>
+                <span class="badge b-foryou">★ For You</span>
+              </div>
+              <div style="display:flex;gap:4px;"><span class="badge b-p">P</span><span class="badge b-r">R</span></div>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Gut Health & Prebiotics</div>
+            <div class="tc-cat">Wellness · Nutrition</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">61</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +74% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">71K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:61%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="seasonal" onclick="openKwDetail('Skincare Tool Essentials')">
+            <div class="tc-top">
+              <span class="badge b-growing">Growing</span>
+              <span class="badge b-p">P</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Skincare Tool Essentials</div>
+            <div class="tc-cat">Beauty · Devices & Tools</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">58</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +43% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">64K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:58%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="seasonal" data-relevant="true" onclick="openKwDetail('Slow Living Aesthetic')">
+            <div class="tc-top">
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span class="badge b-emerging">⭐ Emerging</span>
+                <span class="badge b-foryou">★ For You</span>
+              </div>
+              <span class="badge b-p">P</span>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Slow Living Aesthetic</div>
+            <div class="tc-cat">Lifestyle · Wellness</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">55</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +38% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">57K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:55%;"></div></div>
+          </div>
+
+          <div class="topic-card" data-tab="growing" data-relevant="true" onclick="openKwDetail('Protein Coffee &amp; Collagen')">
+            <div class="tc-top">
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span class="badge b-new">New</span>
+                <span class="badge b-foryou">★ For You</span>
+              </div>
+              <div style="display:flex;gap:4px;"><span class="badge b-p">P</span><span class="badge b-r">R</span></div>
+            </div>
+            <div class="tc-name" style="margin-top:6px;">Protein Coffee & Collagen</div>
+            <div class="tc-cat">Food · Beverage & Fitness</div>
+            <div class="tc-metrics">
+              <div>
+                <div class="tc-index">51</div>
+                <div class="tc-index-label">Trend Index</div>
+              </div>
+              <div style="font-size:11px;color:#94A3B8;">|</div>
+              <div>
+                <div class="tc-change up">↑ +29% <span style="font-size:10px;font-weight:400;color:#94A3B8;">7d</span></div>
+                <div style="font-size:10.5px;color:#94A3B8;">48K mentions</div>
+              </div>
+            </div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:51%;"></div></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Section B: Category Trends removed — see 03-category-trends.html -->
+
+      <!-- Section C: Holiday Countdown -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">
+              <span style="display:inline-flex;align-items:center;gap:7px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Upcoming Holidays & Shopping Events
+              </span>
+            </div>
+            <div class="card-sub">Next 90 days · Based on today Apr 23, 2026</div>
+          </div>
+          <a class="card-link">View full calendar →</a>
+        </div>
+        <div class="holiday-list">
+
+          <div class="holiday-item">
+            <div class="holiday-countdown">
+              <div class="hc-days" style="color:#DC2626;">7</div>
+              <div class="hc-label">days left</div>
+            </div>
+            <div class="holiday-divider"></div>
+            <div class="holiday-info">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="holiday-name">Mother's Day</div>
+                <span class="holiday-badge hb-holiday">Holiday</span>
+                <span class="holiday-badge hb-urgent" style="font-size:9.5px;">Urgent</span>
+              </div>
+              <div class="holiday-date">May 11, 2026 (2nd Sunday of May)</div>
+              <div class="holiday-keywords">
+                <span class="hkw">gift for mom</span>
+                <span class="hkw">mothers day gifts</span>
+                <span class="hkw">personalized gifts</span>
+                <span class="hkw">spa gift set</span>
+                <span class="hkw">jewelry for mom</span>
+              </div>
+            </div>
+            <div class="holiday-actions">
+              <button class="remind-btn set">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Reminder set
+              </button>
+            </div>
+          </div>
+
+          <div class="holiday-item">
+            <div class="holiday-countdown">
+              <div class="hc-days" style="color:#F59E0B;">26</div>
+              <div class="hc-label">days left</div>
+            </div>
+            <div class="holiday-divider"></div>
+            <div class="holiday-info">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="holiday-name">Memorial Day Weekend</div>
+                <span class="holiday-badge hb-shopping">Shopping</span>
+              </div>
+              <div class="holiday-date">May 25–26, 2026</div>
+              <div class="holiday-keywords">
+                <span class="hkw">memorial day sale</span>
+                <span class="hkw">outdoor furniture</span>
+                <span class="hkw">BBQ grills</span>
+                <span class="hkw">summer deals</span>
+              </div>
+            </div>
+            <div class="holiday-actions">
+              <button class="remind-btn" onclick="setRemind(this)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Set reminder
+              </button>
+            </div>
+          </div>
+
+          <div class="holiday-item">
+            <div class="holiday-countdown">
+              <div class="hc-days" style="color:#6366F1;">39</div>
+              <div class="hc-label">days left</div>
+            </div>
+            <div class="holiday-divider"></div>
+            <div class="holiday-info">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="holiday-name">Father's Day</div>
+                <span class="holiday-badge hb-holiday">Holiday</span>
+              </div>
+              <div class="holiday-date">June 15, 2026 (3rd Sunday of June)</div>
+              <div class="holiday-keywords">
+                <span class="hkw">gifts for dad</span>
+                <span class="hkw">fathers day ideas</span>
+                <span class="hkw">grilling accessories</span>
+                <span class="hkw">tech gifts men</span>
+              </div>
+            </div>
+            <div class="holiday-actions">
+              <button class="remind-btn" onclick="setRemind(this)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Set reminder
+              </button>
+            </div>
+          </div>
+
+          <div class="holiday-item">
+            <div class="holiday-countdown">
+              <div class="hc-days" style="color:#6366F1;">53</div>
+              <div class="hc-label">days left</div>
+            </div>
+            <div class="holiday-divider"></div>
+            <div class="holiday-info">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="holiday-name">Amazon Prime Day</div>
+                <span class="holiday-badge hb-shopping">Shopping</span>
+              </div>
+              <div class="holiday-date">~June/July 2026 (TBD — based on Amazon announcement)</div>
+              <div class="holiday-keywords">
+                <span class="hkw">prime day deals</span>
+                <span class="hkw">amazon deals</span>
+                <span class="hkw">best prime day</span>
+                <span class="hkw">lightning deals</span>
+              </div>
+            </div>
+            <div class="holiday-actions">
+              <button class="remind-btn" onclick="setRemind(this)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Set reminder
+              </button>
+            </div>
+          </div>
+
+          <div class="holiday-item">
+            <div class="holiday-countdown">
+              <div class="hc-days" style="color:#64748B;">72</div>
+              <div class="hc-label">days left</div>
+            </div>
+            <div class="holiday-divider"></div>
+            <div class="holiday-info">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="holiday-name">Back to School Season</div>
+                <span class="holiday-badge hb-seasonal">Seasonal</span>
+              </div>
+              <div class="holiday-date">July 20 – August 31, 2026</div>
+              <div class="holiday-keywords">
+                <span class="hkw">back to school</span>
+                <span class="hkw">school supplies</span>
+                <span class="hkw">dorm essentials</span>
+                <span class="hkw">college checklist</span>
+              </div>
+            </div>
+            <div class="holiday-actions">
+              <button class="remind-btn" onclick="setRemind(this)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Set reminder
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div>
+
+<!-- Add to Research Group Modal -->
+<div class="modal-overlay" id="addModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Add to Research Group</div>
+      <button class="modal-close" onclick="document.getElementById('addModal').classList.remove('show')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px;">
+        <div style="font-size:12px;color:#64748B;margin-bottom:6px;">Adding topic:</div>
+        <div class="added-tag" id="addTopicName">Cottagecore Aesthetic</div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Select an existing Research Group</div>
+        <div class="group-option-list">
+          <div class="group-option selected" onclick="selectGroup(this)">
+            <div>
+              <div class="go-name">Skincare & Beauty Q2</div>
+              <div class="go-kws">retinol, niacinamide, peptides +8 more</div>
+            </div>
+            <div class="go-radio"></div>
+          </div>
+          <div class="group-option" onclick="selectGroup(this)">
+            <div>
+              <div class="go-name">Home Decor Spring</div>
+              <div class="go-kws">cottagecore, vintage, linen +5 more</div>
+            </div>
+            <div class="go-radio"></div>
+          </div>
+          <div class="group-option" onclick="selectGroup(this)">
+            <div>
+              <div class="go-name">Wellness Products</div>
+              <div class="go-kws">adaptogens, mushroom coffee +3 more</div>
+            </div>
+            <div class="go-radio"></div>
+          </div>
+        </div>
+      </div>
+      <div class="or-divider"><span>or create new group</span></div>
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="form-label">New Research Group Name</div>
+        <input class="new-group-input" type="text" placeholder="e.g. Cottagecore Summer Campaign">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="document.getElementById('addModal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAdd()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Add to Group
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Keyword Detail Modal -->
+<div class="kw-overlay" id="kwModal" onclick="closeKwModal(event)">
+  <div class="kw-modal">
+    <div class="kw-modal-head">
+      <div>
+        <div class="kw-modal-title" id="kwModalTitle"></div>
+        <div class="kw-modal-meta-row" id="kwModalMeta"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('kwModal').classList.remove('show')">×</button>
+    </div>
+    <div class="kw-modal-body">
+      <div class="kw-section">
+        <div class="kw-section-title">Search Volume Trend · Last 12 Months</div>
+        <div class="kw-chart-wrap"><canvas id="kwChart"></canvas></div>
+      </div>
+      <div class="kw-section">
+        <div class="kw-section-title">Audience Demographics</div>
+        <div class="kw-demo-row">
+          <div class="kw-demo-col">
+            <div class="demo-label">Age Distribution</div>
+            <div class="age-bar-list" id="kwAgeList"></div>
+          </div>
+          <div class="kw-demo-col">
+            <div class="demo-label">Gender Split</div>
+            <div class="gender-wrap" id="kwGenderWrap"></div>
+          </div>
+        </div>
+      </div>
+      <div class="kw-section">
+        <div class="kw-section-title">Popular Pins</div>
+        <div class="pin-grid" id="kwPinGrid"></div>
+      </div>
+
+      <div class="kw-section" id="kwInsightSection" style="display:none;">
+        <div class="kw-section-title" style="display:flex;align-items:center;gap:5px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="#4F46E5" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Keyword Strategy · Connect This Trend to Your Products
+        </div>
+        <div class="kw-insight-box">
+          <div class="kw-insight-box-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Targeting Insight
+          </div>
+          <div class="kw-insight-box-text" id="kwInsightText"></div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="insight-kw-table">
+            <thead>
+              <tr>
+                <th style="width:22px;"></th>
+                <th>Keyword</th>
+                <th>Match Type</th>
+                <th>Rec. Bid</th>
+                <th>Est. Monthly Vol.</th>
+                <th>Competition</th>
+              </tr>
+            </thead>
+            <tbody id="kwInsightRows"></tbody>
+          </table>
+        </div>
+        <div class="insight-actions">
+          <button class="btn btn-ghost" style="font-size:11.5px;padding:5px 12px;" onclick="selectAllInsightKws()">Select All</button>
+          <button class="btn btn-primary" style="font-size:11.5px;padding:5px 14px;" onclick="addToCampaign()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add to Campaign
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot" style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:11.5px;color:#94A3B8;">Pinterest · Most saved in last 30 days</div>
+      <button class="btn btn-primary" style="font-size:11.5px;padding:5px 12px;" onclick="openAddModal(document.getElementById('kwModalTitle').textContent)">+ Add to Research Group</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleExpand(card, panelId) {
+  const panel = document.getElementById(panelId);
+  const wasOpen = panel.classList.contains('show');
+  document.querySelectorAll('.topic-expand-panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.topic-card').forEach(c=>c.classList.remove('expanded'));
+  if (!wasOpen) { panel.classList.add('show'); card.classList.add('expanded'); }
+}
+
+function setTimeRange(btn, range) {
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setPlatform(el, platform) {
+  document.querySelectorAll('.platform-toggle').forEach(e=>{e.classList.remove('all','active-p','active-r');});
+  if(platform==='all') el.classList.add('all');
+  else if(platform==='p') el.classList.add('active-p');
+  else el.classList.add('active-r');
+}
+
+function openAddModal(topicName) {
+  document.getElementById('addTopicName').textContent = topicName;
+  document.getElementById('addModal').classList.add('show');
+}
+
+function closeModal(e) {
+  if(e.target.id==='addModal') document.getElementById('addModal').classList.remove('show');
+}
+
+function selectGroup(el) {
+  document.querySelectorAll('.group-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function confirmAdd() {
+  document.getElementById('addModal').classList.remove('show');
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#0F172A;color:white;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;';
+  toast.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Topic added to Research Group';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function setRemind(btn) {
+  btn.classList.add('set');
+  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Reminder set';
+}
+
+// ── Keyword Insight Data ──────────────────────────────────────────────────────
+const kwInsightData = {
+  'Mushroom Coffee & Adaptogens': {
+    summary: "This trend overlaps directly with your mushroom supplement product line. Pinners engaging with this topic are seeking daily wellness rituals — a natural fit for your Lion\'s Mane and adaptogen products. Start with Broad match to build awareness, then funnel into Exact match for higher-intent shoppers.",
+    keywords: [
+      { kw: 'mushroom coffee',            matchType: 'Broad',  bid: '$0.45–0.62', vol: '18K–22K', comp: 'Medium' },
+      { kw: "lion's mane coffee",         matchType: 'Phrase', bid: '$0.72–0.95', vol: '8K–12K',  comp: 'Low'    },
+      { kw: 'mushroom elixir powder',     matchType: 'Exact',  bid: '$1.05–1.38', vol: '3K–5K',   comp: 'Low'    },
+      { kw: 'adaptogen coffee blend',     matchType: 'Broad',  bid: '$0.52–0.71', vol: '12K–16K', comp: 'Medium' },
+      { kw: 'mushroom supplement coffee', matchType: 'Phrase', bid: '$0.88–1.12', vol: '5K–8K',   comp: 'Low'    },
+    ]
+  },
+  'Gut Health & Prebiotics': {
+    summary: "Gut health is a growing year-round priority. Your probiotic and digestive supplement products directly answer this purchase intent. Layer branded and unbranded terms for full-funnel coverage, and consider Phrase match as the sweet spot for this category.",
+    keywords: [
+      { kw: 'gut health supplements',   matchType: 'Broad',  bid: '$0.58–0.76', vol: '22K–28K', comp: 'High'   },
+      { kw: 'prebiotic supplement',     matchType: 'Phrase', bid: '$0.81–1.05', vol: '10K–14K', comp: 'Medium' },
+      { kw: 'daily probiotic capsules', matchType: 'Exact',  bid: '$1.12–1.45', vol: '6K–9K',   comp: 'Low'    },
+      { kw: 'digestive health gummies', matchType: 'Phrase', bid: '$0.92–1.18', vol: '8K–11K',  comp: 'Low'    },
+      { kw: 'fiber probiotic blend',    matchType: 'Exact',  bid: '$0.95–1.22', vol: '4K–6K',   comp: 'Low'    },
+    ]
+  },
+  'Protein Coffee & Collagen': {
+    summary: "The protein-coffee fusion audience skews toward fitness-focused millennials aged 25–34. Your collagen powder and protein supplement line are well-positioned here. Use Phrase match on product-specific queries to capture high-intent traffic at efficient CPCs.",
+    keywords: [
+      { kw: 'protein coffee powder',     matchType: 'Broad',  bid: '$0.51–0.68', vol: '16K–20K', comp: 'Medium' },
+      { kw: 'collagen coffee creamer',   matchType: 'Phrase', bid: '$0.76–0.98', vol: '9K–12K',  comp: 'Low'    },
+      { kw: 'collagen peptides coffee',  matchType: 'Exact',  bid: '$1.08–1.35', vol: '5K–7K',   comp: 'Low'    },
+      { kw: 'high protein coffee drink', matchType: 'Broad',  bid: '$0.44–0.60', vol: '20K–26K', comp: 'Medium' },
+      { kw: 'grass fed collagen coffee', matchType: 'Phrase', bid: '$0.88–1.14', vol: '4K–6K',   comp: 'Low'    },
+    ]
+  },
+  'Anti-Aging Skincare Routine': {
+    summary: "This audience actively researches 'beauty from within' solutions. Your collagen, vitamin C, and antioxidant supplement products can capture this intent effectively. Broad match builds reach; retarget with Exact match on high-converting product terms.",
+    keywords: [
+      { kw: 'anti aging supplement',     matchType: 'Broad',  bid: '$0.62–0.82', vol: '24K–30K', comp: 'High'   },
+      { kw: 'collagen skin supplement',  matchType: 'Phrase', bid: '$0.88–1.15', vol: '10K–14K', comp: 'Medium' },
+      { kw: 'retinol alternative pills', matchType: 'Exact',  bid: '$1.25–1.58', vol: '5K–7K',   comp: 'Low'    },
+      { kw: 'vitamin c collagen powder', matchType: 'Phrase', bid: '$0.74–0.96', vol: '8K–11K',  comp: 'Low'    },
+      { kw: 'skin collagen builder',     matchType: 'Exact',  bid: '$0.98–1.28', vol: '3K–5K',   comp: 'Low'    },
+    ]
+  },
+  'Slow Living Aesthetic': {
+    summary: "The slow-living audience values mindful, intentional wellness rituals. Your adaptogens, mushroom coffee, and functional supplements fit naturally — emphasize ritual, calm, and morning routines in your ad creative for maximum resonance.",
+    keywords: [
+      { kw: 'morning wellness ritual',    matchType: 'Broad',  bid: '$0.38–0.52', vol: '14K–18K', comp: 'Low'    },
+      { kw: 'mindful supplement routine', matchType: 'Phrase', bid: '$0.65–0.85', vol: '7K–10K',  comp: 'Low'    },
+      { kw: 'slow morning supplement',    matchType: 'Exact',  bid: '$0.88–1.12', vol: '3K–5K',   comp: 'Low'    },
+      { kw: 'adaptogen daily ritual',     matchType: 'Phrase', bid: '$0.72–0.94', vol: '6K–9K',   comp: 'Low'    },
+      { kw: 'functional mushroom drink',  matchType: 'Broad',  bid: '$0.48–0.64', vol: '11K–15K', comp: 'Medium' },
+    ]
+  }
+};
+
+// ── Keyword Detail Modal ──────────────────────────────────────────────────────
+const months12 = ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+const kwDetailData = {
+  'Cottagecore Aesthetic': {
+    tab:'growing', cat:'Home Decor · Lifestyle', badge:'b-hot', badgeText:'🔥 Hot',
+    vol:[18000,19500,22000,28000,32000,35000,41000,38000,45000,52000,61000,72000],
+    age:[{l:'18-24',p:31},{l:'25-34',p:38},{l:'35-44',p:21},{l:'45-54',p:7},{l:'55+',p:3}],
+    gender:[{n:'Female',p:79,c:'#EC4899'},{n:'Male',p:17,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'cottage10',saves:'42.3K'},{seed:'cottage20',saves:'31.8K'},{seed:'cottage30',saves:'28.4K'},{seed:'cottage40',saves:'19.7K'}]
+  },
+  'Quiet Luxury Fashion': {
+    tab:'growing', cat:'Apparel · Fashion', badge:'b-emerging', badgeText:'⭐ Emerging',
+    vol:[12000,14000,16000,19000,22000,28000,34000,31000,40000,51000,64000,76000],
+    age:[{l:'18-24',p:24},{l:'25-34',p:42},{l:'35-44',p:24},{l:'45-54',p:7},{l:'55+',p:3}],
+    gender:[{n:'Female',p:74,c:'#EC4899'},{n:'Male',p:22,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'quiet10',saves:'31.2K'},{seed:'quiet20',saves:'24.5K'},{seed:'quiet30',saves:'18.9K'},{seed:'quiet40',saves:'14.2K'}]
+  },
+  'Anti-Aging Skincare Routine': {
+    tab:'growing', cat:'Beauty · Skincare', badge:'b-growing', badgeText:'Growing',
+    vol:[28000,30000,31000,33000,35000,36000,38000,40000,44000,48000,52000,58000],
+    age:[{l:'18-24',p:16},{l:'25-34',p:32},{l:'35-44',p:32},{l:'45-54',p:14},{l:'55+',p:6}],
+    gender:[{n:'Female',p:81,c:'#EC4899'},{n:'Male',p:15,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'skincare10',saves:'22.8K'},{seed:'skincare20',saves:'18.4K'},{seed:'skincare30',saves:'14.1K'},{seed:'skincare40',saves:'11.3K'}]
+  },
+  'Mushroom Coffee & Adaptogens': {
+    tab:'growing', cat:'Food & Beverage · Wellness', badge:'b-emerging', badgeText:'⭐ Emerging',
+    vol:[5000,6000,7500,9000,11000,14000,18000,22000,29000,38000,50000,64000],
+    age:[{l:'18-24',p:22},{l:'25-34',p:44},{l:'35-44',p:24},{l:'45-54',p:7},{l:'55+',p:3}],
+    gender:[{n:'Female',p:61,c:'#EC4899'},{n:'Male',p:34,c:'#6366F1'},{n:'Other',p:5,c:'#94A3B8'}],
+    pins:[{seed:'mushroom10',saves:'28.6K'},{seed:'mushroom20',saves:'21.3K'},{seed:'mushroom30',saves:'17.4K'},{seed:'mushroom40',saves:'12.8K'}]
+  },
+  'Clean Girl Makeup Look': {
+    tab:'seasonal', cat:'Beauty · Makeup', badge:'b-growing', badgeText:'Growing',
+    vol:[22000,26000,35000,42000,38000,28000,24000,22000,27000,32000,41000,48000],
+    age:[{l:'18-24',p:42},{l:'25-34',p:35},{l:'35-44',p:14},{l:'45-54',p:6},{l:'55+',p:3}],
+    gender:[{n:'Female',p:88,c:'#EC4899'},{n:'Male',p:9,c:'#6366F1'},{n:'Other',p:3,c:'#94A3B8'}],
+    pins:[{seed:'cleangirl10',saves:'19.3K'},{seed:'cleangirl20',saves:'14.7K'},{seed:'cleangirl30',saves:'11.2K'},{seed:'cleangirl40',saves:'8.6K'}]
+  },
+  'Home Gym Setup 2026': {
+    tab:'growing', cat:'Sports & Fitness · Equipment', badge:'b-new', badgeText:'New',
+    vol:[8000,9000,10000,11500,12000,12500,13000,14000,16000,20000,26000,34000],
+    age:[{l:'18-24',p:20},{l:'25-34',p:39},{l:'35-44',p:27},{l:'45-54',p:10},{l:'55+',p:4}],
+    gender:[{n:'Female',p:39,c:'#EC4899'},{n:'Male',p:57,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'homegym10',saves:'12.1K'},{seed:'homegym20',saves:'9.4K'},{seed:'homegym30',saves:'7.8K'},{seed:'homegym40',saves:'5.9K'}]
+  },
+  'Trail Running Gear': {
+    tab:'seasonal', cat:'Sports · Running & Outdoors', badge:'b-hot', badgeText:'🔥 Hot',
+    vol:[14000,12000,13000,18000,28000,38000,44000,42000,32000,22000,18000,24000],
+    age:[{l:'18-24',p:18},{l:'25-34',p:36},{l:'35-44',p:30},{l:'45-54',p:12},{l:'55+',p:4}],
+    gender:[{n:'Female',p:44,c:'#EC4899'},{n:'Male',p:52,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'trail10',saves:'11.4K'},{seed:'trail20',saves:'9.2K'},{seed:'trail30',saves:'7.1K'},{seed:'trail40',saves:'5.8K'}]
+  },
+  'Minimalist Room Aesthetic': {
+    tab:'seasonal', cat:'Home Decor · Interior Design', badge:'b-emerging', badgeText:'⭐ Emerging',
+    vol:[16000,14000,15000,22000,30000,28000,24000,22000,26000,32000,38000,42000],
+    age:[{l:'18-24',p:34},{l:'25-34',p:37},{l:'35-44',p:19},{l:'45-54',p:7},{l:'55+',p:3}],
+    gender:[{n:'Female',p:72,c:'#EC4899'},{n:'Male',p:24,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'minimal10',saves:'22.1K'},{seed:'minimal20',saves:'17.6K'},{seed:'minimal30',saves:'13.4K'},{seed:'minimal40',saves:'9.8K'}]
+  },
+  'Gut Health & Prebiotics': {
+    tab:'seasonal', cat:'Wellness · Nutrition', badge:'b-growing', badgeText:'Growing',
+    vol:[28000,38000,32000,26000,22000,20000,18000,22000,34000,42000,48000,52000],
+    age:[{l:'18-24',p:19},{l:'25-34',p:38},{l:'35-44',p:28},{l:'45-54',p:11},{l:'55+',p:4}],
+    gender:[{n:'Female',p:69,c:'#EC4899'},{n:'Male',p:27,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'gut10',saves:'14.8K'},{seed:'gut20',saves:'11.3K'},{seed:'gut30',saves:'8.7K'},{seed:'gut40',saves:'6.2K'}]
+  },
+  'Skincare Tool Essentials': {
+    tab:'seasonal', cat:'Beauty · Devices & Tools', badge:'b-growing', badgeText:'Growing',
+    vol:[22000,20000,18000,20000,24000,22000,20000,24000,30000,36000,42000,46000],
+    age:[{l:'18-24',p:28},{l:'25-34',p:40},{l:'35-44',p:22},{l:'45-54',p:7},{l:'55+',p:3}],
+    gender:[{n:'Female',p:84,c:'#EC4899'},{n:'Male',p:12,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'skintool10',saves:'17.6K'},{seed:'skintool20',saves:'13.2K'},{seed:'skintool30',saves:'9.8K'},{seed:'skintool40',saves:'7.4K'}]
+  },
+  'Slow Living Aesthetic': {
+    tab:'seasonal', cat:'Lifestyle · Wellness', badge:'b-emerging', badgeText:'⭐ Emerging',
+    vol:[20000,24000,22000,18000,16000,14000,16000,20000,26000,32000,38000,42000],
+    age:[{l:'18-24',p:26},{l:'25-34',p:36},{l:'35-44',p:24},{l:'45-54',p:10},{l:'55+',p:4}],
+    gender:[{n:'Female',p:77,c:'#EC4899'},{n:'Male',p:19,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'slow10',saves:'11.9K'},{seed:'slow20',saves:'9.1K'},{seed:'slow30',saves:'7.3K'},{seed:'slow40',saves:'5.6K'}]
+  },
+  'Protein Coffee & Collagen': {
+    tab:'growing', cat:'Food · Beverage & Fitness', badge:'b-new', badgeText:'New',
+    vol:[3000,3500,4000,4500,5000,5500,6000,6800,7800,8900,10000,11500],
+    age:[{l:'18-24',p:29},{l:'25-34',p:43},{l:'35-44',p:20},{l:'45-54',p:6},{l:'55+',p:2}],
+    gender:[{n:'Female',p:68,c:'#EC4899'},{n:'Male',p:28,c:'#6366F1'},{n:'Other',p:4,c:'#94A3B8'}],
+    pins:[{seed:'protein10',saves:'9.4K'},{seed:'protein20',saves:'7.2K'},{seed:'protein30',saves:'5.8K'},{seed:'protein40',saves:'4.1K'}]
+  }
+};
+
+let kwChartInst = null;
+let currentKwTab = 'toprank';
+let currentRelevance = 'all';
+
+function switchKwTab(btn, tab) {
+  currentKwTab = tab;
+  document.querySelectorAll('.kw-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyKwFilters();
+}
+
+function filterRelevance(btn, mode) {
+  currentRelevance = mode;
+  document.querySelectorAll('#relevanceGroup .seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyKwFilters();
+}
+
+function applyKwFilters() {
+  document.querySelectorAll('#topicGrid .topic-card').forEach(card => {
+    const tabOk = currentKwTab === 'toprank' || card.dataset.tab === currentKwTab;
+    const relOk = currentRelevance === 'all' || card.dataset.relevant === 'true';
+    card.style.display = (tabOk && relOk) ? '' : 'none';
+  });
+}
+
+function openKwDetail(name) {
+  const d = kwDetailData[name];
+  if (!d) return;
+  document.getElementById('kwModalTitle').textContent = name;
+  document.getElementById('kwModalMeta').innerHTML =
+    `<span class="badge ${d.badge}">${d.badgeText}</span>
+     <span class="badge b-cat">${d.cat}</span>`;
+  document.getElementById('kwAgeList').innerHTML = d.age.map(a =>
+    `<div class="age-bar-item">
+      <span class="age-bar-label">${a.l}</span>
+      <div class="age-bar-track"><div class="age-bar-fill" style="width:${a.p}%"></div></div>
+      <span class="age-bar-pct">${a.p}%</span>
+    </div>`).join('');
+  document.getElementById('kwGenderWrap').innerHTML = d.gender.map(g =>
+    `<div>
+      <div class="gender-item">
+        <div class="gender-dot" style="background:${g.c}"></div>
+        <span class="gender-name">${g.n}</span>
+        <span class="gender-pct">${g.p}%</span>
+      </div>
+      <div class="gender-bar-track"><div class="gender-bar-fill" style="width:${g.p}%;background:${g.c}"></div></div>
+    </div>`).join('');
+  document.getElementById('kwPinGrid').innerHTML = d.pins.map(p =>
+    `<div class="pin-card">
+      <img src="https://picsum.photos/seed/${p.seed}/160/220" alt="pin" loading="lazy">
+      <div class="pin-saves">${p.saves}</div>
+    </div>`).join('');
+
+  // Insight section
+  const insightSection = document.getElementById('kwInsightSection');
+  const insight = kwInsightData[name];
+  if (insight) {
+    document.getElementById('kwInsightText').textContent = insight.summary;
+    document.getElementById('kwInsightRows').innerHTML = insight.keywords.map(kw => `
+      <tr>
+        <td><input type="checkbox" class="insight-kw-check" checked style="cursor:pointer;width:14px;height:14px;accent-color:#6366F1;"></td>
+        <td><span class="ikt-kw-code">${kw.kw}</span></td>
+        <td><span class="match-badge match-${kw.matchType.toLowerCase()}">${kw.matchType}</span></td>
+        <td style="font-size:12px;font-weight:600;color:#0F172A;white-space:nowrap;">${kw.bid}</td>
+        <td style="font-size:12px;color:#374151;white-space:nowrap;">${kw.vol}</td>
+        <td><span class="comp-${kw.comp.toLowerCase()}">● ${kw.comp}</span></td>
+      </tr>`).join('');
+    insightSection.style.display = '';
+  } else {
+    insightSection.style.display = 'none';
+  }
+
+  document.getElementById('kwModal').classList.add('show');
+  requestAnimationFrame(() => {
+    const ctx = document.getElementById('kwChart').getContext('2d');
+    if (kwChartInst) kwChartInst.destroy();
+    kwChartInst = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: months12,
+        datasets: [{
+          data: d.vol, borderColor: '#6366F1', backgroundColor: 'rgba(99,102,241,0.08)',
+          borderWidth: 2, fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 5,
+          pointBackgroundColor: '#6366F1'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend:{display:false}, tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>`Volume: ${ctx.raw.toLocaleString()}`}} },
+        scales: {
+          x: {grid:{display:false}, border:{display:false}, ticks:{font:{size:10}, color:'#94A3B8'}},
+          y: {grid:{color:'#F1F5F9'}, border:{display:false}, ticks:{font:{size:10}, color:'#94A3B8', callback: v => v>=1000?`${(v/1000).toFixed(0)}k`:v}}
+        }
+      }
+    });
+  });
+}
+
+function closeKwModal(e) {
+  if (e.target.id === 'kwModal') document.getElementById('kwModal').classList.remove('show');
+}
+
+function selectAllInsightKws() {
+  document.querySelectorAll('.insight-kw-check').forEach(c => c.checked = true);
+}
+
+function addToCampaign() {
+  const checks = document.querySelectorAll('.insight-kw-check:checked');
+  if (!checks.length) return;
+  const count = checks.length;
+  document.getElementById('kwModal').classList.remove('show');
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#0F172A;color:white;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;';
+  toast.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${count} keyword${count > 1 ? 's' : ''} added to Campaign`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+</script>
+</body>
+</html>

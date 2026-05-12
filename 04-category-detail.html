@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social SOV — Category Detail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #F0F2F5; color: #1E293B; font-size: 14px; line-height: 1.5; }
+    .app { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar { width: 232px; background: #131C2B; color: #94A3B8; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { padding: 18px 20px; border-bottom: 1px solid #1E2D42; display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 34px; height: 34px; background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-text { font-size: 15px; font-weight: 700; color: #F1F5F9; line-height: 1.2; }
+    .logo-sub { font-size: 10.5px; color: #475569; font-weight: 400; }
+    .sidebar-nav { padding: 12px 0; flex: 1; overflow-y: auto; }
+    .nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 20px; cursor: pointer; transition: all 0.12s; font-size: 13px; font-weight: 500; color: #7A96AE; border-left: 3px solid transparent; margin: 1px 0; }
+    .nav-item:hover { background: #1A2840; color: #C8D8E8; }
+    .nav-item.active { background: rgba(99,102,241,0.15); color: #A5B4FC; border-left-color: #6366F1; }
+    .nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.8; }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .nav-badge { margin-left: auto; background: #3B4E6B; color: #94A3B8; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 8px; }
+    .sidebar-footer { padding: 14px 20px; border-top: 1px solid #1E2D42; display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #6366F1, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .avatar-name { font-size: 12.5px; font-weight: 600; color: #C8D8E8; }
+    .avatar-role { font-size: 10.5px; color: #475569; }
+
+    /* Main */
+    .main { margin-left: 232px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Topbar */
+    .topbar { background: #FFFFFF; border-bottom: 1px solid #E2E8F0; padding: 0 28px; height: 60px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 50; }
+    .back-btn { display: flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; color: #6366F1; cursor: pointer; padding: 6px 12px; border-radius: 7px; border: 1px solid #E2E8F0; background: white; font-family: inherit; transition: all 0.12s; white-space: nowrap; flex-shrink: 0; }
+    .back-btn:hover { background: #EEF2FF; border-color: #C7D2FE; }
+    .topbar-divider { width: 1px; height: 28px; background: #E2E8F0; flex-shrink: 0; }
+    .topbar-left { flex: 1; min-width: 0; }
+    .topbar-title { font-size: 16px; font-weight: 700; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-breadcrumb { font-size: 12px; color: #94A3B8; margin-top: 1px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; transition: all 0.12s; font-family: inherit; }
+    .btn-ghost { background: transparent; color: #64748B; border: 1px solid #E2E8F0; }
+    .btn-ghost:hover { background: #F8FAFC; }
+
+    /* Summary strip */
+    .summary-strip { background: white; border-bottom: 1px solid #E2E8F0; display: flex; }
+    .summary-kpi { flex: 1; padding: 14px 24px; border-right: 1px solid #F1F5F9; }
+    .summary-kpi:last-child { border-right: none; }
+    .kpi-label { font-size: 11px; color: #94A3B8; font-weight: 500; margin-bottom: 3px; }
+    .kpi-value { font-size: 20px; font-weight: 700; color: #0F172A; }
+    .kpi-sub { font-size: 11px; margin-top: 2px; }
+    .kpi-up { color: #10B981; font-weight: 600; }
+    .kpi-neutral { color: #94A3B8; }
+
+    /* Tabs */
+    .tabs-bar { background: white; border-bottom: 1px solid #E2E8F0; padding: 0 28px; display: flex; position: sticky; top: 60px; z-index: 40; }
+    .tab-item { padding: 14px 18px; font-size: 13px; font-weight: 600; color: #64748B; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .tab-item:hover { color: #4F46E5; }
+    .tab-item.active { color: #6366F1; border-bottom-color: #6366F1; }
+
+    /* Tab content */
+    .tab-content { display: none; padding: 22px 28px; }
+    .tab-content.active { display: block; }
+
+    /* Card */
+    .card { background: #FFFFFF; border-radius: 10px; border: 1px solid #E2E8F0; overflow: hidden; }
+    .card-head { padding: 14px 18px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 13.5px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 7px; }
+    .card-sub { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+    .mb16 { margin-bottom: 16px; }
+
+    /* Split layout */
+    .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+
+    /* Product ranking table */
+    table { width: 100%; border-collapse: collapse; }
+    thead th { padding: 9px 14px; font-size: 10.5px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; border-bottom: 1px solid #F1F5F9; background: #FAFBFC; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #F8FAFC; cursor: pointer; transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #F8FAFF; }
+    tbody tr.selected { background: #EEF2FF !important; }
+    tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
+    .rank-circle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .r1 { background: #FEF3C7; color: #B45309; }
+    .r2 { background: #F1F5F9; color: #64748B; }
+    .r3 { background: #FFF4EE; color: #C03400; }
+    .rn { background: #F8FAFC; color: #94A3B8; }
+    .prod-name { font-size: 12.5px; font-weight: 600; color: #0F172A; }
+    .prod-brand { font-size: 10.5px; color: #94A3B8; margin-top: 1px; }
+    .mention-bar-wrap { display: flex; align-items: center; gap: 7px; }
+    .mention-bar-bg { flex: 1; max-width: 60px; height: 5px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
+    .mention-bar-fill { height: 100%; background: linear-gradient(90deg, #6366F1, #8B5CF6); border-radius: 3px; }
+    .mention-num { font-size: 12px; font-weight: 600; color: #0F172A; white-space: nowrap; }
+    .growth-up { font-size: 12px; font-weight: 700; color: #10B981; }
+    .growth-down { font-size: 12px; font-weight: 700; color: #EF4444; }
+    .sparkline-td canvas { display: block; }
+
+    /* Sentiment panel */
+    .sentiment-panel { position: sticky; top: 120px; }
+    .sent-inner { padding: 18px; }
+    .sent-product-header { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F1F5F9; }
+    .sent-product-name { font-size: 14px; font-weight: 700; color: #0F172A; line-height: 1.3; }
+    .sent-product-brand { font-size: 11.5px; color: #94A3B8; margin-top: 3px; }
+
+    .sentiment-ratio { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
+    .sent-bar-track { flex: 1; height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; display: flex; }
+    .sent-bar-pos { height: 100%; background: #10B981; transition: width 0.4s; }
+    .sent-bar-neg { height: 100%; background: #EF4444; transition: width 0.4s; }
+    .sent-ratio-label { font-size: 11px; color: #94A3B8; white-space: nowrap; }
+    .sent-pos-num { font-size: 11px; font-weight: 700; color: #10B981; white-space: nowrap; }
+    .sent-neg-num { font-size: 11px; font-weight: 700; color: #EF4444; white-space: nowrap; }
+
+    .sent-section { margin-bottom: 16px; }
+    .sent-section:last-child { margin-bottom: 0; }
+    .sent-section-head { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; margin-bottom: 9px; }
+    .head-praise { color: #059669; }
+    .head-crit { color: #DC2626; }
+
+    .sent-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
+    .sent-tag { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+    .st-praise { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+    .st-crit { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+
+    .quote-list { display: flex; flex-direction: column; gap: 7px; }
+    .quote-item { padding: 9px 12px; border-radius: 7px; font-size: 12px; color: #374151; line-height: 1.55; border-left: 3px solid; }
+    .qi-praise { background: #F0FDF4; border-left-color: #10B981; }
+    .qi-crit { background: #FEF2F2; border-left-color: #EF4444; }
+    .quote-meta { font-size: 10.5px; color: #94A3B8; margin-top: 4px; }
+
+    .select-prompt { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; }
+    .select-prompt-icon { font-size: 32px; margin-bottom: 12px; }
+    .select-prompt-text { font-size: 13px; color: #94A3B8; }
+
+    /* Brand SOV tab */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .donut-wrap { display: flex; flex-direction: column; align-items: center; padding: 20px 16px; }
+    .donut-container { position: relative; width: 160px; height: 160px; margin-bottom: 16px; flex-shrink: 0; }
+    .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .dc-value { font-size: 22px; font-weight: 800; color: #6366F1; line-height: 1; }
+    .dc-label { font-size: 10px; color: #94A3B8; font-weight: 600; margin-top: 2px; }
+    .sov-legend { display: flex; flex-direction: column; gap: 9px; width: 100%; }
+    .sov-legend-item { display: flex; align-items: center; gap: 8px; }
+    .sov-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .sov-brand-name { font-size: 12px; color: #374151; flex: 1; font-weight: 500; }
+    .sov-brand-name.mine { font-weight: 700; color: #0F172A; }
+    .sov-bar { flex: 1; height: 4px; background: #F1F5F9; border-radius: 2px; overflow: hidden; max-width: 70px; }
+    .sov-bar-fill { height: 100%; border-radius: 2px; }
+    .sov-pct { font-size: 12.5px; font-weight: 700; color: #0F172A; min-width: 34px; text-align: right; }
+
+    .chart-wrap { position: relative; height: 200px; }
+    .chart-legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 14px 18px 0; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #64748B; }
+    .legend-dot { width: 10px; height: 3px; border-radius: 2px; }
+
+    /* Brand affinity table */
+    .brand-table { width: 100%; border-collapse: collapse; }
+    .brand-table thead th { padding: 10px 14px; font-size: 10.5px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; border-bottom: 1px solid #F1F5F9; background: #FAFBFC; white-space: nowrap; }
+    .brand-table tbody tr { border-bottom: 1px solid #F8FAFC; transition: background 0.1s; }
+    .brand-table tbody tr:last-child { border-bottom: none; }
+    .brand-table tbody tr:hover td { background: #F8FAFF; }
+    .brand-table tbody td { padding: 13px 14px; font-size: 13px; vertical-align: middle; }
+    .brand-cell-name { font-size: 13px; font-weight: 700; color: #0F172A; }
+    .brand-cell-sub { font-size: 10.5px; color: #94A3B8; margin-top: 1px; }
+
+    .affinity-wrap { display: flex; align-items: center; gap: 8px; }
+    .affinity-score-num { font-size: 16px; font-weight: 800; min-width: 32px; }
+    .score-a { color: #059669; }
+    .score-b { color: #10B981; }
+    .score-c { color: #F59E0B; }
+    .score-d { color: #EF4444; }
+    .affinity-bar-track { width: 64px; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
+    .affinity-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+    .af-a { background: linear-gradient(90deg, #10B981, #059669); }
+    .af-b { background: linear-gradient(90deg, #34D399, #10B981); }
+    .af-c { background: linear-gradient(90deg, #FCD34D, #F59E0B); }
+    .af-d { background: linear-gradient(90deg, #FCA5A5, #EF4444); }
+
+    .mention-split { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .ms-pos { color: #059669; font-weight: 700; }
+    .ms-neg { color: #DC2626; font-weight: 700; }
+    .ms-sep { color: #CBD5E1; }
+
+    .sov-pct-cell { font-size: 13px; font-weight: 700; color: #6366F1; }
+    .sov-bar-cell-wrap { display: flex; align-items: center; gap: 7px; }
+    .sov-bar-cell-bg { width: 60px; height: 5px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
+    .sov-bar-cell-fill { height: 100%; border-radius: 3px; }
+
+    /* Keyword Insight */
+    .ki-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .ki-cell { padding: 20px; border-right: 1px solid #F1F5F9; border-bottom: 1px solid #F1F5F9; }
+    .ki-cell:nth-child(2n) { border-right: none; }
+    .ki-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .ki-cell-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #F1F5F9; }
+    .ki-cat-badge { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .ki-cat-name { font-size: 13px; font-weight: 700; color: #0F172A; line-height: 1.2; }
+    .ki-cat-count { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+    .ki-section { margin-bottom: 11px; }
+    .ki-section:last-child { margin-bottom: 0; }
+    .ki-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px; display: flex; align-items: center; gap: 4px; }
+    .ki-pos-label { color: #059669; }
+    .ki-neg-label { color: #DC2626; }
+    .ki-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ki-tag { border-radius: 6px; font-weight: 600; cursor: default; transition: opacity 0.12s, transform 0.12s; line-height: 1.3; white-space: nowrap; }
+    .ki-tag:hover { opacity: 0.82; transform: scale(1.04); }
+    .ki-tag-lg { padding: 5px 11px; font-size: 12.5px; }
+    .ki-tag-md { padding: 4px 9px; font-size: 11.5px; }
+    .ki-tag-sm { padding: 3px 8px; font-size: 10.5px; opacity: 0.8; }
+    .ki-pos { background: #ECFDF5; color: #065F46; border: 1px solid #6EE7B7; }
+    .ki-neg { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+    /* Top Products Pin Cards */
+    .pin-card { padding: 14px 12px; border-right: 1px solid #F1F5F9; cursor: pointer; transition: background 0.12s; }
+    .pin-card:last-child { border-right: none; }
+    .pin-card:hover { background: #F8FAFF; }
+    .pin-thumb { width: 100%; padding-bottom: 130%; background: linear-gradient(145deg, #F1F5F9 0%, #E2E8F0 100%); border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 10px; }
+    .pin-thumb-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .pin-name { font-size: 11.5px; font-weight: 700; color: #0F172A; line-height: 1.3; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pin-brand { font-size: 10.5px; color: #94A3B8; margin-bottom: 8px; }
+    .pin-ctr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+    .pin-ctr-val { font-size: 13px; font-weight: 800; color: #6366F1; }
+    .pin-ctr-label { font-size: 10px; color: #94A3B8; }
+    .pin-spark-wrap canvas { display: block; }
+    .pin-rank { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.55); color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+
+    /* Keyword rows */
+    .kw-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 7px; background: #F8FAFC; }
+    .kw-row:hover { background: #EEF2FF; }
+    .kw-name { font-size: 12.5px; font-weight: 600; color: #0F172A; flex: 1; }
+    .kw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+    .kw-hot { background: #FEF3C7; color: #B45309; }
+    .kw-rising { background: #ECFDF5; color: #059669; }
+    .kw-bar-bg { width: 60px; height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+    .kw-bar-fill-up { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #10B981, #059669); }
+    .kw-bar-fill-down { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #FCA5A5, #EF4444); }
+    .kw-delta-up { font-size: 11px; font-weight: 700; color: #10B981; white-space: nowrap; }
+    .kw-delta-down { font-size: 11px; font-weight: 700; color: #EF4444; white-space: nowrap; }
+
+    /* Audience packages */
+    .aud-pkg { border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 16px; transition: border-color 0.12s; cursor: pointer; }
+    .aud-pkg:hover { border-color: #A5B4FC; }
+    .aud-pkg.selected { border-color: #6366F1; background: #F5F3FF; }
+    .aud-pkg-title { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+    .aud-pkg-sub { font-size: 11px; color: #94A3B8; margin-bottom: 12px; }
+    .aud-attr { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 7px; }
+    .aud-attr-label { font-size: 10.5px; font-weight: 600; color: #94A3B8; width: 50px; flex-shrink: 0; padding-top: 1px; }
+    .aud-attr-val { font-size: 11.5px; color: #374151; line-height: 1.4; }
+    .aud-size { font-size: 11px; font-weight: 700; color: #6366F1; margin-top: 10px; padding-top: 10px; border-top: 1px solid #E2E8F0; }
+    .aud-create-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; padding: 6px 13px; background: #6366F1; color: white; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: background 0.12s; }
+    .aud-create-btn:hover { background: #4F46E5; }
+
+    /* Campaign match rows */
+    .campaign-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; border: 1px solid #F1F5F9; transition: border-color 0.12s; }
+    .campaign-row:hover { border-color: #C7D2FE; background: #F8FAFF; }
+    .camp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .camp-name { font-size: 13px; font-weight: 600; color: #0F172A; flex: 1; }
+    .camp-meta { font-size: 11px; color: #94A3B8; }
+    .camp-match { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #ECFDF5; color: #059669; white-space: nowrap; }
+    .camp-add-btn { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border: 1.5px solid #6366F1; color: #6366F1; background: white; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+    .camp-add-btn:hover { background: #EEF2FF; }
+    .camp-add-btn.added { background: #6366F1; color: white; border-color: #6366F1; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">Social SOV</div>
+        <div class="logo-sub">by Pacvue</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-item" onclick="location.href='01-social-trends.html'">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+        Social Trends
+      </div>
+      <div class="nav-item" onclick="location.href='02-research-groups.html'">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Research Groups
+        <span class="nav-badge">8</span>
+      </div>
+      <div class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Category Trends
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="avatar">SC</div>
+      <div>
+        <div class="avatar-name">Sarah Chen</div>
+        <div class="avatar-role">Media Planner</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <button class="back-btn" onclick="location.href='03-category-trends.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <div class="topbar-divider"></div>
+      <div class="topbar-left">
+        <div class="topbar-title" id="page-title">Category Detail</div>
+        <div class="topbar-breadcrumb">Social SOV · Category Trends · Reddit Insights</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" style="font-size:12px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="summary-strip">
+      <div class="summary-kpi">
+        <div class="kpi-label">Total Reddit Mentions</div>
+        <div class="kpi-value">16.1K</div>
+        <div class="kpi-sub kpi-up">↑ +47% vs. Last Month</div>
+      </div>
+      <div class="summary-kpi">
+        <div class="kpi-label">Top Product</div>
+        <div class="kpi-value" style="font-size:15px;">Four Sigmatic Lion's Mane</div>
+        <div class="kpi-sub kpi-up">4,280 mentions</div>
+      </div>
+      <div class="summary-kpi">
+        <div class="kpi-label">Avg. Positive Sentiment</div>
+        <div class="kpi-value">78%</div>
+        <div class="kpi-sub kpi-neutral">Overall leaning positive</div>
+      </div>
+      <div class="summary-kpi">
+        <div class="kpi-label">Brands Tracked</div>
+        <div class="kpi-value">5</div>
+        <div class="kpi-sub kpi-neutral">Active brands on Reddit</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <div class="tab-item active" id="tab-btn-insight" onclick="switchTab('insight')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Category Insight
+      </div>
+      <div class="tab-item" id="tab-btn-discussion" onclick="switchTab('discussion')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Discussion in Reddit
+      </div>
+      <div class="tab-item" id="tab-btn-sov" onclick="switchTab('sov')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Brand SOV
+      </div>
+    </div>
+
+    <!-- ── Tab 0: Category Insight ── -->
+    <div class="tab-content active" id="tab-insight">
+
+      <!-- Top Products -->
+      <div class="card mb16">
+        <div class="card-head">
+          <div>
+            <div class="card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E60023" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M9 9h6v6H9z"/></svg>
+              Top Products
+            </div>
+            <div class="card-sub">Pinterest · Ranked by Outbound Clicks · Last 30 Days</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:#94A3B8;">Sort by:</span>
+            <select style="font-size:11.5px;border:1px solid #E2E8F0;border-radius:6px;padding:4px 8px;color:#374151;background:#fff;cursor:pointer;">
+              <option>Outbound Clicks</option>
+              <option>Click Rate</option>
+              <option>Impressions</option>
+            </select>
+          </div>
+        </div>
+        <div id="top-products-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-top:1px solid #F1F5F9;"></div>
+      </div>
+
+      <!-- Relative Interest Trend -->
+      <div class="card mb16">
+        <div class="card-head">
+          <div>
+            <div class="card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+              Relative Interest Trend
+            </div>
+            <div class="card-sub">Pinterest Search Interest · Last 52 Weeks · Normalized 0–100</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="setInterestPeriod('52w',this)">52W</button>
+            <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;background:#EEF2FF;border-color:#C7D2FE;color:#4F46E5;" onclick="setInterestPeriod('12m',this)">12M</button>
+          </div>
+        </div>
+        <div style="padding:16px 18px 18px;">
+          <div style="position:relative;height:180px;"><canvas id="interest-trend-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Demographics -->
+      <div class="row-2 mb16">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                Age Distribution
+              </div>
+              <div class="card-sub">Pinterest audience in this category</div>
+            </div>
+          </div>
+          <div style="padding:16px 18px 18px;position:relative;height:180px;"><canvas id="age-chart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+                Gender Distribution
+              </div>
+              <div class="card-sub">Pinterest audience in this category</div>
+            </div>
+          </div>
+          <div style="padding:16px 18px 18px;display:flex;align-items:center;justify-content:center;gap:32px;">
+            <div style="position:relative;width:140px;height:140px;flex-shrink:0;"><canvas id="gender-chart"></canvas>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;">
+                <div style="font-size:18px;font-weight:800;color:#6366F1;">72%</div>
+                <div style="font-size:10px;color:#94A3B8;font-weight:600;">Female</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:#6366F1;flex-shrink:0;"></div><span style="font-size:12.5px;color:#374151;flex:1;">Female</span><span style="font-size:13px;font-weight:700;color:#0F172A;">72%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:#10B981;flex-shrink:0;"></div><span style="font-size:12.5px;color:#374151;flex:1;">Male</span><span style="font-size:13px;font-weight:700;color:#0F172A;">22%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:#E2E8F0;flex-shrink:0;"></div><span style="font-size:12.5px;color:#374151;flex:1;">Unspecified</span><span style="font-size:13px;font-weight:700;color:#0F172A;">6%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyword Insight Analysis -->
+      <div class="card mb16">
+        <div class="card-head">
+          <div>
+            <div class="card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Keyword Insight
+            </div>
+            <div class="card-sub">Pinterest search keyword performance in this category</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #F1F5F9;">
+          <!-- Hot Keywords -->
+          <div style="padding:18px;border-right:1px solid #F1F5F9;">
+            <div style="font-size:12px;font-weight:700;color:#0F172A;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Trending Keywords
+            </div>
+            <div style="font-size:11px;color:#94A3B8;margin-bottom:14px;">Hot or rapidly rising keywords in this category</div>
+            <div id="kw-trending" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+          <!-- Investment Advice -->
+          <div style="padding:18px;">
+            <div style="font-size:12px;font-weight:700;color:#0F172A;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              Investment Recommendations
+            </div>
+            <div style="font-size:11px;color:#94A3B8;margin-bottom:14px;">Keywords to increase or reduce ad spend</div>
+            <div style="margin-bottom:12px;">
+              <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#059669;margin-bottom:7px;display:flex;align-items:center;gap:4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg> Increase Investment
+              </div>
+              <div id="kw-invest-up" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+            <div>
+              <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#DC2626;margin-bottom:7px;display:flex;align-items:center;gap:4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> Reduce Investment
+              </div>
+              <div id="kw-invest-down" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audience Recommendations -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Audience Recommendations
+            </div>
+            <div class="card-sub">AI-generated audience packages based on this category · Match to active campaigns</div>
+          </div>
+        </div>
+        <div style="padding:18px;">
+          <!-- Audience Packages -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;" id="audience-packages"></div>
+
+          <!-- Campaign Match -->
+          <div style="border-top:1px solid #F1F5F9;padding-top:18px;">
+            <div style="font-size:12.5px;font-weight:700;color:#0F172A;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Matching Campaigns
+            </div>
+            <div style="font-size:11px;color:#94A3B8;margin-bottom:14px;">Campaigns currently active that could benefit from these audience packages</div>
+            <div id="campaign-matches" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Tab 1: Discussion in Reddit ── -->
+    <div class="tab-content" id="tab-discussion">
+      <div class="split-layout">
+
+        <!-- Left: Ranking -->
+        <div class="card mb16">
+          <div class="card-head">
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Trending Ranking
+              </div>
+              <div class="card-sub">Reddit · Last 30 Days · Click a product to view user voice</div>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table id="product-table">
+              <thead>
+                <tr>
+                  <th style="width:36px;">#</th>
+                  <th>Product</th>
+                  <th>Mentions</th>
+                  <th>Trend</th>
+                  <th>Growth</th>
+                </tr>
+              </thead>
+              <tbody id="product-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Sentiment -->
+        <div class="card sentiment-panel" id="sentiment-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                User Voice
+              </div>
+              <div class="card-sub" id="sent-card-sub">Select a product on the left to view user feedback</div>
+            </div>
+          </div>
+          <div id="sentiment-body">
+            <div class="select-prompt">
+              <div class="select-prompt-icon">👈</div>
+              <div class="select-prompt-text">Click any product on the left<br>to see what users are praising and criticizing</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Keyword Insight -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-head">
+          <div>
+            <div class="card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Keyword Insight
+            </div>
+            <div class="card-sub">Grouped by topic · Tag size reflects mention weight · Hover for details</div>
+          </div>
+        </div>
+        <div id="ki-grid" class="ki-grid"></div>
+      </div>
+
+    </div>
+
+    <!-- ── Tab 2: 品牌 SOV ── -->
+    <div class="tab-content" id="tab-sov">
+
+      <div class="row-2 mb16">
+
+        <!-- SOV Donut -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Brand Share of Voice</div>
+              <div class="card-sub">Reddit · Total Mentions Last 30 Days</div>
+            </div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <canvas id="sov-donut"></canvas>
+              <div class="donut-center">
+                <div class="dc-value">5</div>
+                <div class="dc-label">BRANDS</div>
+              </div>
+            </div>
+            <div class="sov-legend" id="sov-legend"></div>
+          </div>
+        </div>
+
+        <!-- SOV Trend Chart -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Brand SOV Trend</div>
+              <div class="card-sub">12-Week Reddit Mention Trend Comparison</div>
+            </div>
+          </div>
+          <div class="chart-legend" id="trend-legend"></div>
+          <div style="padding: 0 18px 18px;">
+            <div class="chart-wrap">
+              <canvas id="sov-trend-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Brand Affinity Table -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Brand Affinity Score</div>
+            <div class="card-sub">Based on Reddit comment sentiment · Higher score = better user reputation</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="brand-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">#</th>
+                <th>Brand</th>
+                <th>SOV Share</th>
+                <th>Affinity Score</th>
+                <th>Positive Mentions</th>
+                <th>Negative Mentions</th>
+                <th>Key Praise</th>
+                <th>Key Criticism</th>
+              </tr>
+            </thead>
+            <tbody id="brand-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+
+const catName = decodeURIComponent(new URLSearchParams(location.search).get('cat') || 'Lion\'s Mane Coffee Mix');
+document.getElementById('page-title').textContent = catName;
+
+const products = [
+  {
+    rank: 1, name: "Four Sigmatic Lion's Mane Elixir", brand: "Four Sigmatic",
+    mentions: 4280, growth: 89, maxMentions: 4280,
+    subs: "r/nootropics · r/supplements",
+    spark: [320,480,620,800,1050,1420,1900,2600,3200,3780,4100,4280],
+    praise: {
+      tags: ["Smooth Taste", "Noticeable Focus Boost", "Portable Packaging", "Clean Ingredients"],
+      quotes: [
+        { text: "Surprisingly smooth taste — not bitter at all. I actually look forward to my morning cup now.", sub: "r/nootropics · 1.2k upvotes" },
+        { text: "Real noticeable mental clarity after about 10 days of consistent use. Focus at work has been noticeably better.", sub: "r/supplements · 847 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Overpriced", "Slow to Take Effect", "Limited Sizes"],
+      quotes: [
+        { text: "$30 for 10 servings is hard to justify as a daily driver, especially when there are cheaper alternatives.", sub: "r/Frugal · 634 upvotes" },
+        { text: "Took me almost 3 weeks before I started noticing any cognitive effects. Requires patience.", sub: "r/nootropics · 412 upvotes" },
+      ]
+    },
+    posRatio: 78
+  },
+  {
+    rank: 2, name: "Real Mushrooms Lion's Mane Extract", brand: "Real Mushrooms",
+    mentions: 3140, growth: 67, maxMentions: 4280,
+    subs: "r/Biohacking · r/nootropics",
+    spark: [240,360,500,680,880,1120,1450,1900,2350,2780,3050,3140],
+    praise: {
+      tags: ["High-Potency Extract", "Third-Party Tested", "Great Value", "No Fillers"],
+      quotes: [
+        { text: "The third-party testing transparency is what sets Real Mushrooms apart. You know exactly what you're getting.", sub: "r/Biohacking · 1.8k upvotes" },
+        { text: "Best bang-for-buck lion's mane on the market. Cost per gram of actual extract is unbeatable.", sub: "r/supplements · 965 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Powder Doesn't Dissolve Well", "Basic Packaging", "Strong Smell"],
+      quotes: [
+        { text: "The powder doesn't dissolve well in cold water — definitely need hot liquid to mix it properly.", sub: "r/nootropics · 521 upvotes" },
+        { text: "Packaging is very basic and not the prettiest. Doesn't feel premium given the price point.", sub: "r/Supplements · 287 upvotes" },
+      ]
+    },
+    posRatio: 84
+  },
+  {
+    rank: 3, name: "Host Defense Lion's Mane Capsules", brand: "Host Defense",
+    mentions: 2870, growth: 45, maxMentions: 4280,
+    subs: "r/supplements · r/mycology",
+    spark: [420,580,730,920,1150,1420,1700,2050,2380,2660,2870],
+    praise: {
+      tags: ["Paul Stamets Brand", "Organic Certified", "Consistent Results", "Research-Backed"],
+      quotes: [
+        { text: "Paul Stamets literally wrote the book on medicinal mushrooms. The credibility and research behind this brand is unmatched.", sub: "r/mycology · 2.1k upvotes" },
+        { text: "Been using Host Defense for 2 years. Consistent, reliable, and I've never had quality issues.", sub: "r/supplements · 743 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Most Expensive", "Small Capsule Dose", "Requires Multiple Capsules"],
+      quotes: [
+        { text: "Love the brand but it's the most expensive option out there. Hard to recommend to someone on a budget.", sub: "r/Frugal · 891 upvotes" },
+        { text: "Each capsule is only 500mg so you need 2-3 to match the dose of competitors. Adds up fast.", sub: "r/nootropics · 567 upvotes" },
+      ]
+    },
+    posRatio: 74
+  },
+  {
+    rank: 4, name: "Om Mushroom Superfood Powder", brand: "Om Mushroom",
+    mentions: 1960, growth: 32, maxMentions: 4280,
+    subs: "r/Fitness · r/nootropics",
+    spark: [380,500,620,760,920,1100,1320,1580,1760,1900,1960],
+    praise: {
+      tags: ["Blend Formula", "Organic Certified", "Easy to Mix", "Great Taste"],
+      quotes: [
+        { text: "The blend mixes really well into smoothies — no clumping. Easy to add to my morning routine.", sub: "r/Fitness · 612 upvotes" },
+        { text: "Like that it's USDA Organic and the taste is neutral enough to add to anything.", sub: "r/mealprep · 438 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Low Extract Potency", "Mediocre Effects", "Poor Value"],
+      quotes: [
+        { text: "It's using whole mushroom powder, not a concentrated extract. You need more product to get equivalent benefits.", sub: "r/nootropics · 703 upvotes" },
+        { text: "Didn't notice any cognitive difference after 30 days. Could be a bioavailability issue with their form.", sub: "r/Biohacking · 492 upvotes" },
+      ]
+    },
+    posRatio: 61
+  },
+  {
+    rank: 5, name: "Genius Mushroom Complex", brand: "Genius Brand",
+    mentions: 1520, growth: 18, maxMentions: 4280,
+    subs: "r/nootropics · r/Supplements",
+    spark: [720,820,900,1000,1120,1220,1340,1420,1520],
+    praise: {
+      tags: ["Multi-Mushroom Formula", "Affordable", "Amazon Bestseller"],
+      quotes: [
+        { text: "The combo of Lion's Mane + Ashwagandha + Cordyceps in one pill is super convenient and fairly priced.", sub: "r/nootropics · 534 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Under-Dosed Ingredients", "Weak Effects", "Low Brand Credibility"],
+      quotes: [
+        { text: "The doses of each mushroom are too low when split across 3 ingredients. You're getting diluted benefits.", sub: "r/Supplements · 918 upvotes" },
+        { text: "\"Genius Brand\" is one of those Amazon brands that looks legit but lacks real research backing.", sub: "r/Biohacking · 676 upvotes" },
+      ]
+    },
+    posRatio: 53
+  },
+  {
+    rank: 6, name: "Ryze Mushroom Coffee Blend", brand: "Ryze",
+    mentions: 980, growth: 24, maxMentions: 4280,
+    subs: "r/Coffee · r/nootropics",
+    spark: [280,360,440,540,640,740,840,920,980],
+    praise: {
+      tags: ["Coffee-Like Flavor", "Low Caffeine", "Easy to Stick With"],
+      quotes: [
+        { text: "Finally a mushroom coffee that actually tastes like coffee! Ryze nailed the flavor profile.", sub: "r/Coffee · 1.3k upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Expensive", "Over-Marketed", "Questionable Efficacy"],
+      quotes: [
+        { text: "Way too much money for what's essentially flavored instant coffee with a tiny amount of mushroom extract.", sub: "r/Coffee · 1.1k upvotes" },
+      ]
+    },
+    posRatio: 58
+  },
+  {
+    rank: 7, name: "MudWtr Mushroom Blend", brand: "MudWtr",
+    mentions: 760, growth: -12, maxMentions: 4280,
+    subs: "r/Coffee · r/Fitness",
+    spark: [1020,980,940,900,870,840,800,780,760],
+    praise: {
+      tags: ["Strong Ritual Appeal", "Caffeine-Free", "Diverse Ingredients"],
+      quotes: [
+        { text: "Love the ritual of making it — the process slows me down in the morning. Not just about the ingredients.", sub: "r/Mindfulness · 487 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Unusual Flavor", "High Price", "Heavy on Marketing"],
+      quotes: [
+        { text: "Tastes like spiced dirt. Strong acquired taste that many people will hate. Had to force myself to finish the tin.", sub: "r/Coffee · 2.2k upvotes" },
+        { text: "The anti-coffee branding is more marketing than substance. You're paying for the brand story.", sub: "r/Frugal · 891 upvotes" },
+      ]
+    },
+    posRatio: 41
+  },
+  {
+    rank: 8, name: "NeuRoFuzion Mushroom Blend", brand: "Global Healing",
+    mentions: 640, growth: -8, maxMentions: 4280,
+    subs: "r/herbalism · r/nutrition",
+    spark: [780,740,710,680,660,640,650,640],
+    praise: {
+      tags: ["Long Brand History", "Organic Liquid Form"],
+      quotes: [
+        { text: "Global Healing has been around for decades — there's something reassuring about that longevity.", sub: "r/herbalism · 234 upvotes" },
+      ]
+    },
+    criticism: {
+      tags: ["Minimal Reddit Discussion", "Overpriced", "Lacks Independent Testing"],
+      quotes: [
+        { text: "Can't find any independent lab tests for this brand anywhere. Transparency is basically zero.", sub: "r/Supplements · 542 upvotes" },
+      ]
+    },
+    posRatio: 46
+  },
+];
+
+const brands = [
+  { name: "Four Sigmatic",  sov: 34, affinity: 84, posCount: 3596, negCount: 684, praiseKey: "Taste · Convenience · Brand Reputation", critKey: "Overpriced", color: "#6366F1" },
+  { name: "Real Mushrooms", sov: 24, affinity: 91, posCount: 2638, negCount: 502, praiseKey: "Transparency · Potent Extract · Value", critKey: "Basic Packaging", color: "#10B981" },
+  { name: "Host Defense",   sov: 16, affinity: 76, posCount: 2180, negCount: 690, praiseKey: "Brand Authority · Organic Certified", critKey: "Most Expensive", color: "#F59E0B" },
+  { name: "Om Mushroom",    sov: 14, affinity: 61, posCount: 1196, negCount: 764, praiseKey: "Easy Mix · Organic", critKey: "Low Potency · Weak Effects", color: "#8B5CF6" },
+  { name: "Others",         sov: 12, affinity: 52, posCount: 896,  negCount: 824, praiseKey: "—",    critKey: "Over-Marketed · Under-Dosed", color: "#CBD5E1" },
+];
+
+const sovTrendData = {
+  labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
+  datasets: [
+    { label: "Four Sigmatic", data: [280,340,390,460,560,700,860,1080,1360,1640,1900,2100], borderColor: "#6366F1", backgroundColor: "rgba(99,102,241,0.06)", fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 },
+    { label: "Real Mushrooms", data: [200,240,290,360,440,540,680,860,1080,1300,1520,1640], borderColor: "#10B981", backgroundColor: "rgba(16,185,129,0.04)", fill: false, tension: 0.4, pointRadius: 0, borderWidth: 2 },
+    { label: "Host Defense",   data: [340,360,380,400,420,450,480,510,540,570,600,620],    borderColor: "#F59E0B", backgroundColor: "transparent", fill: false, tension: 0.4, pointRadius: 0, borderWidth: 2 },
+    { label: "Om Mushroom",    data: [180,210,240,270,300,330,370,410,450,490,520,540],    borderColor: "#8B5CF6", backgroundColor: "transparent", fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.5 },
+  ]
+};
+
+// ── Sparkline instances ───────────────────────────────────────────────────────
+
+const sparkInstances = {};
+function drawSparkline(canvasId, data, isDown) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (sparkInstances[canvasId]) sparkInstances[canvasId].destroy();
+  const color = isDown ? '#EF4444' : '#10B981';
+  sparkInstances[canvasId] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: data.map((_,i) => i),
+      datasets: [{ data, borderColor: color, backgroundColor: color.replace(')', ',0.07)').replace('rgb','rgba'), borderWidth: 1.5, fill: true, tension: 0.4, pointRadius: 0 }]
+    },
+    options: {
+      responsive: false, animation: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } }
+    }
+  });
+}
+
+// ── Product table ─────────────────────────────────────────────────────────────
+
+function renderProductTable() {
+  const tbody = document.getElementById('product-tbody');
+  tbody.innerHTML = '';
+  const deferred = [];
+
+  products.forEach((p, i) => {
+    const pct = Math.round((p.mentions / p.maxMentions) * 100);
+    const isDown = p.growth < 0;
+    const growthHtml = isDown
+      ? `<span class="growth-down">↓ ${Math.abs(p.growth)}%</span>`
+      : `<span class="growth-up">↑ +${p.growth}%</span>`;
+    const rankClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
+    const canvasId = `spark-prod-${i}`;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="rank-circle ${rankClass}">${p.rank}</span></td>
+      <td>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-brand">${p.brand} · ${p.subs}</div>
+      </td>
+      <td>
+        <div class="mention-bar-wrap">
+          <div class="mention-bar-bg"><div class="mention-bar-fill" style="width:${pct}%"></div></div>
+          <span class="mention-num">${(p.mentions/1000).toFixed(1)}K</span>
+        </div>
+      </td>
+      <td class="sparkline-td"><canvas id="${canvasId}" width="80" height="30"></canvas></td>
+      <td>${growthHtml}</td>
+    `;
+    tr.onclick = () => selectProduct(i, tr);
+    tbody.appendChild(tr);
+    deferred.push({ canvasId, data: p.spark, isDown });
+  });
+
+  requestAnimationFrame(() => {
+    deferred.forEach(({ canvasId, data, isDown }) => drawSparkline(canvasId, data, isDown));
+  });
+
+  // Auto-select first product
+  const firstRow = tbody.querySelector('tr');
+  if (firstRow) firstRow.click();
+}
+
+function selectProduct(idx, tr) {
+  document.querySelectorAll('#product-tbody tr').forEach(r => r.classList.remove('selected'));
+  tr.classList.add('selected');
+  renderSentiment(idx);
+}
+
+// ── Sentiment panel ───────────────────────────────────────────────────────────
+
+function renderSentiment(idx) {
+  const p = products[idx];
+  const negRatio = 100 - p.posRatio;
+
+  let scoreClass = p.posRatio >= 80 ? 'score-a' : p.posRatio >= 65 ? 'score-b' : p.posRatio >= 50 ? 'score-c' : 'score-d';
+  let scoreBgClass = p.posRatio >= 80 ? 'af-a' : p.posRatio >= 65 ? 'af-b' : p.posRatio >= 50 ? 'af-c' : 'af-d';
+
+  document.getElementById('sent-card-sub').textContent = p.name;
+
+  const praiseTagsHtml = p.praise.tags.map(t => `<span class="sent-tag st-praise">${t}</span>`).join('');
+  const critTagsHtml = p.criticism.tags.map(t => `<span class="sent-tag st-crit">${t}</span>`).join('');
+
+  const praiseQuotesHtml = p.praise.quotes.map(q => `
+    <div class="quote-item qi-praise">
+      "${q.text}"
+      <div class="quote-meta">${q.sub}</div>
+    </div>
+  `).join('');
+
+  const critQuotesHtml = p.criticism.quotes.map(q => `
+    <div class="quote-item qi-crit">
+      "${q.text}"
+      <div class="quote-meta">${q.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('sentiment-body').innerHTML = `
+    <div class="sent-inner">
+      <div class="sent-product-header">
+        <div class="sent-product-name">${p.name}</div>
+        <div class="sent-product-brand">${p.brand}</div>
+        <div class="sentiment-ratio">
+          <span class="sent-pos-num">Positive ${p.posRatio}%</span>
+          <div class="sent-bar-track">
+            <div class="sent-bar-pos" style="width:${p.posRatio}%"></div>
+            <div class="sent-bar-neg" style="width:${negRatio}%"></div>
+          </div>
+          <span class="sent-neg-num">${negRatio}% Negative</span>
+        </div>
+      </div>
+
+      <div class="sent-section">
+        <div class="sent-section-head head-praise">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+          What Users Praise · ${p.praise.quotes.length > 1 ? 'Multiple Reviews' : 'Featured Review'}
+        </div>
+        <div class="sent-tags">${praiseTagsHtml}</div>
+        <div class="quote-list">${praiseQuotesHtml}</div>
+      </div>
+
+      <div class="sent-section">
+        <div class="sent-section-head head-crit">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+          What Users Criticize · ${p.criticism.quotes.length > 1 ? 'Multiple Reviews' : 'Featured Review'}
+        </div>
+        <div class="sent-tags">${critTagsHtml}</div>
+        <div class="quote-list">${critQuotesHtml}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Keyword Insight ───────────────────────────────────────────────────────────
+
+function buildKeywordInsight() {
+  const KI_CATEGORIES = [
+    {
+      label: 'Efficacy', icon: '🧠', iconBg: '#EEF2FF',
+      tags: ['Noticeable Focus Boost','Consistent Results','Research-Backed',
+             'Slow to Take Effect','Weak Effects','Mediocre Effects','Questionable Efficacy']
+    },
+    {
+      label: 'Quality & Purity', icon: '🔬', iconBg: '#ECFEFF',
+      tags: ['High-Potency Extract','Third-Party Tested','Organic Certified','No Fillers',
+             'Clean Ingredients','Organic Liquid Form','Low Extract Potency',
+             'Under-Dosed Ingredients','Lacks Independent Testing','Small Capsule Dose']
+    },
+    {
+      label: 'Taste & Experience', icon: '☕', iconBg: '#FFFBEB',
+      tags: ['Smooth Taste','Easy to Mix','Great Taste','Coffee-Like Flavor','Strong Ritual Appeal',
+             'Easy to Stick With','Caffeine-Free','Low Caffeine','Portable Packaging',
+             "Powder Doesn't Dissolve Well",'Unusual Flavor','Strong Smell',
+             'Requires Multiple Capsules','Basic Packaging','Limited Sizes']
+    },
+    {
+      label: 'Price & Brand', icon: '⭐', iconBg: '#FFF7ED',
+      tags: ['Great Value','Affordable','Amazon Bestseller','Paul Stamets Brand','Long Brand History',
+             'Multi-Mushroom Formula','Blend Formula','Diverse Ingredients',
+             'Overpriced','Most Expensive','Expensive','Poor Value',
+             'Low Brand Credibility','Over-Marketed','Heavy on Marketing','High Price']
+    }
+  ];
+
+  const posMap = {}, negMap = {};
+  products.forEach(p => {
+    p.praise.tags.forEach(tag => { posMap[tag] = (posMap[tag] || 0) + p.mentions; });
+    p.criticism.tags.forEach(tag => { negMap[tag] = (negMap[tag] || 0) + p.mentions; });
+  });
+
+  function sizeClass(count, arr) {
+    if (!arr.length) return 'ki-tag-md';
+    const max = Math.max(...arr.map(([, c]) => c));
+    const r = count / max;
+    return r >= 0.7 ? 'ki-tag-lg' : r >= 0.35 ? 'ki-tag-md' : 'ki-tag-sm';
+  }
+
+  function fmtCount(n) { return n >= 1000 ? (n / 1000).toFixed(1) + 'K' : n; }
+
+  const cells = KI_CATEGORIES.map(cat => {
+    const posTags = cat.tags.filter(t => posMap[t]).map(t => [t, posMap[t]]).sort((a, b) => b[1] - a[1]);
+    const negTags = cat.tags.filter(t => negMap[t]).map(t => [t, negMap[t]]).sort((a, b) => b[1] - a[1]);
+    const total = posTags.length + negTags.length;
+
+    const posHtml = posTags.map(([tag, count]) =>
+      `<span class="ki-tag ki-pos ${sizeClass(count, posTags)}" title="${fmtCount(count)} weighted mentions">${tag}</span>`
+    ).join('');
+
+    const negHtml = negTags.map(([tag, count]) =>
+      `<span class="ki-tag ki-neg ${sizeClass(count, negTags)}" title="${fmtCount(count)} weighted mentions">${tag}</span>`
+    ).join('');
+
+    return `
+      <div class="ki-cell">
+        <div class="ki-cell-header">
+          <div class="ki-cat-badge" style="background:${cat.iconBg}">${cat.icon}</div>
+          <div>
+            <div class="ki-cat-name">${cat.label}</div>
+            <div class="ki-cat-count">${total} keywords</div>
+          </div>
+        </div>
+        ${posTags.length ? `
+        <div class="ki-section">
+          <div class="ki-section-label ki-pos-label">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg>
+            Positive
+          </div>
+          <div class="ki-tags">${posHtml}</div>
+        </div>` : ''}
+        ${negTags.length ? `
+        <div class="ki-section">
+          <div class="ki-section-label ki-neg-label">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/></svg>
+            Critical
+          </div>
+          <div class="ki-tags">${negHtml}</div>
+        </div>` : ''}
+      </div>`;
+  }).join('');
+
+  document.getElementById('ki-grid').innerHTML = cells;
+}
+
+// ── Brand SOV ─────────────────────────────────────────────────────────────────
+
+function renderSOV() {
+  // Donut chart
+  new Chart(document.getElementById('sov-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: brands.map(b => b.name),
+      datasets: [{
+        data: brands.map(b => b.sov),
+        backgroundColor: brands.map(b => b.color),
+        borderWidth: 2,
+        borderColor: '#fff',
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
+          }
+        }
+      }
+    }
+  });
+
+  // Legend
+  const legendEl = document.getElementById('sov-legend');
+  legendEl.innerHTML = brands.map(b => `
+    <div class="sov-legend-item">
+      <div class="sov-dot" style="background:${b.color}"></div>
+      <span class="sov-brand-name${b.name === 'Four Sigmatic' ? ' mine' : ''}">${b.name}</span>
+      <div class="sov-bar"><div class="sov-bar-fill" style="width:${b.sov}%;background:${b.color}"></div></div>
+      <span class="sov-pct">${b.sov}%</span>
+    </div>
+  `).join('');
+
+  // Trend chart
+  new Chart(document.getElementById('sov-trend-chart'), {
+    type: 'line',
+    data: sovTrendData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
+        y: { grid: { color: '#F1F5F9' }, ticks: { font: { size: 10 }, color: '#94A3B8' } }
+      },
+      interaction: { mode: 'nearest', axis: 'x', intersect: false }
+    }
+  });
+
+  // Trend legend
+  const trendLegendEl = document.getElementById('trend-legend');
+  trendLegendEl.innerHTML = sovTrendData.datasets.map(d => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${d.borderColor}"></div>
+      <span>${d.label}</span>
+    </div>
+  `).join('');
+
+  // Brand affinity table
+  const tbody = document.getElementById('brand-tbody');
+  tbody.innerHTML = brands.map((b, i) => {
+    const scoreClass = b.affinity >= 80 ? 'score-a' : b.affinity >= 65 ? 'score-b' : b.affinity >= 50 ? 'score-c' : 'score-d';
+    const barClass = b.affinity >= 80 ? 'af-a' : b.affinity >= 65 ? 'af-b' : b.affinity >= 50 ? 'af-c' : 'af-d';
+    const rankClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
+    const sovBarPct = Math.round((b.sov / 34) * 100);
+    return `
+      <tr>
+        <td><span class="rank-circle ${rankClass}" style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${i+1}</span></td>
+        <td>
+          <div class="brand-cell-name">${b.name}</div>
+        </td>
+        <td>
+          <div class="sov-bar-cell-wrap">
+            <span class="sov-pct-cell">${b.sov}%</span>
+            <div class="sov-bar-cell-bg"><div class="sov-bar-cell-fill" style="width:${sovBarPct}%;background:${b.color};height:100%;border-radius:3px;"></div></div>
+          </div>
+        </td>
+        <td>
+          <div class="affinity-wrap">
+            <span class="affinity-score-num ${scoreClass}">${b.affinity}</span>
+            <div class="affinity-bar-track"><div class="affinity-bar-fill ${barClass}" style="width:${b.affinity}%"></div></div>
+          </div>
+        </td>
+        <td><span class="mention-split ms-pos">+${(b.posCount/1000).toFixed(1)}K</span></td>
+        <td><span class="mention-split ms-neg">−${(b.negCount/1000).toFixed(1)}K</span></td>
+        <td style="font-size:12px;color:#374151;">${b.praiseKey}</td>
+        <td style="font-size:12px;color:#64748B;">${b.critKey}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+
+let sovRendered = false, insightRendered = false;
+function switchTab(name) {
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-btn-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'sov' && !sovRendered) { sovRendered = true; renderSOV(); }
+  if (name === 'insight' && !insightRendered) { insightRendered = true; renderInsight(); }
+}
+
+// ── Category Insight Data ─────────────────────────────────────────────────────
+
+const pinProducts = [
+  { rank:1, name:"Four Sigmatic Lion's Mane Elixir", brand:"Four Sigmatic", ctr:"3.8%", clicks:18400, color:"#EEF2FF", emoji:"☕", spark:[2.1,2.4,2.8,3.1,3.5,3.8] },
+  { rank:2, name:"Real Mushrooms Extract Powder", brand:"Real Mushrooms", ctr:"3.1%", clicks:14200, color:"#ECFDF5", emoji:"🌿", spark:[1.8,2.0,2.3,2.6,2.9,3.1] },
+  { rank:3, name:"Host Defense Capsules", brand:"Host Defense", ctr:"2.6%", clicks:11800, color:"#FFFBEB", emoji:"🍄", spark:[2.4,2.4,2.5,2.5,2.6,2.6] },
+  { rank:4, name:"Ryze Mushroom Coffee", brand:"Ryze", ctr:"2.2%", clicks:9600, color:"#FFF1F2", emoji:"🧋", spark:[1.2,1.5,1.7,1.9,2.1,2.2] },
+  { rank:5, name:"Om Mushroom Superfood", brand:"Om Mushroom", ctr:"1.9%", clicks:8100, color:"#F0FDF4", emoji:"💚", spark:[1.7,1.8,1.8,1.9,1.9,1.9] },
+  { rank:6, name:"Genius Mushroom Complex", brand:"Genius Brand", ctr:"1.5%", clicks:6300, color:"#F5F3FF", emoji:"🧠", spark:[1.3,1.4,1.4,1.5,1.5,1.5] },
+];
+
+const interestTrendData = {
+  labels: ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'],
+  data:   [38,   42,   45,   52,   61,   74,   82,   88,   79,   85,   91,   96]
+};
+
+const kwTrending = [
+  { name:"lion's mane latte", vol:"89K", delta:"+112%", type:"rising" },
+  { name:"mushroom coffee routine", vol:"64K", delta:"+78%", type:"rising" },
+  { name:"nootropic coffee", vol:"52K", delta:"+67%", type:"rising" },
+  { name:"mushroom coffee", vol:"210K", delta:"+24%", type:"hot" },
+  { name:"adaptogen coffee", vol:"48K", delta:"+19%", type:"hot" },
+];
+
+const kwInvestUp = [
+  { name:"lion's mane latte", ctr:"+3.8%", reason:"High CTR, fast growth" },
+  { name:"nootropic coffee", ctr:"+2.9%", reason:"Rising search volume, low competition" },
+  { name:"morning wellness ritual", ctr:"+2.4%", reason:"Broad audience match" },
+];
+
+const kwInvestDown = [
+  { name:"coffee substitute", ctr:"-0.8%", reason:"Declining CTR trend" },
+  { name:"mushroom powder supplement", ctr:"-0.4%", reason:"Saturated, low engagement" },
+];
+
+const audiencePackages = [
+  {
+    id: 'pkg-a',
+    title: "Wellness Enthusiasts",
+    sub: "High-intent female audience, health-focused",
+    gender: "Female (72%)",
+    age: "25–44",
+    interests: "Wellness, Natural Remedies, Holistic Health, Morning Routines",
+    size: "Est. reach: 2.4M – 3.8M",
+    color: "#6366F1"
+  },
+  {
+    id: 'pkg-b',
+    title: "Productivity Seekers",
+    sub: "Biohacking & performance-focused audience",
+    gender: "All genders",
+    age: "28–45",
+    interests: "Biohacking, Productivity, Mental Performance, Fitness",
+    size: "Est. reach: 1.6M – 2.5M",
+    color: "#8B5CF6"
+  }
+];
+
+const campaignMatches = [
+  { name:"Health Supplements Q2 2026", status:"Active", budget:"$12,400/mo", match:"High Match", matchPkg:"Wellness Enthusiasts", color:"#10B981" },
+  { name:"Morning Routine Products — Spring", status:"Active", budget:"$8,200/mo", match:"High Match", matchPkg:"Both Packages", color:"#6366F1" },
+  { name:"Brain & Focus Supplements", status:"Active", budget:"$5,600/mo", match:"Good Match", matchPkg:"Productivity Seekers", color:"#F59E0B" },
+];
+
+// ── Render Insight ────────────────────────────────────────────────────────────
+
+const pinSparkInstances = {};
+
+function renderInsight() {
+  renderPinProducts();
+  renderInterestTrend();
+  renderDemographics();
+  renderKwInsight();
+  renderAudience();
+}
+
+function renderPinProducts() {
+  const grid = document.getElementById('top-products-grid');
+  const deferred = [];
+  grid.innerHTML = pinProducts.map((p, i) => {
+    const cid = `pin-spark-${i}`;
+    deferred.push({ cid, data: p.spark });
+    return `
+      <div class="pin-card">
+        <div class="pin-thumb" style="background:linear-gradient(145deg,${p.color},${p.color}cc);">
+          <div class="pin-rank">#${p.rank}</div>
+          <div class="pin-thumb-inner" style="font-size:36px;">${p.emoji}</div>
+        </div>
+        <div class="pin-name">${p.name}</div>
+        <div class="pin-brand">${p.brand}</div>
+        <div class="pin-ctr">
+          <span class="pin-ctr-val">${p.ctr}</span>
+          <span class="pin-ctr-label">CTR</span>
+        </div>
+        <div class="pin-spark-wrap"><canvas id="${cid}" width="100%" height="30" style="width:100%;"></canvas></div>
+        <div style="font-size:10px;color:#94A3B8;margin-top:3px;">${(p.clicks/1000).toFixed(1)}K outbound clicks</div>
+      </div>`;
+  }).join('');
+  requestAnimationFrame(() => {
+    deferred.forEach(({ cid, data }) => {
+      const canvas = document.getElementById(cid);
+      if (!canvas) return;
+      if (pinSparkInstances[cid]) pinSparkInstances[cid].destroy();
+      pinSparkInstances[cid] = new Chart(canvas, {
+        type: 'line',
+        data: { labels: data.map((_,i)=>i), datasets: [{ data, borderColor:'#6366F1', backgroundColor:'rgba(99,102,241,0.08)', borderWidth:1.5, fill:true, tension:0.4, pointRadius:0 }] },
+        options: { responsive:false, animation:false, plugins:{legend:{display:false},tooltip:{enabled:false}}, scales:{x:{display:false},y:{display:false}} }
+      });
+    });
+  });
+}
+
+function renderInterestTrend() {
+  const ctx = document.getElementById('interest-trend-chart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: interestTrendData.labels,
+      datasets: [{
+        label: 'Relative Interest',
+        data: interestTrendData.data,
+        borderColor: '#6366F1',
+        backgroundColor: 'rgba(99,102,241,0.08)',
+        fill: true, tension: 0.4, pointRadius: 3,
+        pointBackgroundColor: '#6366F1', borderWidth: 2,
+        pointHoverRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Interest: ${ctx.parsed.y}` } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
+        y: { min: 0, max: 100, grid: { color: '#F1F5F9' }, ticks: { font: { size: 10 }, color: '#94A3B8', callback: v => v } }
+      }
+    }
+  });
+}
+
+function renderDemographics() {
+  new Chart(document.getElementById('age-chart'), {
+    type: 'bar',
+    data: {
+      labels: ['18–24', '25–34', '35–44', '45–54', '55+'],
+      datasets: [{
+        data: [28, 35, 20, 12, 5],
+        backgroundColor: ['rgba(99,102,241,0.85)','rgba(99,102,241,1)','rgba(139,92,246,0.85)','rgba(139,92,246,0.6)','rgba(203,213,225,0.8)'],
+        borderRadius: 5, borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y}%` } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
+        y: { grid: { color: '#F1F5F9' }, ticks: { font: { size: 10 }, color: '#94A3B8', callback: v => v + '%' }, max: 45 }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('gender-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Female', 'Male', 'Unspecified'],
+      datasets: [{ data: [72, 22, 6], backgroundColor: ['#6366F1', '#10B981', '#E2E8F0'], borderWidth: 2, borderColor: '#fff', hoverOffset: 3 }]
+    },
+    options: { responsive: true, cutout: '68%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } } } }
+  });
+}
+
+function renderKwInsight() {
+  document.getElementById('kw-trending').innerHTML = kwTrending.map(k => `
+    <div class="kw-row">
+      <span class="kw-name">${k.name}</span>
+      <span class="kw-badge ${k.type === 'rising' ? 'kw-rising' : 'kw-hot'}">${k.type === 'rising' ? '↑ Rising' : '🔥 Hot'}</span>
+      <div class="kw-bar-bg"><div class="kw-bar-fill-up" style="width:${Math.min(100, parseInt(k.delta)*0.7)}%"></div></div>
+      <span class="kw-delta-up">${k.delta}</span>
+      <span style="font-size:10.5px;color:#94A3B8;">${k.vol}</span>
+    </div>`).join('');
+
+  document.getElementById('kw-invest-up').innerHTML = kwInvestUp.map(k => `
+    <div class="kw-row">
+      <span class="kw-name">${k.name}</span>
+      <span style="font-size:10.5px;color:#94A3B8;flex:1;">${k.reason}</span>
+      <span class="kw-delta-up">${k.ctr}</span>
+    </div>`).join('');
+
+  document.getElementById('kw-invest-down').innerHTML = kwInvestDown.map(k => `
+    <div class="kw-row">
+      <span class="kw-name">${k.name}</span>
+      <span style="font-size:10.5px;color:#94A3B8;flex:1;">${k.reason}</span>
+      <span class="kw-delta-down">${k.ctr}</span>
+    </div>`).join('');
+}
+
+function renderAudience() {
+  document.getElementById('audience-packages').innerHTML = audiencePackages.map(pkg => `
+    <div class="aud-pkg" id="${pkg.id}" onclick="toggleAudPkg('${pkg.id}')">
+      <div class="aud-pkg-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${pkg.color}" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        ${pkg.title}
+      </div>
+      <div class="aud-pkg-sub">${pkg.sub}</div>
+      <div class="aud-attr"><span class="aud-attr-label">Gender</span><span class="aud-attr-val">${pkg.gender}</span></div>
+      <div class="aud-attr"><span class="aud-attr-label">Age</span><span class="aud-attr-val">${pkg.age}</span></div>
+      <div class="aud-attr"><span class="aud-attr-label">Interests</span><span class="aud-attr-val">${pkg.interests}</span></div>
+      <div class="aud-size">${pkg.size}</div>
+      <button class="aud-create-btn" onclick="event.stopPropagation();createAudience('${pkg.id}',this)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Create Audience
+      </button>
+    </div>`).join('');
+
+  document.getElementById('campaign-matches').innerHTML = campaignMatches.map(c => `
+    <div class="campaign-row">
+      <div class="camp-dot" style="background:${c.color}"></div>
+      <div style="flex:1;min-width:0;">
+        <div class="camp-name">${c.name}</div>
+        <div class="camp-meta">${c.status} · ${c.budget} · Matches: ${c.matchPkg}</div>
+      </div>
+      <span class="camp-match">${c.match}</span>
+      <button class="camp-add-btn" onclick="addAudienceToCampaign(this)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Audience
+      </button>
+    </div>`).join('');
+}
+
+function toggleAudPkg(id) {
+  document.getElementById(id).classList.toggle('selected');
+}
+
+function createAudience(id, btn) {
+  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Created`;
+  btn.style.background = '#059669';
+  btn.disabled = true;
+}
+
+function addAudienceToCampaign(btn) {
+  btn.classList.add('added');
+  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added`;
+  btn.disabled = true;
+}
+
+function setInterestPeriod(period, btn) {
+  document.querySelectorAll('.btn-ghost').forEach(b => { b.style.background=''; b.style.borderColor=''; b.style.color=''; });
+  btn.style.background = '#EEF2FF'; btn.style.borderColor = '#C7D2FE'; btn.style.color = '#4F46E5';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+renderProductTable();
+buildKeywordInsight();
+insightRendered = true;
+renderInsight();
+</script>
+</body>
+</html>
