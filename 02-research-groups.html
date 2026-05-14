@@ -356,14 +356,30 @@
     .btn-reduce:hover { background: #FECACA; }
     .roas-low-chip { display: inline-flex; align-items: center; padding: 2px 7px; background: #FFF7ED; color: #C2410C; border-radius: 20px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
 
-    /* Feature — Overfunded Declining Products */
-    .decline-card { border: 1px solid #FECACA !important; }
-    .decline-card .card-head { background: linear-gradient(90deg, #FFF1F2 0%, #FFFFFF 100%); border-bottom: 1px solid #FECACA; }
-    .decline-table { width: 100%; border-collapse: collapse; }
-    .decline-table thead th { padding: 8px 10px; font-size: 10px; font-weight: 600; color: #991B1B; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #FECACA; background: #FFF1F2; white-space: nowrap; }
-    .decline-table tbody td { padding: 10px 10px; font-size: 12px; color: #374151; border-bottom: 1px solid #FFF1F2; vertical-align: middle; }
-    .decline-table tbody tr:last-child td { border-bottom: none; }
-    .decline-table tbody tr:hover td { background: #FFF8F8; }
+    /* Feature — Merged Budget Allocation */
+    .budget-alloc-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid #F1F5F9; }
+    .budget-alloc-side { padding: 12px 18px; }
+    .budget-alloc-side.boost-side { border-right: 1px solid #F1F5F9; background: #FFFDF5; }
+    .budget-alloc-side.reduce-side { background: #FFFAFA; }
+    .brand-alloc-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+    .brand-alloc-head.boost { color: #92400E; }
+    .brand-alloc-head.reduce { color: #991B1B; }
+    .brand-alloc-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .brand-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; border: 1px solid; white-space: nowrap; }
+    .brand-pill.boost { background: #FFFBEB; border-color: #FDE68A; color: #0F172A; }
+    .brand-pill.reduce { background: #FFF1F2; border-color: #FECACA; color: #0F172A; }
+    .brand-pill-signal { font-size: 10px; font-weight: 700; }
+    .brand-pill-signal.up { color: #059669; }
+    .brand-pill-signal.down { color: #DC2626; }
+    .budget-alloc-table { width: 100%; border-collapse: collapse; }
+    .budget-alloc-table thead th { padding: 8px 12px; font-size: 10px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #F1F5F9; background: #F8FAFC; white-space: nowrap; }
+    .budget-alloc-table tbody td { padding: 10px 12px; font-size: 12px; color: #374151; border-bottom: 1px solid #F8FAFC; vertical-align: middle; }
+    .budget-alloc-table tbody tr:last-child td { border-bottom: none; }
+    .budget-alloc-table tr.boost-row:hover td { background: #FFFBF0; }
+    .budget-alloc-table tr.reduce-row:hover td { background: #FFF8F8; }
+    .rec-boost-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; border-radius: 20px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+    .rec-reduce-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; background: #FFF1F2; color: #991B1B; border: 1px solid #FECACA; border-radius: 20px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+    .section-divider-row td { background: #F1F5F9 !important; padding: 4px 12px !important; border-bottom: 1px solid #E2E8F0 !important; font-size: 10px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; }
 
     /* Feature — Budget Reallocation Estimator */
     .realloc-card { border: 1px solid #C7D2FE !important; }
@@ -1599,260 +1615,123 @@
           </div>
         </div>
 
-        <!-- Underfunded Trending Products -->
-        <div class="card mb16 opp-card">
+        <!-- Budget Allocation Recommendations -->
+        <div class="card mb16">
           <div class="card-head">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div style="width:36px;height:36px;background:#FEF3C7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📈</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <div class="card-title">Underfunded Trending Products</div>
-                  <span class="opp-badge">⚠ Impression Share Declining</span>
-                </div>
-                <div class="card-sub" style="color:#92400E;">Category social trend ↑ &amp; campaign active — but 2-week Impression Share declining or Spend below daily budget cap</div>
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Budget Allocation Recommendations
+              </div>
+              <div class="card-sub">7 products flagged · 4 need more budget · 3 need less · Based on social trend signals</div>
+            </div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="showToast('Exported recommendations to CSV')">Export</button>
+          </div>
+
+          <!-- Brand-level summary strip -->
+          <div class="budget-alloc-strip">
+            <div class="budget-alloc-side boost-side">
+              <div class="brand-alloc-head boost">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                Increase Investment · 4 Brands
+              </div>
+              <div class="brand-alloc-pills">
+                <span class="brand-pill boost">CeraVe <span class="brand-pill-signal up">Social ↑+31%</span></span>
+                <span class="brand-pill boost">The Ordinary <span class="brand-pill-signal up">Social ↑+47%</span></span>
+                <span class="brand-pill boost">La Roche-Posay <span class="brand-pill-signal up">Social ↑+24%</span></span>
+                <span class="brand-pill boost">NovaBay <span class="brand-pill-signal up">Social ↑+39%</span></span>
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:11px;color:#92400E;font-weight:600;">4 products need attention</span>
-              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="showToast('Exported underfunded products to CSV')">Export</button>
+            <div class="budget-alloc-side reduce-side">
+              <div class="brand-alloc-head reduce">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 13 12 18 7 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                Reduce Investment · 3 Brands
+              </div>
+              <div class="brand-alloc-pills">
+                <span class="brand-pill reduce">Neutrogena <span class="brand-pill-signal down">Social ↓-22% · ROAS 2.6x</span></span>
+                <span class="brand-pill reduce">Olay <span class="brand-pill-signal down">Social ↓-17% · ROAS 2.3x</span></span>
+                <span class="brand-pill reduce">Dove <span class="brand-pill-signal down">Social ↓-9% · ROAS 3.1x</span></span>
+              </div>
             </div>
           </div>
-          <div class="card-body" style="padding:0;">
-            <table class="opp-table">
+
+          <!-- Unified product table -->
+          <div style="overflow-x:auto;">
+            <table class="budget-alloc-table">
               <thead>
                 <tr>
                   <th style="width:28%;">Product</th>
                   <th>Category Trend</th>
-                  <th>Campaign</th>
-                  <th>Impression Share (2wk)</th>
-                  <th style="width:18%;">Spend vs Budget Cap</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">🧴</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">CeraVe Moisturizing Cream</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B00TTD9BRC</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="trend-up-chip">↑ +31%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
-                  <td><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#059669;"><span style="width:6px;height:6px;background:#10B981;border-radius:50%;display:inline-block;"></span>Active</span></td>
-                  <td>
-                    <div class="sparkline-is">
-                      <span style="font-size:12px;font-weight:700;color:#374151;">18.2%</span>
-                      <span class="is-trend-arrow">→</span>
-                      <span style="font-size:12px;font-weight:700;color:#DC2626;">11.4%</span>
-                    </div>
-                    <span class="is-chip-down" style="margin-top:3px;display:inline-flex;">↓ -6.8 pts</span>
-                  </td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:62%;"></div></div>
-                      <div class="spend-bar-labels"><span>$28 / $45</span><span style="color:#DC2626;">-$17</span></div>
-                    </div>
-                  </td>
-                  <td><button class="btn-boost" onclick="showToast('Budget boost request sent for CeraVe Moisturizing Cream')">Boost Budget</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">💧</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">The Ordinary Retinol 0.5%</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B07KQXMXVC</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="trend-up-chip">↑ +47%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Serums &amp; Treatments</div></td>
-                  <td><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#059669;"><span style="width:6px;height:6px;background:#10B981;border-radius:50%;display:inline-block;"></span>Active</span></td>
-                  <td>
-                    <div class="sparkline-is">
-                      <span style="font-size:12px;font-weight:700;color:#374151;">21.6%</span>
-                      <span class="is-trend-arrow">→</span>
-                      <span style="font-size:12px;font-weight:700;color:#DC2626;">14.8%</span>
-                    </div>
-                    <span class="is-chip-down" style="margin-top:3px;display:inline-flex;">↓ -6.8 pts</span>
-                  </td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:63%;"></div></div>
-                      <div class="spend-bar-labels"><span>$38 / $60</span><span style="color:#DC2626;">-$22</span></div>
-                    </div>
-                  </td>
-                  <td><button class="btn-boost" onclick="showToast('Budget boost request sent for The Ordinary Retinol 0.5%')">Boost Budget</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">🌿</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">La Roche-Posay Toleriane</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B01N9SPQHB</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="trend-up-chip">↑ +24%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
-                  <td><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#059669;"><span style="width:6px;height:6px;background:#10B981;border-radius:50%;display:inline-block;"></span>Active</span></td>
-                  <td>
-                    <div class="sparkline-is">
-                      <span style="font-size:12px;font-weight:700;color:#374151;">13.9%</span>
-                      <span class="is-trend-arrow">→</span>
-                      <span style="font-size:12px;font-weight:700;color:#DC2626;">9.2%</span>
-                    </div>
-                    <span class="is-chip-down" style="margin-top:3px;display:inline-flex;">↓ -4.7 pts</span>
-                  </td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:64%;"></div></div>
-                      <div class="spend-bar-labels"><span>$51 / $80</span><span style="color:#DC2626;">-$29</span></div>
-                    </div>
-                  </td>
-                  <td><button class="btn-boost" onclick="showToast('Budget boost request sent for La Roche-Posay Toleriane')">Boost Budget</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">✨</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">NovaBay Ceramide Barrier Repair</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B08XK2NV7P</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="trend-up-chip">↑ +39%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
-                  <td><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#059669;"><span style="width:6px;height:6px;background:#10B981;border-radius:50%;display:inline-block;"></span>Active</span></td>
-                  <td>
-                    <div class="sparkline-is">
-                      <span style="font-size:12px;font-weight:700;color:#374151;">9.4%</span>
-                      <span class="is-trend-arrow">→</span>
-                      <span style="font-size:12px;font-weight:700;color:#DC2626;">5.1%</span>
-                    </div>
-                    <span class="is-chip-down" style="margin-top:3px;display:inline-flex;">↓ -4.3 pts</span>
-                  </td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:60%;"></div></div>
-                      <div class="spend-bar-labels"><span>$18 / $30</span><span style="color:#DC2626;">-$12</span></div>
-                    </div>
-                  </td>
-                  <td><button class="btn-boost" onclick="showToast('Budget boost request sent for NovaBay Ceramide Barrier Repair')">Boost Budget</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Overfunded Declining Products -->
-        <div class="card mb16 decline-card">
-          <div class="card-head">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div style="width:36px;height:36px;background:#FEE2E2;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📉</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <div class="card-title">Overfunded Declining Products</div>
-                  <span class="opp-badge-decline">↓ ROI Declining</span>
-                </div>
-                <div class="card-sub" style="color:#991B1B;">Category social trend declining — ad spend still running at full budget, wasting impression dollars</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:11px;color:#991B1B;font-weight:600;">3 products to cut back</span>
-              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="showToast('Exported overfunded products to CSV')">Export</button>
-            </div>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <table class="decline-table">
-              <thead>
-                <tr>
-                  <th style="width:26%;">Product</th>
-                  <th>Category Trend</th>
-                  <th>ACOS</th>
                   <th>ROAS</th>
-                  <th>Daily Spend vs Cap</th>
-                  <th>Reducible Budget/day</th>
+                  <th>Spend vs Budget</th>
+                  <th>Recommendation</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">💧</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">Neutrogena Hydro Boost Water Gel</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B014OF66K6</div>
-                      </div>
-                    </div>
-                  </td>
+                <!-- Divider: Boost -->
+                <tr class="section-divider-row">
+                  <td colspan="6">↑ Increase Budget — Social trend rising, impression share losing ground</td>
+                </tr>
+                <tr class="boost-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">🧴</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">CeraVe Moisturizing Cream</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B00TTD9BRC</div></div></div></td>
+                  <td><span class="trend-up-chip">↑ +31%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
+                  <td><span class="roas-chip">7.04x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:62%;"></div></div><div class="spend-bar-labels"><span>$28 / $45</span><span style="color:#DC2626;">-$17</span></div></div></td>
+                  <td><span class="rec-boost-badge">↑ Boost Budget</span></td>
+                  <td><button class="btn-boost" onclick="showToast('Budget boost sent for CeraVe Moisturizing Cream')">Boost</button></td>
+                </tr>
+                <tr class="boost-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">💧</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">The Ordinary Retinol 0.5%</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B07KQXMXVC</div></div></div></td>
+                  <td><span class="trend-up-chip">↑ +47%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Serums &amp; Treatments</div></td>
+                  <td><span class="roas-chip">8.47x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:63%;"></div></div><div class="spend-bar-labels"><span>$38 / $60</span><span style="color:#DC2626;">-$22</span></div></div></td>
+                  <td><span class="rec-boost-badge">↑ Boost Budget</span></td>
+                  <td><button class="btn-boost" onclick="showToast('Budget boost sent for The Ordinary Retinol 0.5%')">Boost</button></td>
+                </tr>
+                <tr class="boost-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">🌿</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">La Roche-Posay Toleriane</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B01N9SPQHB</div></div></div></td>
+                  <td><span class="trend-up-chip">↑ +24%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
+                  <td><span class="roas-chip">7.75x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:64%;"></div></div><div class="spend-bar-labels"><span>$51 / $80</span><span style="color:#DC2626;">-$29</span></div></div></td>
+                  <td><span class="rec-boost-badge">↑ Boost Budget</span></td>
+                  <td><button class="btn-boost" onclick="showToast('Budget boost sent for La Roche-Posay Toleriane')">Boost</button></td>
+                </tr>
+                <tr class="boost-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">✨</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">NovaBay Ceramide Barrier Repair</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B08XK2NV7P</div></div></div></td>
+                  <td><span class="trend-up-chip">↑ +39%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
+                  <td><span class="roas-chip">5.46x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track"><div class="spend-bar-fill gap-warn" style="width:60%;"></div></div><div class="spend-bar-labels"><span>$18 / $30</span><span style="color:#DC2626;">-$12</span></div></div></td>
+                  <td><span class="rec-boost-badge">↑ Boost Budget</span></td>
+                  <td><button class="btn-boost" onclick="showToast('Budget boost sent for NovaBay Ceramide Barrier Repair')">Boost</button></td>
+                </tr>
+                <!-- Divider: Reduce -->
+                <tr class="section-divider-row">
+                  <td colspan="6">↓ Reduce Budget — Social trend declining, ROAS below target</td>
+                </tr>
+                <tr class="reduce-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">💧</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">Neutrogena Hydro Boost Water Gel</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B014OF66K6</div></div></div></td>
                   <td><span class="trend-down-chip">↓ -22%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
-                  <td>
-                    <div style="font-size:13px;font-weight:700;color:#DC2626;">38.4%</div>
-                    <div style="font-size:10px;color:#94A3B8;">Target: 20%</div>
-                  </td>
-                  <td><span class="roas-low-chip">2.60x</span><div style="font-size:10px;color:#94A3B8;margin-top:2px;">Weak</div></td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:100%;"></div></div>
-                      <div class="spend-bar-labels"><span>$65 / $65</span><span style="color:#DC2626;">At Cap</span></div>
-                    </div>
-                  </td>
-                  <td><div style="font-size:13px;font-weight:700;color:#059669;">~$30/day</div><div style="font-size:10px;color:#94A3B8;">$900/mo freed</div></td>
-                  <td><button class="btn-reduce" onclick="showToast('Budget reduction applied for Neutrogena Hydro Boost')">Reduce Budget</button></td>
+                  <td><span class="roas-low-chip">2.60x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:100%;"></div></div><div class="spend-bar-labels"><span>$65 / $65</span><span style="color:#DC2626;">At Cap</span></div></div></td>
+                  <td><span class="rec-reduce-badge">↓ Reduce Budget</span></td>
+                  <td><button class="btn-reduce" onclick="showToast('Budget reduced for Neutrogena Hydro Boost')">Reduce</button></td>
                 </tr>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">🧴</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">Olay Regenerist Micro-Sculpting Cream</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B07K44JPZ9</div>
-                      </div>
-                    </div>
-                  </td>
+                <tr class="reduce-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">🧴</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">Olay Regenerist Micro-Sculpting Cream</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B07K44JPZ9</div></div></div></td>
                   <td><span class="trend-down-chip">↓ -17%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
-                  <td>
-                    <div style="font-size:13px;font-weight:700;color:#DC2626;">44.1%</div>
-                    <div style="font-size:10px;color:#94A3B8;">Target: 20%</div>
-                  </td>
-                  <td><span class="roas-low-chip">2.27x</span><div style="font-size:10px;color:#94A3B8;margin-top:2px;">Weak</div></td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:96%;"></div></div>
-                      <div class="spend-bar-labels"><span>$48 / $50</span><span style="color:#DC2626;">Near Cap</span></div>
-                    </div>
-                  </td>
-                  <td><div style="font-size:13px;font-weight:700;color:#059669;">~$35/day</div><div style="font-size:10px;color:#94A3B8;">$1,050/mo freed</div></td>
-                  <td><button class="btn-reduce" onclick="showToast('Budget reduction applied for Olay Regenerist')">Reduce Budget</button></td>
+                  <td><span class="roas-low-chip">2.27x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:96%;"></div></div><div class="spend-bar-labels"><span>$48 / $50</span><span style="color:#DC2626;">Near Cap</span></div></div></td>
+                  <td><span class="rec-reduce-badge">↓ Reduce Budget</span></td>
+                  <td><button class="btn-reduce" onclick="showToast('Budget reduced for Olay Regenerist')">Reduce</button></td>
                 </tr>
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px;">
-                      <div style="font-size:20px;flex-shrink:0;">🌸</div>
-                      <div>
-                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">Dove DermaSeries Dry Skin Face Cream</div>
-                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B082WQCV1N</div>
-                      </div>
-                    </div>
-                  </td>
+                <tr class="reduce-row">
+                  <td><div style="display:flex;align-items:center;gap:9px;"><div style="font-size:18px;">🌸</div><div><div style="font-size:12px;font-weight:600;color:#0F172A;">Dove DermaSeries Dry Skin Face Cream</div><div style="font-size:10px;color:#94A3B8;font-family:monospace;">B082WQCV1N</div></div></div></td>
                   <td><span class="trend-down-chip">↓ -9%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
-                  <td>
-                    <div style="font-size:13px;font-weight:700;color:#B45309;">31.8%</div>
-                    <div style="font-size:10px;color:#94A3B8;">Target: 20%</div>
-                  </td>
-                  <td><span class="roas-low-chip">3.14x</span><div style="font-size:10px;color:#94A3B8;margin-top:2px;">Below avg</div></td>
-                  <td>
-                    <div class="spend-bar-wrap">
-                      <div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:91%;"></div></div>
-                      <div class="spend-bar-labels"><span>$32 / $35</span><span style="color:#B45309;">Near Cap</span></div>
-                    </div>
-                  </td>
-                  <td><div style="font-size:13px;font-weight:700;color:#059669;">~$21/day</div><div style="font-size:10px;color:#94A3B8;">$630/mo freed</div></td>
-                  <td><button class="btn-reduce" onclick="showToast('Budget reduction applied for Dove DermaSeries')">Reduce Budget</button></td>
+                  <td><span class="roas-low-chip">3.14x</span></td>
+                  <td><div class="spend-bar-wrap"><div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:91%;"></div></div><div class="spend-bar-labels"><span>$32 / $35</span><span style="color:#B45309;">Near Cap</span></div></div></td>
+                  <td><span class="rec-reduce-badge">↓ Reduce Budget</span></td>
+                  <td><button class="btn-reduce" onclick="showToast('Budget reduced for Dove DermaSeries')">Reduce</button></td>
                 </tr>
               </tbody>
             </table>
