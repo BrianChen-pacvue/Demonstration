@@ -210,20 +210,53 @@
     .sov-bar { flex: 1; height: 4px; background: #F1F5F9; border-radius: 2px; overflow: hidden; max-width: 80px; }
     .sov-bar-fill { height: 100%; border-radius: 2px; }
 
-    .mention-list { display: flex; flex-direction: column; gap: 0; }
-    .mention-item { display: flex; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #F8FAFC; align-items: flex-start; }
-    .mention-item:last-child { border-bottom: none; }
     .mention-platform { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 700; flex-shrink: 0; }
     .mention-brand-tag { display: inline-flex; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700; margin-right: 6px; }
     .mb-mine { background: #EEF2FF; color: #4F46E5; }
     .mb-comp { background: #F1F5F9; color: #475569; }
-    .mention-text { font-size: 12.5px; color: #374151; line-height: 1.5; }
-    .mention-meta { font-size: 11px; color: #94A3B8; margin-top: 4px; display: flex; align-items: center; gap: 8px; }
     .mention-link { color: #6366F1; font-weight: 600; cursor: pointer; text-decoration: none; }
+
+    /* Brand Voice layout */
+    .brand-voice-list { display: flex; flex-direction: column; }
+    .brand-voice-row { padding: 16px 18px; border-bottom: 1px solid #F1F5F9; }
+    .brand-voice-row:last-child { border-bottom: none; }
+    .bv-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .bv-brand-name { font-size: 13px; font-weight: 700; color: #0F172A; }
+    .bv-platforms { display: flex; gap: 4px; }
+    .bv-stats { font-size: 11px; color: #94A3B8; margin-left: auto; }
+    .bv-voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bv-voice-head { font-size: 11.5px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .bv-voice-head.praise { color: #059669; }
+    .bv-voice-head.crit { color: #DC2626; }
+    .bv-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .vt-praise { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+    .vt-crit { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
     .no-brand-banner { background: linear-gradient(135deg, #EEF2FF, #F5F3FF); border: 1px dashed #C7D2FE; border-radius: 10px; padding: 28px; text-align: center; }
     .nb-icon { font-size: 32px; margin-bottom: 10px; }
     .nb-title { font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 6px; }
     .nb-sub { font-size: 12.5px; color: #64748B; margin-bottom: 16px; }
+
+    /* Tab 5 — Audience Recommendation */
+    .aud-pkg { border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 16px; transition: border-color 0.12s; cursor: pointer; }
+    .aud-pkg:hover { border-color: #A5B4FC; }
+    .aud-pkg.selected { border-color: #6366F1; background: #F5F3FF; }
+    .aud-pkg-title { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+    .aud-pkg-sub { font-size: 11px; color: #94A3B8; margin-bottom: 12px; }
+    .aud-attr { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 7px; }
+    .aud-attr-label { font-size: 10.5px; font-weight: 600; color: #94A3B8; width: 50px; flex-shrink: 0; padding-top: 1px; }
+    .aud-attr-val { font-size: 11.5px; color: #374151; line-height: 1.4; }
+    .aud-size { font-size: 11px; font-weight: 700; color: #6366F1; margin-top: 10px; padding-top: 10px; border-top: 1px solid #E2E8F0; }
+    .aud-create-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; padding: 6px 13px; background: #6366F1; color: white; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: background 0.12s; }
+    .aud-create-btn:hover { background: #4F46E5; }
+    .campaign-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; border: 1px solid #F1F5F9; transition: border-color 0.12s; }
+    .campaign-row:hover { border-color: #C7D2FE; background: #F8FAFF; }
+    .camp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .camp-name { font-size: 13px; font-weight: 600; color: #0F172A; }
+    .camp-meta { font-size: 11px; color: #94A3B8; }
+    .camp-match { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #ECFDF5; color: #059669; white-space: nowrap; }
+    .camp-add-btn { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border: 1.5px solid #6366F1; color: #6366F1; background: white; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+    .camp-add-btn:hover { background: #EEF2FF; }
+    .camp-add-btn.added { background: #6366F1; color: white; border-color: #6366F1; }
 
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
@@ -322,6 +355,54 @@
     .btn-reduce { padding: 5px 11px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; font-size: 11px; font-weight: 700; color: #991B1B; cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; }
     .btn-reduce:hover { background: #FECACA; }
     .roas-low-chip { display: inline-flex; align-items: center; padding: 2px 7px; background: #FFF7ED; color: #C2410C; border-radius: 20px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+
+    /* Feature — Overfunded Declining Products */
+    .decline-card { border: 1px solid #FECACA !important; }
+    .decline-card .card-head { background: linear-gradient(90deg, #FFF1F2 0%, #FFFFFF 100%); border-bottom: 1px solid #FECACA; }
+    .decline-table { width: 100%; border-collapse: collapse; }
+    .decline-table thead th { padding: 8px 10px; font-size: 10px; font-weight: 600; color: #991B1B; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #FECACA; background: #FFF1F2; white-space: nowrap; }
+    .decline-table tbody td { padding: 10px 10px; font-size: 12px; color: #374151; border-bottom: 1px solid #FFF1F2; vertical-align: middle; }
+    .decline-table tbody tr:last-child td { border-bottom: none; }
+    .decline-table tbody tr:hover td { background: #FFF8F8; }
+
+    /* Feature — Budget Reallocation Estimator */
+    .realloc-card { border: 1px solid #C7D2FE !important; }
+    .realloc-card .card-head { background: linear-gradient(90deg, #EEF2FF 0%, #FFFFFF 100%); border-bottom: 1px solid #C7D2FE; }
+    .realloc-flow { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0; align-items: center; margin-bottom: 20px; }
+    .realloc-side { border-radius: 10px; padding: 16px 18px; }
+    .realloc-side.cut { background: #FFF1F2; border: 1.5px solid #FECACA; }
+    .realloc-side.gain { background: #F0FDF4; border: 1.5px solid #A7F3D0; }
+    .realloc-side-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .cut .realloc-side-label { color: #991B1B; }
+    .gain .realloc-side-label { color: #065F46; }
+    .realloc-amount { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+    .cut .realloc-amount { color: #DC2626; }
+    .gain .realloc-amount { color: #059669; }
+    .realloc-amount-sub { font-size: 11px; color: #64748B; margin-bottom: 12px; }
+    .realloc-product-list { display: flex; flex-direction: column; gap: 5px; }
+    .realloc-product-row { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; }
+    .realloc-product-name { color: #374151; font-weight: 500; }
+    .realloc-product-val { font-weight: 700; white-space: nowrap; }
+    .realloc-product-val.cut { color: #DC2626; }
+    .realloc-product-val.gain { color: #059669; }
+    .realloc-arrow-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+    .realloc-arrow-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #6366F1, #8B5CF6); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+    .realloc-arrow-text { font-size: 10px; font-weight: 700; color: #6366F1; text-align: center; line-height: 1.3; }
+    .realloc-kpis { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .realloc-kpi { padding: 20px 16px; border-right: 1px solid #E0E7FF; text-align: center; }
+    .realloc-kpi:last-child { border-right: none; }
+    .realloc-kpi-val { font-size: 20px; font-weight: 800; color: #059669; line-height: 1; margin-bottom: 3px; }
+    .realloc-kpi-label { font-size: 10.5px; color: #64748B; font-weight: 500; }
+    .realloc-detail-table { width: 100%; border-collapse: collapse; }
+    .realloc-detail-table thead th { padding: 7px 12px; font-size: 10px; font-weight: 600; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E0E7FF; background: #EEF2FF; white-space: nowrap; }
+    .realloc-detail-table tbody td { padding: 10px 12px; font-size: 12px; color: #374151; border-bottom: 1px solid #F5F3FF; vertical-align: middle; }
+    .realloc-detail-table tbody tr:last-child td { border-bottom: none; }
+    .realloc-detail-table tbody tr:hover td { background: #F5F3FF; }
+    .budget-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #059669; }
+    .realloc-btn { padding: 5px 12px; background: #6366F1; color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.12s; white-space: nowrap; }
+    .realloc-btn:hover { background: #4F46E5; }
+    .btn-primary { background: #6366F1; color: white; }
+    .btn-primary:hover { background: #4F46E5; }
 
     /* Tooltip on column header */
     .th-tooltip { position: relative; display: inline-flex; align-items: center; gap: 4px; cursor: default; }
@@ -645,6 +726,10 @@
         <div class="tab-item" onclick="switchTab(this,'tab4')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
           Brand SOV
+        </div>
+        <div class="tab-item" onclick="switchTab(this,'tab5')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Audience Recommendation
         </div>
       </div>
 
@@ -1661,6 +1746,150 @@
             </table>
           </div>
         </div>
+
+        <!-- Overfunded Declining Products -->
+        <div class="card mb16 decline-card">
+          <div class="card-head">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;background:#FEE2E2;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📉</div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="card-title">Overfunded Declining Products</div>
+                  <span class="opp-badge-decline">↓ ROI Declining</span>
+                </div>
+                <div class="card-sub" style="color:#991B1B;">Category social trend declining — ad spend still running at full budget, wasting impression dollars</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:11px;color:#991B1B;font-weight:600;">3 products to cut back</span>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="showToast('Exported overfunded products to CSV')">Export</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <table class="decline-table">
+              <thead>
+                <tr>
+                  <th style="width:26%;">Product</th>
+                  <th>Category Trend</th>
+                  <th>ACOS</th>
+                  <th>ROAS</th>
+                  <th>Daily Spend vs Cap</th>
+                  <th>Reducible Budget/day</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:9px;">
+                      <div style="font-size:20px;flex-shrink:0;">💧</div>
+                      <div>
+                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">Neutrogena Hydro Boost Water Gel</div>
+                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B014OF66K6</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="trend-down-chip">↓ -22%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
+                  <td>
+                    <div style="font-size:13px;font-weight:700;color:#DC2626;">38.4%</div>
+                    <div style="font-size:10px;color:#94A3B8;">Target: 20%</div>
+                  </td>
+                  <td><span class="roas-low-chip">2.60x</span><div style="font-size:10px;color:#94A3B8;margin-top:2px;">Weak</div></td>
+                  <td>
+                    <div class="spend-bar-wrap">
+                      <div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:100%;"></div></div>
+                      <div class="spend-bar-labels"><span>$65 / $65</span><span style="color:#DC2626;">At Cap</span></div>
+                    </div>
+                  </td>
+                  <td><div style="font-size:13px;font-weight:700;color:#059669;">~$30/day</div><div style="font-size:10px;color:#94A3B8;">$900/mo freed</div></td>
+                  <td><button class="btn-reduce" onclick="showToast('Budget reduction applied for Neutrogena Hydro Boost')">Reduce Budget</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:9px;">
+                      <div style="font-size:20px;flex-shrink:0;">🧴</div>
+                      <div>
+                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">Olay Regenerist Micro-Sculpting Cream</div>
+                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B07K44JPZ9</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="trend-down-chip">↓ -17%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
+                  <td>
+                    <div style="font-size:13px;font-weight:700;color:#DC2626;">44.1%</div>
+                    <div style="font-size:10px;color:#94A3B8;">Target: 20%</div>
+                  </td>
+                  <td><span class="roas-low-chip">2.27x</span><div style="font-size:10px;color:#94A3B8;margin-top:2px;">Weak</div></td>
+                  <td>
+                    <div class="spend-bar-wrap">
+                      <div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:96%;"></div></div>
+                      <div class="spend-bar-labels"><span>$48 / $50</span><span style="color:#DC2626;">Near Cap</span></div>
+                    </div>
+                  </td>
+                  <td><div style="font-size:13px;font-weight:700;color:#059669;">~$35/day</div><div style="font-size:10px;color:#94A3B8;">$1,050/mo freed</div></td>
+                  <td><button class="btn-reduce" onclick="showToast('Budget reduction applied for Olay Regenerist')">Reduce Budget</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:9px;">
+                      <div style="font-size:20px;flex-shrink:0;">🌸</div>
+                      <div>
+                        <div style="font-size:12px;font-weight:600;color:#0F172A;line-height:1.3;">Dove DermaSeries Dry Skin Face Cream</div>
+                        <div style="font-size:10px;color:#94A3B8;font-family:monospace;">B082WQCV1N</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="trend-down-chip">↓ -9%</span><div style="font-size:10px;color:#64748B;margin-top:2px;">Moisturizers</div></td>
+                  <td>
+                    <div style="font-size:13px;font-weight:700;color:#B45309;">31.8%</div>
+                    <div style="font-size:10px;color:#94A3B8;">Target: 20%</div>
+                  </td>
+                  <td><span class="roas-low-chip">3.14x</span><div style="font-size:10px;color:#94A3B8;margin-top:2px;">Below avg</div></td>
+                  <td>
+                    <div class="spend-bar-wrap">
+                      <div class="spend-bar-track over-track"><div class="spend-bar-fill over-spend" style="width:91%;"></div></div>
+                      <div class="spend-bar-labels"><span>$32 / $35</span><span style="color:#B45309;">Near Cap</span></div>
+                    </div>
+                  </td>
+                  <td><div style="font-size:13px;font-weight:700;color:#059669;">~$21/day</div><div style="font-size:10px;color:#94A3B8;">$630/mo freed</div></td>
+                  <td><button class="btn-reduce" onclick="showToast('Budget reduction applied for Dove DermaSeries')">Reduce Budget</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Budget Reallocation Estimator -->
+        <div class="card mb16 realloc-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                Budget Reallocation Estimator
+              </div>
+              <div class="card-sub">Projected monthly impact after redirecting budget from declining → trending products</div>
+            </div>
+          </div>
+          <div class="realloc-kpis">
+            <div class="realloc-kpi">
+              <div class="realloc-kpi-val">+142K</div>
+              <div class="realloc-kpi-label">Est. Impressions / mo</div>
+            </div>
+            <div class="realloc-kpi">
+              <div class="realloc-kpi-val">+$28.4K</div>
+              <div class="realloc-kpi-label">Est. Revenue / mo</div>
+            </div>
+            <div class="realloc-kpi">
+              <div class="realloc-kpi-val">+312</div>
+              <div class="realloc-kpi-label">Est. Sales Volume / mo</div>
+            </div>
+            <div class="realloc-kpi">
+              <div class="realloc-kpi-val">6.8x</div>
+              <div class="realloc-kpi-label">Est. ROAS (after realloc)</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- TAB 3: Listing Word Library -->
@@ -1897,84 +2126,154 @@
               </select>
             </div>
           </div>
-          <div class="mention-list">
-            <div class="mention-item">
-              <div class="mention-platform pp-reddit">R</div>
-              <div style="flex:1;">
-                <div class="mention-text">
-                  <span class="mention-brand-tag mb-comp">CeraVe</span>
-                  "I switched from CeraVe to The Ordinary niacinamide and my skin has never been clearer — why is this $6 bottle outperforming my $40 serum?"
+          <div class="brand-voice-list">
+
+            <!-- CeraVe -->
+            <div class="brand-voice-row">
+              <div class="bv-header">
+                <div class="bv-platforms">
+                  <div class="mention-platform pp-reddit" style="width:22px;height:22px;font-size:10px;">R</div>
+                  <div class="mention-platform pp-pinterest" style="width:22px;height:22px;font-size:10px;">P</div>
                 </div>
-                <div class="mention-meta">
-                  Reddit · r/SkincareAddiction
-                  <span>18.4K upvotes</span>
-                  <span>2,341 comments</span>
-                  <span>2 days ago</span>
-                  <a class="mention-link">View →</a>
+                <span class="mention-brand-tag mb-comp" style="font-size:12px;padding:2px 8px;">CeraVe</span>
+                <div class="bv-stats">34.1% SOV · 18.4K mentions · Last 7 days</div>
+              </div>
+              <div class="bv-voice-grid">
+                <div>
+                  <div class="bv-voice-head praise">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    What users love
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-praise">Dermatologist-trusted</span>
+                    <span class="vt-praise">Affordable & effective</span>
+                    <span class="vt-praise">Great for sensitive skin</span>
+                    <span class="vt-praise">Fragrance-free options</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="bv-voice-head crit">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    What users dislike
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-crit">Pump packaging breaks easily</span>
+                    <span class="vt-crit">Some variants contain fragrance</span>
+                    <span class="vt-crit">Formula inconsistency complaints</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="mention-item">
-              <div class="mention-platform pp-pinterest">P</div>
-              <div style="flex:1;">
-                <div class="mention-text">
-                  <span class="mention-brand-tag mb-mine">NovaBay</span>
-                  "My dermatologist finally recommended NovaBay ceramide repair — after years of struggling with my skin barrier, this is the one"
+
+            <!-- The Ordinary -->
+            <div class="brand-voice-row">
+              <div class="bv-header">
+                <div class="bv-platforms">
+                  <div class="mention-platform pp-reddit" style="width:22px;height:22px;font-size:10px;">R</div>
                 </div>
-                <div class="mention-meta">
-                  Pinterest
-                  <span>26.1K saves</span>
-                  <span>4 days ago</span>
-                  <a class="mention-link">View →</a>
+                <span class="mention-brand-tag mb-comp" style="font-size:12px;padding:2px 8px;">The Ordinary</span>
+                <div class="bv-stats">24.3% SOV · 11.2K mentions · Last 7 days</div>
+              </div>
+              <div class="bv-voice-grid">
+                <div>
+                  <div class="bv-voice-head praise">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    What users love
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-praise">Transparent ingredient list</span>
+                    <span class="vt-praise">Unbeatable value for money</span>
+                    <span class="vt-praise">Science-backed formulas</span>
+                    <span class="vt-praise">Wide product range</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="bv-voice-head crit">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    What users dislike
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-crit">Confusing layering rules</span>
+                    <span class="vt-crit">Clinical / chemical smell</span>
+                    <span class="vt-crit">Sticky retinol texture</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="mention-item">
-              <div class="mention-platform pp-reddit">R</div>
-              <div style="flex:1;">
-                <div class="mention-text">
-                  <span class="mention-brand-tag mb-comp">The Ordinary</span>
-                  "Complete The Ordinary routine guide: which products to layer with retinol without irritation — a breakdown for beginners"
+
+            <!-- La Roche-Posay -->
+            <div class="brand-voice-row">
+              <div class="bv-header">
+                <div class="bv-platforms">
+                  <div class="mention-platform pp-pinterest" style="width:22px;height:22px;font-size:10px;">P</div>
+                  <div class="mention-platform pp-reddit" style="width:22px;height:22px;font-size:10px;">R</div>
                 </div>
-                <div class="mention-meta">
-                  Reddit · r/30PlusSkinCare
-                  <span>11.2K upvotes</span>
-                  <span>1 day ago</span>
-                  <a class="mention-link">View →</a>
+                <span class="mention-brand-tag mb-comp" style="font-size:12px;padding:2px 8px;">La Roche-Posay</span>
+                <div class="bv-stats">12.8% SOV · 19.7K mentions · Last 7 days</div>
+              </div>
+              <div class="bv-voice-grid">
+                <div>
+                  <div class="bv-voice-head praise">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    What users love
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-praise">Trusted by dermatologists</span>
+                    <span class="vt-praise">Highly effective for eczema</span>
+                    <span class="vt-praise">Gentle on reactive skin</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="bv-voice-head crit">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    What users dislike
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-crit">Premium price point</span>
+                    <span class="vt-crit">Heavy texture in some SKUs</span>
+                    <span class="vt-crit">Limited offline availability</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="mention-item">
-              <div class="mention-platform pp-pinterest">P</div>
-              <div style="flex:1;">
-                <div class="mention-text">
-                  <span class="mention-brand-tag mb-comp">La Roche-Posay</span>
-                  "La Roche-Posay Cicaplast Baume review: literally healed my contact dermatitis overnight, will never be without this"
+
+            <!-- NovaBay (You) -->
+            <div class="brand-voice-row">
+              <div class="bv-header">
+                <div class="bv-platforms">
+                  <div class="mention-platform pp-pinterest" style="width:22px;height:22px;font-size:10px;">P</div>
+                  <div class="mention-platform pp-reddit" style="width:22px;height:22px;font-size:10px;">R</div>
                 </div>
-                <div class="mention-meta">
-                  Pinterest
-                  <span>19.7K saves</span>
-                  <span>5 days ago</span>
-                  <a class="mention-link">View →</a>
+                <span class="mention-brand-tag mb-mine" style="font-size:12px;padding:2px 8px;">NovaBay (You)</span>
+                <div class="bv-stats">22.4% SOV · 30.4K mentions · Last 7 days</div>
+              </div>
+              <div class="bv-voice-grid">
+                <div>
+                  <div class="bv-voice-head praise">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    What users love
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-praise">Ceramide barrier repair</span>
+                    <span class="vt-praise">Dermatologist recommended</span>
+                    <span class="vt-praise">Gentle on damaged skin</span>
+                    <span class="vt-praise">Visible results in 2 weeks</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="bv-voice-head crit">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    What users dislike
+                  </div>
+                  <div class="bv-tags">
+                    <span class="vt-crit">Low brand awareness</span>
+                    <span class="vt-crit">Sparse online reviews</span>
+                    <span class="vt-crit">Hard to find in stores</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="mention-item">
-              <div class="mention-platform pp-reddit">R</div>
-              <div style="flex:1;">
-                <div class="mention-text">
-                  <span class="mention-brand-tag mb-mine">NovaBay</span>
-                  "Has anyone tried the NovaBay peptide complex serum? I saw it recommended alongside The Ordinary but can't find much info"
-                </div>
-                <div class="mention-meta">
-                  Reddit · r/AsianBeauty
-                  <span>4.3K upvotes</span>
-                  <span>847 comments</span>
-                  <span>3 days ago</span>
-                  <a class="mention-link">View →</a>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -2009,8 +2308,40 @@
               <button class="kp-chip" onclick="toggleKpChip(this,'orders')">Orders</button>
               <button class="kp-chip" onclick="toggleKpChip(this,'acos')">ACOS</button>
               <button class="kp-chip" onclick="toggleKpChip(this,'roas')">ROAS</button>
+              <button class="kp-chip active" onclick="toggleKpChip(this,'totalSov')">Amazon Total SOV</button>
+              <button class="kp-chip" onclick="toggleKpChip(this,'paidSov')">Amazon Paid SOV</button>
+              <button class="kp-chip" onclick="toggleKpChip(this,'organicSov')">Amazon Organic SOV</button>
             </div>
             <div class="chart-wrap-lg"><canvas id="kwPerfChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: Audience Recommendation -->
+      <div id="tab5" class="tab-content">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Audience Recommendations
+              </div>
+              <div class="card-sub">AI-generated audience packages based on this group · Match to active campaigns</div>
+            </div>
+          </div>
+          <div style="padding:18px;">
+            <!-- Audience Packages -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;" id="audience-packages"></div>
+
+            <!-- Campaign Match -->
+            <div style="border-top:1px solid #F1F5F9;padding-top:18px;">
+              <div style="font-size:12.5px;font-weight:700;color:#0F172A;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Matching Campaigns
+              </div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:14px;">Campaigns currently active that could benefit from these audience packages</div>
+              <div id="campaign-matches" style="display:flex;flex-direction:column;gap:8px;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2653,7 +2984,7 @@ function updateWizardSummary() {
 
 // ---- KW Performance Trend Chart ----
 let kwPerfChartInstance = null;
-const kwPerfActiveMetrics = new Set(['ctr', 'impressions', 'clicks']);
+const kwPerfActiveMetrics = new Set(['ctr', 'impressions', 'clicks', 'totalSov']);
 
 function buildKwPerfChart() {
   const days30 = Array.from({length:30},(_,i)=>{const d=new Date('2026-03-24');d.setDate(d.getDate()+i);return `${d.getMonth()+1}/${d.getDate()}`;});
@@ -2664,7 +2995,10 @@ function buildKwPerfChart() {
     {id:'spend',       label:'Spend ($)',          data:[220,240,235,260,255,280,300,295,320,340,335,360,380,375,400,420,415,440,460,455,480,500,495,520,540,535,560,580,575,600],                        borderColor:'#F59E0B', yAxisID:'y'},
     {id:'orders',      label:'Orders',             data:[18,20,19,22,21,24,26,25,28,30,29,32,34,33,36,38,37,40,42,41,44,46,45,48,50,49,52,54,53,56],                                                     borderColor:'#EF4444', yAxisID:'y1'},
     {id:'acos',        label:'ACOS (%)',           data:[14,13.5,14.2,13,13.8,12.5,12,12.8,11.5,11,11.8,10.5,10,10.8,9.5,9,9.8,8.5,8,8.8,7.5,7,7.8,6.5,6,6.8,5.5,5,5.8,4.5],                         borderColor:'#EC4899', yAxisID:'y'},
-    {id:'roas',        label:'ROAS',               data:[7.1,7.4,7.0,7.7,7.2,8.0,8.3,7.8,8.7,9.1,8.5,9.5,10.0,9.3,10.5,11.1,10.2,11.8,12.5,11.6,13.3,14.3,13.2,15.4,16.7,14.7,18.2,20.0,17.2,22.2], borderColor:'#14B8A6', yAxisID:'y'}
+    {id:'roas',        label:'ROAS',               data:[7.1,7.4,7.0,7.7,7.2,8.0,8.3,7.8,8.7,9.1,8.5,9.5,10.0,9.3,10.5,11.1,10.2,11.8,12.5,11.6,13.3,14.3,13.2,15.4,16.7,14.7,18.2,20.0,17.2,22.2], borderColor:'#14B8A6', yAxisID:'y'},
+    {id:'totalSov',    label:'Amazon Total SOV (%)', data:[22.4,22.1,22.8,23.2,22.9,23.6,24.0,23.7,24.3,24.8,24.5,25.1,25.4,25.0,25.7,26.2,25.8,26.5,26.9,26.4,27.1,27.6,27.2,27.8,28.3,27.9,28.6,29.0,28.5,29.2], borderColor:'#0EA5E9', yAxisID:'y'},
+    {id:'paidSov',     label:'Amazon Paid SOV (%)', data:[14.2,13.9,14.5,14.8,14.5,15.1,15.4,15.1,15.6,16.0,15.7,16.2,16.5,16.1,16.7,17.1,16.8,17.3,17.7,17.2,17.8,18.2,17.8,18.4,18.8,18.4,18.9,19.3,18.8,19.4], borderColor:'#F97316', yAxisID:'y'},
+    {id:'organicSov',  label:'Amazon Organic SOV (%)', data:[8.2,8.2,8.3,8.4,8.4,8.5,8.6,8.6,8.7,8.8,8.8,8.9,8.9,8.9,9.0,9.1,9.0,9.2,9.2,9.2,9.3,9.4,9.4,9.4,9.5,9.5,9.7,9.7,9.7,9.8], borderColor:'#84CC16', yAxisID:'y'}
   ];
   const activeDatasets = allDatasets.filter(d => kwPerfActiveMetrics.has(d.id)).map(d => ({
     ...d, backgroundColor:'transparent', borderWidth:2, fill:false, tension:0.4, pointRadius:0
@@ -2701,6 +3035,87 @@ function switchKwPerfGranularity(granularity) {
   if (kwPerfChartInstance) { kwPerfChartInstance.destroy(); kwPerfChartInstance = null; }
   buildKwPerfChart();
 }
+
+// ---- Audience Recommendation (Tab 5) ----
+const audiencePackages = [
+  {
+    id: 'aud-pkg-a',
+    title: "Wellness Enthusiasts",
+    sub: "High-intent female audience, health-focused",
+    gender: "Female (72%)",
+    age: "25–44",
+    interests: "Wellness, Natural Remedies, Holistic Health, Morning Routines",
+    size: "Est. reach: 2.4M – 3.8M",
+    color: "#6366F1"
+  },
+  {
+    id: 'aud-pkg-b',
+    title: "Productivity Seekers",
+    sub: "Biohacking & performance-focused audience",
+    gender: "All genders",
+    age: "28–45",
+    interests: "Biohacking, Productivity, Mental Performance, Fitness",
+    size: "Est. reach: 1.6M – 2.5M",
+    color: "#8B5CF6"
+  }
+];
+
+const campaignMatches = [
+  { name:"Health Supplements Q2 2026", status:"Active", budget:"$12,400/mo", match:"High Match", matchPkg:"Wellness Enthusiasts", color:"#10B981" },
+  { name:"Morning Routine Products — Spring", status:"Active", budget:"$8,200/mo", match:"High Match", matchPkg:"Both Packages", color:"#6366F1" },
+  { name:"Brain & Focus Supplements", status:"Active", budget:"$5,600/mo", match:"Good Match", matchPkg:"Productivity Seekers", color:"#F59E0B" },
+];
+
+function renderAudience() {
+  document.getElementById('audience-packages').innerHTML = audiencePackages.map(pkg => `
+    <div class="aud-pkg" id="${pkg.id}" onclick="toggleAudPkg('${pkg.id}')">
+      <div class="aud-pkg-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${pkg.color}" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        ${pkg.title}
+      </div>
+      <div class="aud-pkg-sub">${pkg.sub}</div>
+      <div class="aud-attr"><span class="aud-attr-label">Gender</span><span class="aud-attr-val">${pkg.gender}</span></div>
+      <div class="aud-attr"><span class="aud-attr-label">Age</span><span class="aud-attr-val">${pkg.age}</span></div>
+      <div class="aud-attr"><span class="aud-attr-label">Interests</span><span class="aud-attr-val">${pkg.interests}</span></div>
+      <div class="aud-size">${pkg.size}</div>
+      <button class="aud-create-btn" onclick="event.stopPropagation();createAudience('${pkg.id}',this)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Create Audience
+      </button>
+    </div>`).join('');
+
+  document.getElementById('campaign-matches').innerHTML = campaignMatches.map(c => `
+    <div class="campaign-row">
+      <div class="camp-dot" style="background:${c.color}"></div>
+      <div style="flex:1;min-width:0;">
+        <div class="camp-name">${c.name}</div>
+        <div class="camp-meta">${c.status} · ${c.budget} · Matches: ${c.matchPkg}</div>
+      </div>
+      <span class="camp-match">${c.match}</span>
+      <button class="camp-add-btn" onclick="addAudienceToCampaign(this)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Audience
+      </button>
+    </div>`).join('');
+}
+
+function toggleAudPkg(id) {
+  document.getElementById(id).classList.toggle('selected');
+}
+
+function createAudience(id, btn) {
+  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Created`;
+  btn.style.background = '#059669';
+  btn.disabled = true;
+}
+
+function addAudienceToCampaign(btn) {
+  btn.classList.add('added');
+  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added`;
+  btn.disabled = true;
+}
+
+renderAudience();
 </script>
 </body>
 </html>
