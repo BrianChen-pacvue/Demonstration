@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Signals → Retail Media Action</title>
+  <style>
+    :root {
+      --pinterest: #E60023;
+      --amazon: #FF9900;
+      --insight: #6C63FF;
+      --bg: #0D0F1A;
+      --card-bg: #141627;
+      --card-border: #1E2240;
+      --text-primary: #F0F2FF;
+      --text-secondary: #8B90B0;
+      --text-muted: #555A80;
+      --accent-green: #00D68F;
+      --accent-blue: #3D9BFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(160deg, #111328 0%, #0D0F1A 60%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 64px 40px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108,99,255,.12) 0%, transparent 70%);
+      top: -200px; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(108,99,255,.15);
+      border: 1px solid rgba(108,99,255,.35);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #9B95FF;
+      margin-bottom: 28px;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #9B95FF; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .hero h1 span.hi { color: #E60023; }
+    .hero h1 span.lo { color: #FF9900; }
+
+    .hero p {
+      max-width: 660px;
+      margin: 0 auto 40px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* lead-time badge row */
+    .hero-stats {
+      display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+    }
+    .stat-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px 24px;
+      text-align: center;
+    }
+    .stat-pill .val { font-size: 26px; font-weight: 700; color: var(--accent-green); }
+    .stat-pill .lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: .05em; text-transform: uppercase; }
+
+    /* ── Section intro ── */
+    .section-intro {
+      max-width: 900px;
+      margin: 56px auto 0;
+      padding: 0 32px;
+      text-align: center;
+    }
+    .section-intro h2 { font-size: 22px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+    .section-intro p { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── Journey cards ── */
+    .scenarios {
+      max-width: 1040px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: #2A2F5A; }
+
+    /* card header */
+    .card-header {
+      display: flex; align-items: center; gap: 16px;
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .card-num {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .card-meta { flex: 1; }
+    .card-meta h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card-meta .tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      padding: 2px 10px; border-radius: 100px;
+    }
+    .card-value {
+      font-size: 13px; color: var(--text-muted); max-width: 360px; text-align: right; line-height: 1.5;
+    }
+
+    /* flow row */
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: stretch;
+      padding: 28px 28px 28px;
+      gap: 0;
+    }
+
+    .flow-step {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px 18px;
+      position: relative;
+    }
+
+    .step-source {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .step-source .dot { width: 5px; height: 5px; border-radius: 50%; }
+
+    .step-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px; font-size: 20px;
+    }
+
+    .step-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--text-muted); margin-bottom: 6px;
+    }
+    .step-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    .step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* arrow connector */
+    .flow-arrow {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 12px;
+      color: var(--text-muted);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .flow-arrow svg { opacity: .5; }
+
+    /* trigger footer */
+    .card-trigger {
+      margin: 0 28px 24px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    }
+    .trigger-label {
+      flex-shrink: 0;
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--text-muted); padding-top: 1px;
+    }
+
+    /* ── Target user line ── */
+    .card-user {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 7px;
+      font-size: 12px; color: var(--text-muted); line-height: 1;
+    }
+    .card-user .for-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--text-muted); flex-shrink: 0;
+    }
+
+    /* ── Color themes per scenario ── */
+    /* 1 - Keyword Harvest */
+    .s1 .card-num { background: rgba(230,0,35,.15); color: #FF3355; }
+    .s1 .tag { background: rgba(230,0,35,.12); color: #FF3355; }
+    .s1 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s1 .step-discover .step-source { color: #E60023; }
+    .s1 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 2 - Investment Strategy */
+    .s2 .card-num { background: rgba(0,214,143,.15); color: var(--accent-green); }
+    .s2 .tag { background: rgba(0,214,143,.12); color: var(--accent-green); }
+    .s2 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s2 .step-discover .step-source { color: #E60023; }
+    .s2 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 3 - Ad Activation */
+    .s3 .card-num { background: rgba(255,153,0,.15); color: var(--amazon); }
+    .s3 .tag { background: rgba(255,153,0,.12); color: var(--amazon); }
+    .s3 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s3 .step-discover .step-source { color: #E60023; }
+    .s3 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 4 - SOV Defense */
+    .s4 .card-num { background: rgba(108,99,255,.15); color: #9B95FF; }
+    .s4 .tag { background: rgba(108,99,255,.12); color: #9B95FF; }
+    .s4 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s4 .step-discover .step-source { color: #E60023; }
+    .s4 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 5 - Brand Investment */
+    .s5 .card-num { background: rgba(0,212,255,.15); color: #00D4FF; }
+    .s5 .tag { background: rgba(0,212,255,.12); color: #00D4FF; }
+    .s5 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s5 .step-discover .step-source { color: #E60023; }
+    .s5 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 6 - Audience Recommendation */
+    .s6 .card-num { background: rgba(255,107,157,.15); color: #FF6B9D; }
+    .s6 .tag { background: rgba(255,107,157,.12); color: #FF6B9D; }
+    .s6 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s6 .step-discover .step-source { color: #E60023; }
+    .s6 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 7 - Listing Builder */
+    .s7 .card-num { background: rgba(255,184,0,.15); color: #FFB800; }
+    .s7 .tag { background: rgba(255,184,0,.12); color: #FFB800; }
+    .s7 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s7 .step-discover .step-source { color: #E60023; }
+    .s7 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 8 - Competitor Analysis */
+    .s8 .card-num { background: rgba(255,123,84,.15); color: #FF7B54; }
+    .s8 .tag { background: rgba(255,123,84,.12); color: #FF7B54; }
+    .s8 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s8 .step-discover .step-source { color: #E60023; }
+    .s8 .step-discover .step-source .dot { background: #E60023; }
+
+    /* 9 - Marketing Event Preview */
+    .s9 .card-num { background: rgba(0,229,204,.15); color: #00E5CC; }
+    .s9 .tag { background: rgba(0,229,204,.12); color: #00E5CC; }
+    .s9 .step-discover .step-icon { background: rgba(230,0,35,.15); }
+    .s9 .step-discover .step-source { color: #E60023; }
+    .s9 .step-discover .step-source .dot { background: #E60023; }
+
+    /* insight step shared */
+    .step-insight .step-icon { background: rgba(108,99,255,.15); }
+    .step-insight .step-source { color: var(--insight); }
+    .step-insight .step-source .dot { background: var(--insight); }
+
+    /* action step shared */
+    .step-action .step-icon { background: rgba(255,153,0,.15); }
+    .step-action .step-source { color: var(--amazon); }
+    .step-action .step-source .dot { background: var(--amazon); }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .flow {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 12px;
+      }
+      .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
+      .card-value { display: none; }
+      .hero { padding: 48px 20px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> Retail Media Intelligence</div>
+  <h1>From <span class="hi">Pinterest Trends</span> to<br><span class="lo">Amazon Action</span></h1>
+  <p>
+    Social media signals lead Amazon search demand by <strong>2–8 weeks</strong>.
+    By the time a keyword surges onsite, your competitors have already noticed.
+    These eight scenarios show how to act on social signals—before the window closes.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-pill">
+      <div class="val">2–8 wks</div>
+      <div class="lbl">Social → Search Lead Time</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">2–3 wks</div>
+      <div class="lbl">Competitor SOV Warning Window</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">8</div>
+      <div class="lbl">Actionable Signal Scenarios</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION INTRO ═══════════════════ -->
+<div class="section-intro">
+  <h2>User Journey Scenarios</h2>
+  <p>Each flow shows what a media operator discovers on Pinterest, the insight surfaced by Social SOV, and the concrete action taken on Amazon.</p>
+</div>
+
+<!-- ═══════════════════ SCENARIOS ═══════════════════ -->
+<div class="scenarios">
+
+  <!-- ─── 1. SOV & CTR Trend Analysis ─── -->
+  <div class="card s4">
+    <div class="card-header">
+      <div class="card-num">01</div>
+      <div class="card-meta">
+        <h3>SOV &amp; CTR Trend Analysis</h3>
+        <span class="tag">Competitive Defense</span>
+        <div class="card-user"><span class="for-label">For</span> Brand Directors · Senior Marketing Managers</div>
+      </div>
+      <div class="card-value">Act on the 2-week warning before competitor SOV erodes your CTR</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">👀</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">Competitor brand SOV up 22% in 2 weeks on Pinterest</div>
+        <div class="step-desc">A competitor's share of voice on social platforms has crossed a threshold. Their content is generating more saves, comments, and shares—growing their branded demand among consumers who will search on Amazon soon.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">⚠️</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">Historical data: +20% competitor SOV → −8% CTR in 2–3 weeks</div>
+        <div class="step-desc">Social SOV acts as a leading indicator. Based on historical correlation patterns, a 20%+ competitor SOV increase has consistently led to a meaningful drop in the brand's Amazon CTR and conversion rate 2–3 weeks later. The window to act is now open.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">⚡</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Boost branded search + improve listing creative defensively</div>
+        <div class="step-desc">Increase bids on branded keywords to defend CTR. Refresh main image and A+ content to improve conversion quality. Act in this 2-week window before the competitor's social momentum translates into lower-funnel performance erosion.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>System detects competitor SOV has increased beyond a predefined threshold. Historical data shows a statistically significant correlation between this SOV rise and future CTR / conversion decline for the brand.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 2. Audience Recommendation ─── -->
+  <div class="card s6">
+    <div class="card-header">
+      <div class="card-num">02</div>
+      <div class="card-meta">
+        <h3>Audience Recommendation</h3>
+        <span class="tag">Audience Targeting</span>
+        <div class="card-user"><span class="for-label">For</span> DSP Managers · Audience Targeting Specialists</div>
+      </div>
+      <div class="card-value">Turn category demographic signals from Pinterest into precise Amazon audiences—matched to the campaigns that need them most</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">👥</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">"Morning skincare routine" dominated by 25–34F wellness-lifestyle crossover</div>
+        <div class="step-desc">Category demographic data shows a clear audience profile: 25–34 urban women, interested in wellness, sustainability, and lifestyle optimization. Creator demographics reveal a fitness-and-beauty crossover segment that isn't captured by the account's current targeting.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">Two high-value segments untargeted—8 campaigns in the account are a match</div>
+        <div class="step-desc">Social demographic patterns surface two audience segments not covered by any active targeting: (1) wellness-lifestyle crossover buyers 25–34, (2) eco-conscious repeat purchasers. System scans all live campaigns and flags 8 whose product category and targeting gaps align with these profiles.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">🎯</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Build audiences + attach to matched campaigns in one workflow</div>
+        <div class="step-desc">Create Amazon DSP or Sponsored Display audience segments based on the social-derived profiles. System exports a prioritized list of campaigns to attach each audience to, ranked by estimated incremental impact—turning a manual research task into a one-click workflow.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>Category social audience data shows a statistically significant demographic concentration not covered by any active audience targeting in the account. At least 3 live campaigns serve products in the same category and have open audience targeting slots.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 3. Keyword Harvest ─── -->
+  <div class="card s1">
+    <div class="card-header">
+      <div class="card-num">03</div>
+      <div class="card-meta">
+        <h3>Keyword Harvest</h3>
+        <span class="tag">Opportunity Discovery</span>
+        <div class="card-user"><span class="for-label">For</span> Search Ads Managers · PPC Specialists</div>
+      </div>
+      <div class="card-value">Capture trending keywords before they become competitive on Amazon</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">📌</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">"Adaptogen coffee" saves surge 3×</div>
+        <div class="step-desc">A keyword's social mentions are spiking rapidly. The trend index is climbing week over week with strong momentum—but the ad account has never bid on it.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">High social volume, zero ad coverage—2–6 week window open</div>
+        <div class="step-desc">The keyword is gaining social traction but has never appeared in the Search Term Report. Competition is still low. Acting now means lower CPC and first-mover positioning.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">🛒</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Add keyword to Sponsored Products now</div>
+        <div class="step-desc">Add the keyword to existing campaigns with a test budget. By the time it peaks on Amazon, the ad account already holds a strong Quality Score and impression share.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>Keyword social trend index rising with strong growth momentum, but has never appeared—or appears very rarely—in the account's Search Term Report.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 4. Investment Strategy Adjustment ─── -->
+  <div class="card s2">
+    <div class="card-header">
+      <div class="card-num">04</div>
+      <div class="card-meta">
+        <h3>Investment Strategy Adjustment</h3>
+        <span class="tag">Budget Reallocation</span>
+        <div class="card-user"><span class="for-label">For</span> Search Ads Managers · PPC Specialists</div>
+      </div>
+      <div class="card-value">Shift spend toward rising categories and away from fading ones—before onsite data catches up</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">📊</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">Category momentum diverging: some rising, some cooling</div>
+        <div class="step-desc">The social trend dashboard shows clear divergence across categories. "Mushroom skincare" saves are up 65% in 3 weeks; "cold brew concentrate" creator content has dropped 30% MoM. Both are live in the ad account—but spend is allocated evenly.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">Spend allocation is out of sync with category momentum</div>
+        <div class="step-desc">Cross-referencing social trend direction with current ad spend reveals two mismatches: ASINs and keywords in rising categories are under-funded and at risk of losing first-mover advantage; those in declining categories are burning budget on shrinking demand.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">⚖️</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Scale up rising bets; pull back on fading ones</div>
+        <div class="step-desc">Increase daily budgets and raise bids for ASINs and keywords in trending-up categories to capture demand before CPCs spike. Simultaneously reduce bids or pause spend on declining-category ASINs to reallocate budget efficiently and protect overall ROAS.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>Social trend index divergence detected across categories in the account — some crossing an upward threshold, others showing sustained decline. Current spend allocation does not reflect the momentum direction of each category's social signal.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 5. Recommend Ad Activation ─── -->
+  <div class="card s3">
+    <div class="card-header">
+      <div class="card-num">05</div>
+      <div class="card-meta">
+        <h3>Recommend Ad Activation</h3>
+        <span class="tag">New Campaign Launch</span>
+        <div class="card-user"><span class="for-label">For</span> Search Ads Managers · PPC Specialists</div>
+      </div>
+      <div class="card-value">Launch ads during category growth before competitors claim top placements</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">🔥</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">"Mushroom skincare" category saves up 180% MoM</div>
+        <div class="step-desc">A product category is gaining massive traction on social. Consumers are pinning tutorials, before/afters, and product lists—well before they hit Amazon's search bar.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">Category demand surging—unadvertised ASINs are invisible at peak</div>
+        <div class="step-desc">The ASIN sits in this high-growth category but has no active Sponsored Products campaign. Without ads, it cannot appear at the top of search results. Every click goes to a competitor that is already advertising.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">🚀</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Launch Sponsored Products campaign for the ASIN</div>
+        <div class="step-desc">Create a Sponsored Products campaign targeting the rising category keywords. Launching during the growth phase secures top placements at competitive CPCs before demand fully materializes.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>The ASIN's category shows a significant increase in social trend index, but the ASIN currently has no active Sponsored Products campaigns running.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 6. Competitor Analysis ─── -->
+  <div class="card s8">
+    <div class="card-header">
+      <div class="card-num">06</div>
+      <div class="card-meta">
+        <h3>Competitor Analysis</h3>
+        <span class="tag">Competitive Intelligence</span>
+        <div class="card-user"><span class="for-label">For</span> Brand Directors · Senior Marketing Managers</div>
+      </div>
+      <div class="card-value">Decode what consumers love—and hate—about top competitor brands, before it becomes common knowledge</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">🔍</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">Top 5 brands by SOV in category generating thousands of organic posts</div>
+        <div class="step-desc">The category's highest-SOV competitors are driving substantial organic conversation on social. Consumers are sharing detailed experiences—what they loved, what disappointed them, and why they switched. This unfiltered feedback exists well before it shows up in review platforms or onsite ratings.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">Brand A praised for "clean formula · long-lasting"; criticized for "expensive refills · weak pump"</div>
+        <div class="step-desc">NLP sentiment analysis breaks each competitor's mentions into praise themes and complaint themes. Praised attributes reveal their defensible moat; complaint patterns reveal where they are vulnerable. Both are directly actionable for positioning and messaging strategy.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">🥊</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Turn competitor weaknesses into your differentiation story</div>
+        <div class="step-desc">Use competitors' top praise attributes as quality benchmarks to match or exceed. Use their recurring complaints as explicit differentiation angles—highlight the pain points you've solved in listing bullet points, A+ content, and Sponsored Brands ad copy. Target competitor-branded keywords with messaging that directly addresses their known weaknesses.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>At least 3 competitor brands in the category have accumulated sufficient social mention volume for statistically reliable sentiment clustering. NLP analysis yields distinct praise and complaint themes with high confidence scores for at least 2 brands.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 7. Listing Builder ─── -->
+  <div class="card s7">
+    <div class="card-header">
+      <div class="card-num">07</div>
+      <div class="card-meta">
+        <h3>Listing Builder</h3>
+        <span class="tag">Content Optimization</span>
+        <div class="card-user"><span class="for-label">For</span> Content Teams · Listing Optimization Specialists</div>
+      </div>
+      <div class="card-value">Mine trending product conversations for the exact language consumers use—before writing a single word of copy</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">🗣️</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">Thousands of "mushroom coffee" posts full of natural consumer language</div>
+        <div class="step-desc">Pins, creator videos, and reviews about the category overflow with real buyer language: "less jittery than regular coffee," "afternoon energy crash gone," "finally a coffee I can drink at 4pm," "perfect for my desk setup." This is how actual customers talk—not how brand copy teams write.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">NLP clusters surface 4 word types: Emotion · Scene · Function · Style</div>
+        <div class="step-desc">High-frequency terms organized into four clusters: <strong>Emotion</strong> (calm, focused, guilt-free, energized), <strong>Scene</strong> (morning ritual, afternoon slump, WFH, gym prep), <strong>Function</strong> (lion's mane, adaptogen, nootropic, clean caffeine), <strong>Style</strong> (minimalist, earthy, premium, sustainable). These mirror how buyers search and evaluate before purchasing.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">✍️</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Export word clusters as a listing brief; rewrite title, bullets, and A+</div>
+        <div class="step-desc">Use emotion and scene words in bullet points and A+ content to mirror consumer language. Use functional words in the product title and keyword targeting. Use style words in imagery briefs and brand story. Listings that speak the buyer's native language consistently outperform generic copy in both CTR and conversion rate.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>Category social content volume crosses a minimum threshold. NLP analysis identifies at least 4 distinct word cluster types with sufficient frequency. User has one or more ASINs in this category with no recent listing update, or with a listing quality score below the category benchmark.</span>
+    </div>
+  </div>
+
+
+  <!-- ─── 8. Brand Investment Strategy ─── -->
+  <div class="card s5">
+    <div class="card-header">
+      <div class="card-num">08</div>
+      <div class="card-meta">
+        <h3>Brand Investment Strategy</h3>
+        <span class="tag">Portfolio Strategy</span>
+        <div class="card-user"><span class="for-label">For</span> Brand Directors · Senior Marketing Managers</div>
+      </div>
+      <div class="card-value">Allocate brand-level budgets based on market share of voice and category heat—not last quarter's numbers</div>
+    </div>
+
+    <div class="flow">
+
+      <div class="flow-step step-discover">
+        <div class="step-source"><span class="dot"></span> Pinterest / Social</div>
+        <div class="step-icon">🌐</div>
+        <div class="step-label">Discovers</div>
+        <div class="step-title">Brand SOV heat map: some brands surging, others quietly fading</div>
+        <div class="step-desc">A macro view of brand-level social share of voice across the market. "Olaplex" mentions are up 45% YoY; legacy haircare brands are flat or declining. The sulfate-free sub-category is pulling away from mainstream. The portfolio currently spreads brand spend evenly across all brands.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-insight">
+        <div class="step-source"><span class="dot"></span> Social SOV Insight</div>
+        <div class="step-icon">💡</div>
+        <div class="step-label">Insight</div>
+        <div class="step-title">Brand spend allocation doesn't match social momentum—some brands over-invested, others starved</div>
+        <div class="step-desc">Cross-referencing brand-level social SOV trends with Sponsored Brands budgets reveals clear mismatches. Brands gaining market conversation share have under-funded campaigns; brands losing social ground are still receiving disproportionate brand defense spend.</div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="flow-step step-action">
+        <div class="step-source"><span class="dot"></span> Amazon Action</div>
+        <div class="step-icon">🏆</div>
+        <div class="step-label">Action</div>
+        <div class="step-title">Increase Sponsored Brands for rising brands; redirect spend from declining ones</div>
+        <div class="step-desc">Scale up Sponsored Brands and brand defense budgets for brands with rising social SOV. Pull back investment from brands showing sustained social decline and redirect that budget toward high-momentum brands before the onsite search demand surge arrives.</div>
+      </div>
+
+    </div>
+
+    <div class="card-trigger">
+      <span class="trigger-label">Trigger</span>
+      <span>Market SOV changes exceed threshold across multiple brands in the portfolio. System identifies at least one brand with rising social share and under-funded brand campaigns, and at least one with declining social share yet over-allocated brand spend.</span>
+    </div>
+  </div>
+
+</div>
+<!-- end scenarios -->
+
+</body>
+</html>
