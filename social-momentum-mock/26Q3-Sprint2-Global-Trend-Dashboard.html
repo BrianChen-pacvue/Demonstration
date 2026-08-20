@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Global Trend Dashboard — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#003873; --blue:#0A6FE8; --grey:#EEF0F2; --orange:#FF8041;
+    --sky:#AEDFFF; --teal:#08C5A2; --white:#FFFFFF; --red:#E5484D;
+    --text:#1C2733; --text-muted:#5B6B7C; --border:#E1E6EC;
+    --radius:14px; --shadow:0 2px 10px rgba(0,56,115,.07),0 1px 2px rgba(0,56,115,.05);
+    --font:'Poppins',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#F7F9FC;font-family:var(--font);color:var(--text);}
+  a{color:var(--blue)}
+  .proto-banner{background:var(--navy);color:#fff;text-align:center;font-size:12.5px;padding:7px 12px;letter-spacing:.2px}
+  .proto-banner b{color:var(--sky)}
+  .topbar{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:40}
+  .logo{font-weight:700;font-size:19px;color:var(--navy);display:flex;align-items:center;gap:6px}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--blue);display:inline-block}
+  .topbar-left{display:flex;align-items:center}
+  .topnav{display:flex;gap:4px;margin-left:22px}
+  .topnav a{font-size:13px;color:var(--text-muted);text-decoration:none;padding:8px 14px;border-radius:8px}
+  .topnav a.active{background:var(--grey);color:var(--navy);font-weight:600}
+  .role-wrap{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted)}
+  .role-wrap select{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--text)}
+  .page{max-width:1180px;margin:0 auto;padding:24px 24px 80px}
+  .page-head{margin-bottom:20px}
+  .crumbs{font-size:12.5px;color:var(--text-muted);margin-bottom:6px}
+  .crumbs strong{color:var(--navy)}
+  .page-head h1{margin:0 0 4px;font-size:26px;color:var(--navy);font-weight:600}
+  .page-head .subtitle{margin:0;color:var(--text-muted);font-size:14px}
+
+  .module{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:22px 24px;margin-bottom:22px}
+  .module-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  .module-head h2{font-size:17px;margin:0;color:var(--navy);font-weight:600;display:flex;align-items:center;gap:8px}
+  .fcode{font-size:10.5px;font-weight:600;color:var(--text-muted);background:var(--grey);border-radius:20px;padding:2px 8px;letter-spacing:.3px}
+  .module-sub{font-size:12.5px;color:var(--text-muted);margin:0 0 14px}
+  .empty-note{font-size:12.5px;color:var(--orange);background:#FFF4EC;border-radius:8px;padding:8px 12px;margin:0 0 12px}
+  .empty-block{padding:28px;text-align:center;color:var(--text-muted);font-size:13.5px;background:var(--grey);border-radius:12px}
+  .info-note{font-size:12px;color:var(--text-muted);background:var(--grey);border-radius:8px;padding:8px 12px;margin-top:10px}
+
+  /* Business Profile */
+  .bp-summary{font-size:13.5px;color:var(--text);margin:0;line-height:1.5}
+  .bp-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+  .bp-count{font-size:12.5px;color:var(--text-muted)}
+  .bp-reset{font-size:12.5px;color:var(--blue);cursor:pointer;background:none;border:none;font-family:var(--font)}
+  .chip-row{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:flex;align-items:flex-start;gap:10px;border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;max-width:260px;transition:.15s}
+  .chip.selected{border-color:var(--blue);background:rgba(10,111,232,.05)}
+  .chip input{display:none}
+  .chip-check{width:16px;height:16px;margin-top:2px;border-radius:4px;border:1.5px solid #C7D0DA;flex:none;position:relative}
+  .chip.selected .chip-check{background:var(--blue);border-color:var(--blue)}
+  .chip.selected .chip-check::after{content:'✓';position:absolute;color:#fff;font-size:11px;left:2px;top:-2px}
+  .chip-title{font-size:13.5px;font-weight:600;color:var(--text);display:block}
+  .chip-sub{font-size:11.5px;color:var(--text-muted);display:block;margin-top:2px}
+
+  /* Controls shared */
+  .control-row{display:flex;align-items:center;flex-wrap:wrap;gap:18px;margin-bottom:16px}
+  .control-group{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-muted)}
+  select{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--text)}
+  .tab-group{display:flex;gap:6px;background:var(--grey);padding:4px;border-radius:10px}
+  .tab-btn{border:none;background:none;font-family:var(--font);font-size:13px;color:var(--text-muted);padding:7px 14px;border-radius:8px;cursor:pointer}
+  .tab-btn.active{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 3px rgba(0,56,115,.12)}
+  .time-group{display:flex;gap:4px}
+  .time-pill{border:1px solid var(--border);background:#fff;font-family:var(--font);font-size:12.5px;color:var(--text-muted);padding:6px 12px;border-radius:20px;cursor:pointer}
+  .time-pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .toggle-switch{width:36px;height:20px;border-radius:20px;background:#C7D0DA;position:relative;cursor:pointer;flex:none}
+  .toggle-switch .knob{position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.15s}
+  .toggle-switch.on{background:var(--blue)}
+  .toggle-switch.on .knob{left:18px}
+  .toggle-label{font-size:12.5px;color:var(--text-muted)}
+
+  /* Spotlight */
+  .spotlight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+  .topic-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;background:#fff;transition:.15s}
+  .topic-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+  .topic-thumb{height:100px;position:relative}
+  .growth-badge{position:absolute;top:8px;right:8px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;color:#fff}
+  .growth-badge.pos{background:rgba(8,197,162,.92)}
+  .growth-badge.neg{background:rgba(229,72,77,.92)}
+  .topic-body{padding:12px 14px}
+  .topic-title{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px}
+  .topic-desc{font-size:11.5px;color:var(--text-muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+  /* Trending Category */
+  .cat-row{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--border);cursor:pointer}
+  .cat-row:last-child{border-bottom:none}
+  .cat-row:hover{background:#FAFBFD}
+  .cat-name{font-size:13.5px;font-weight:600;color:var(--text)}
+  .cat-metrics{display:flex;align-items:center;gap:14px}
+  .growth-pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+  .growth-pill.pos{background:#E4F9F5;color:#068C71}
+  .growth-pill.neg{background:#FCEAEA;color:#B23237}
+  .relvol{font-size:12px;color:var(--text-muted)}
+
+  /* Trending Keyword — two-level list (v3.3) */
+  .kw-list{display:flex;flex-direction:column}
+  .kw-list-head{display:grid;grid-template-columns:26px minmax(170px,1.6fr) 96px 110px 150px 92px 92px;gap:10px;padding:0 10px 8px;font-size:11px;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border)}
+  .kw-row-wrap{border-bottom:1px solid var(--border)}
+  .kw-row-wrap:last-child{border-bottom:none}
+  .kw-row{display:grid;grid-template-columns:26px minmax(170px,1.6fr) 96px 110px 150px 92px 92px;gap:10px;align-items:center;padding:12px 10px;cursor:pointer}
+  .kw-row:hover{background:#FAFBFD}
+  .expand-icon{border:none;background:var(--grey);width:22px;height:22px;border-radius:6px;font-size:10px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:var(--font)}
+  .expand-icon.open{background:var(--blue);color:#fff}
+  .kw-term-cell{font-size:13.5px;font-weight:600;color:var(--text);background:none;border:none;font-family:var(--font);text-align:left;padding:0;cursor:pointer}
+  .kw-term-cell:hover{color:var(--blue);text-decoration:underline}
+  .reco-badge{display:inline-block;min-width:20px;text-align:center;font-size:12.5px;font-weight:600;color:var(--navy);background:#EAF3FF;border-radius:20px;padding:2px 8px}
+  .reco-badge.inline{margin-left:8px;vertical-align:middle;font-size:11px}
+  .spark-svg{display:block}
+  .svr-cell{font-size:12.5px;color:var(--text)}
+  .change-cell{font-size:12.5px;font-weight:600}
+  .change-cell.pos{color:#068C71}
+  .change-cell.neg{color:#B23237}
+  .kw-expand-panel{display:none;padding:14px 10px 20px 36px;background:#FAFBFD;border-top:1px dashed var(--border)}
+  .kw-expand-panel.open{display:block}
+  .kw-expand-title{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .kw-footer{text-align:center;font-size:12.5px;color:var(--text-muted);padding:18px 0 4px}
+  #kwSentinel{height:1px}
+
+  /* Page-level floating bar (F019 — Add to Campaign moved onto the page) */
+  .page-floating-bar{position:fixed;left:0;right:0;bottom:0;background:var(--navy);color:#fff;padding:14px 24px;display:none;z-index:60;box-shadow:0 -6px 20px rgba(0,20,50,.2)}
+  .page-floating-bar.show{display:block}
+  .page-floating-bar .fb-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+
+  /* Generic modal (Business Profile edit / Add to Campaign) */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,30,60,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:100}
+  .modal-overlay.show{display:flex}
+  #campaignModal{z-index:110}
+  .modal-box{background:#fff;border-radius:16px;width:100%;max-width:720px;padding:26px 28px 22px;box-shadow:0 20px 60px rgba(0,20,50,.25)}
+  .modal-box.narrow{max-width:600px}
+  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .modal-head h2{margin:0;font-size:19px;color:var(--navy)}
+  .modal-sub{margin:4px 0 0;font-size:12.5px;color:var(--text-muted)}
+  .icon-btn{border:none;background:var(--grey);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--text-muted);flex:none}
+  .growth-line{font-size:13px;color:var(--text-muted);margin-bottom:14px}
+  .growth-line b{font-weight:600}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--text-muted);margin:20px 0 10px;text-transform:uppercase}
+  .chart-svg{display:block}
+  .chart-caption{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+  .chart-legend{display:flex;gap:18px;font-size:12px;color:var(--text-muted);margin-top:6px}
+  .chart-legend i{display:inline-block;width:16px;height:0;border-top:3px solid;vertical-align:middle;margin-right:5px}
+
+  .demo-grid{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+  .age-bars{flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px}
+  .age-row{display:grid;grid-template-columns:42px 1fr 34px;align-items:center;gap:8px;font-size:11.5px;color:var(--text-muted)}
+  .age-track{height:8px;background:var(--grey);border-radius:4px;overflow:hidden}
+  .age-fill{height:100%;background:var(--blue)}
+  .donut-wrap{display:flex;align-items:center;gap:16px}
+  .donut{width:96px;height:96px;border-radius:50%;position:relative;flex:none}
+  .donut-hole{position:absolute;inset:18px;background:#fff;border-radius:50%}
+  .donut-legend{font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px}
+  .donut-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+
+  .pin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+  .pin-card{aspect-ratio:1/1;border-radius:10px;position:relative;cursor:pointer;overflow:hidden}
+  .pin-overlay{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,20,45,.55),transparent);color:#fff;font-size:10.5px;padding:6px 8px;display:flex;gap:8px}
+  .pin-credit{font-size:11px;color:var(--text-muted);margin-top:8px}
+  .pin-note{font-size:11.5px;color:var(--text-muted);background:var(--grey);border-radius:8px;padding:8px 12px;margin-top:14px}
+  .text-btn{background:none;border:none;color:var(--blue);font-family:var(--font);font-size:12.5px;cursor:pointer;padding:8px 0 0;display:block}
+
+  /* Related Keywords (F017) */
+  .tag-list{display:flex;flex-wrap:wrap;gap:8px}
+  .keyword-chip{border:1px solid var(--border);background:var(--grey);border-radius:20px;padding:6px 14px;font-size:12.5px;color:var(--text);cursor:pointer;transition:.15s;font-family:var(--font)}
+  .keyword-chip:hover{border-color:var(--blue);background:#fff;color:var(--blue)}
+
+  .reco-table{width:100%;border-collapse:collapse;font-size:12.5px}
+  .reco-table th{text-align:left;font-size:11px;color:var(--text-muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+  .reco-table th.sortable{cursor:pointer}
+  .reco-table th.sortable:hover{color:var(--blue)}
+  .reco-table td{padding:8px 6px;border-bottom:1px solid #F0F3F7;color:var(--text)}
+  .reco-table tr.row-selected{background:rgba(10,111,232,.05)}
+  .reco-table select{font-size:12px;padding:4px 6px}
+  .reco-table input[type=number]{width:72px;font-family:var(--font);border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:12px}
+  .pos{color:#068C71}
+  .neg{color:#B23237}
+
+  .fb-actions{display:flex;gap:10px}
+  .btn-primary{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer}
+  .btn-primary:disabled{background:#7C9CBF;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:8px;padding:8px 16px;font-family:var(--font);font-size:13px;cursor:pointer}
+  .btn-secondary{background:#fff;color:var(--navy);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-family:var(--font);font-size:13px;cursor:pointer}
+  .btn-secondary:disabled{opacity:.45;cursor:not-allowed}
+
+  .stepper{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:18px}
+  .step-dot{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-muted)}
+  .step-dot span{width:26px;height:26px;border-radius:50%;background:var(--grey);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .step-dot label{font-size:10.5px}
+  .step-dot.active span{background:var(--blue);color:#fff}
+  .step-dot.active label{color:var(--navy);font-weight:600}
+  .step-dot.done span{background:var(--teal);color:#fff}
+  .step-line{width:48px;height:2px;background:var(--border)}
+
+  .list-select{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto}
+  .list-row{display:flex;align-items:center;gap:10px;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer}
+  .list-row.selected{border-color:var(--blue);background:rgba(10,111,232,.05)}
+  .row-name{flex:1;font-size:13px}
+  .status-badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
+  .status-badge.active{background:#E4F9F5;color:#068C71}
+  .status-badge.paused{background:var(--grey);color:var(--text-muted)}
+
+  .batch-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text-muted);margin-bottom:12px;flex-wrap:wrap}
+  .batch-row input{width:90px;font-family:var(--font);border:1px solid var(--border);border-radius:6px;padding:5px 8px}
+  .bid-error{display:block;color:var(--red);font-size:10.5px;margin-top:3px}
+
+  .modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--border)}
+  .modal-footer .footer-right{display:flex;gap:10px}
+  .modal-footer .btn-ghost{color:var(--text-muted);border-color:var(--border)}
+
+  .toast{position:fixed;right:22px;bottom:22px;background:#fff;border-left:4px solid var(--teal);box-shadow:0 8px 24px rgba(0,20,50,.18);border-radius:10px;padding:13px 18px;font-size:13px;max-width:340px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;z-index:200}
+  .toast.show{transform:translateY(0);opacity:1}
+  .toast.warn{border-left-color:var(--orange)}
+  .toast.info{border-left-color:var(--blue)}
+
+  /* Drawer (Topic / Keyword detail) */
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(0,30,60,.45);display:none;z-index:100}
+  .drawer-backdrop.show{display:block}
+  .drawer-panel{position:fixed;top:0;right:0;bottom:0;width:min(500px,92vw);background:#fff;box-shadow:-16px 0 40px rgba(0,20,50,.2);overflow-y:auto;padding:26px 28px 24px;transform:translateX(100%);transition:transform .25s ease}
+  .drawer-backdrop.show .drawer-panel{transform:translateX(0)}
+  .drawer-nav{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .nav-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:5px 12px;font-family:var(--font);font-size:12.5px;cursor:pointer;color:var(--text)}
+  .nav-btn:disabled{opacity:.4;cursor:not-allowed}
+  .nav-pos{font-size:12px;color:var(--text-muted)}
+  .back-link{background:none;border:none;color:var(--blue);font-family:var(--font);font-size:12.5px;cursor:pointer;padding:0 0 12px;display:block}
+
+  /* Trending Category detail page */
+  .category-page{display:none;max-width:1180px;margin:0 auto;padding:24px 24px 80px}
+  .cat-page-back{background:none;border:none;color:var(--blue);font-family:var(--font);font-size:13px;cursor:pointer;padding:0 0 12px;display:block}
+  .cat-page-title-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .cat-page-title-row h1{margin:0;font-size:24px;color:var(--navy)}
+  .page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 0}
+  .page-tab{border:none;background:none;font-family:var(--font);font-size:14px;color:var(--text-muted);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
+  .page-tab.active{color:var(--navy);font-weight:600;border-bottom-color:var(--blue)}
+  .tab-panel{padding-top:22px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:22px 24px;margin-top:16px}
+
+  /* Brand SOV */
+  .sov-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .sov-legend{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:12px;font-size:12px;color:var(--text-muted)}
+  .sov-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+  .sov-table-toolbar{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px;flex-wrap:wrap;gap:10px}
+  .sov-table-toolbar input{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;width:220px}
+  .pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font-size:12.5px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<div class="proto-banner">原型对照 <b>26Q3-Sprint2-Global-Trend-Dashboard.md v3.5</b> · 可点击交互 Prototype，全部数据为模拟数据（不连接真实接口）</div>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo"><span class="dot"></span>pacvue</div>
+    <div class="topnav">
+      <a href="26Q3-Sprint2-Global-Trend-Dashboard.html" class="active">Global Trend</a>
+      <a href="26Q3-Sprint1-Research-Group-List.html">Research Group</a>
+    </div>
+  </div>
+  <div class="role-wrap">
+    <span>Viewing as:</span>
+    <select id="roleSelect" onchange="setRole(this.value)">
+      <option>Account Admin</option>
+      <option selected>Editor</option>
+      <option>Viewer</option>
+    </select>
+  </div>
+</div>
+
+<div class="page" id="dashboardPage">
+  <div class="page-head">
+    <div class="crumbs">Cross Retailer - Tools / Social Momentum / <strong>Global Trend</strong></div>
+    <h1>Global Trend</h1>
+    <p class="subtitle">Discover what's trending on Pinterest, matched to your business.</p>
+  </div>
+
+  <!-- Business Profile F001 -->
+  <section class="module" id="businessProfile">
+    <div class="module-head">
+      <h2>Business Profile <span class="fcode">F001</span></h2>
+      <button class="btn-secondary" onclick="openBpEditModal()">Edit</button>
+    </div>
+    <p class="bp-summary" id="bpSummaryText"></p>
+  </section>
+
+  <!-- Trending Spotlight F002/F003 -->
+  <section class="module" id="spotlight">
+    <div class="module-head">
+      <h2>Trending Spotlight <span class="fcode">F002 · F003</span></h2>
+      <div class="control-group">
+        <span>Viewing:</span>
+        <select id="interestSelect" onchange="spotlightView=this.value; renderSpotlight();"></select>
+      </div>
+    </div>
+    <p class="module-sub">Recent Pinterest topics, ranked by month-over-month growth.</p>
+    <div id="spotlightEmptyNote"></div>
+    <div class="spotlight-grid" id="spotlightGrid"></div>
+  </section>
+
+  <!-- Trending Category F005 -->
+  <section class="module" id="myCategory">
+    <div class="module-head">
+      <h2>Trending Category <span class="fcode">F005</span></h2>
+    </div>
+    <p class="module-sub">Pinterest trend movement for the Amazon categories you sell in, sorted by growth rate.</p>
+    <div id="categoryList"></div>
+  </section>
+
+  <!-- Trending Keyword F007-F011, F019 -->
+  <section class="module" id="trendingKeyword">
+    <div class="module-head">
+      <h2>Trending Keyword <span class="fcode">F007–F011 · F019</span></h2>
+    </div>
+    <p class="module-sub">Pinterest trending keywords with at least one personalized Amazon recommendation (out of 50 per sub-filter). Expand a row to see the recommendations and add them to a Campaign.</p>
+    <div class="control-row">
+      <div class="tab-group">
+        <button class="tab-btn" data-tab="top_rank" onclick="setTab('top_rank')">Top Rank</button>
+        <button class="tab-btn" data-tab="growing" onclick="setTab('growing')">Growing</button>
+        <button class="tab-btn" data-tab="seasonal" onclick="setTab('seasonal')">Seasonal</button>
+      </div>
+      <div class="control-group">
+        <span>Sort by</span>
+        <select id="sortSelect" onchange="setSort(this.value)">
+          <option value="svr">Search Volume Rank</option>
+          <option value="weekly">Weekly Change</option>
+          <option value="monthly">Monthly Change</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <div class="time-group" id="timeGroup">
+          <button class="time-pill" data-range="7D" onclick="setTimeRange('7D')">7D</button>
+          <button class="time-pill" data-range="30D" onclick="setTimeRange('30D')">30D</button>
+          <button class="time-pill" data-range="90D" onclick="setTimeRange('90D')">90D</button>
+        </div>
+      </div>
+    </div>
+    <div class="empty-block" id="keywordEmpty" style="display:none">No trending keywords matched your Amazon products at this time</div>
+    <div class="kw-list" id="keywordList"></div>
+    <div id="kwSentinel"></div>
+    <div class="kw-footer" id="keywordFooter"></div>
+  </section>
+</div>
+
+<!-- Page-level floating bar (F019 — Add to Campaign, moved out of the drawer) -->
+<div class="page-floating-bar" id="pageFloatingBar">
+  <div class="fb-inner">
+    <span id="pageFloatingCount"></span>
+    <div class="fb-actions">
+      <button class="btn-ghost" onclick="cancelPageSelection()">Cancel</button>
+      <button class="btn-primary" id="pageAddToCampaignBtn" onclick="openCampaignModal()">Add to Campaign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Trending Category detail page (F006) -->
+<div class="category-page" id="categoryPage">
+  <button class="cat-page-back" onclick="closeCategoryPage()">‹ Back to Global Trend</button>
+  <div class="cat-page-title-row">
+    <h1 id="catPageTitle"></h1>
+    <span id="catPageGrowth"></span>
+  </div>
+  <div class="page-tabs">
+    <button class="page-tab" data-tab="overview" onclick="setCategoryTab('overview')">Overview</button>
+    <button class="page-tab" data-tab="brand_sov" onclick="setCategoryTab('brand_sov')">Brand SOV <span class="fcode">F018</span></button>
+  </div>
+  <div class="tab-panel" id="categoryOverviewTab" style="display:none"></div>
+  <div class="tab-panel" id="categoryBrandSovTab" style="display:none"></div>
+</div>
+
+<!-- Business Profile edit modal -->
+<div class="modal-overlay" id="bpEditModal" onclick="if(event.target===this) cancelBpEdit()">
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <div><h2>Edit Business Profile</h2><p class="modal-sub">F001 · Adjust which categories this page's recommendations are based on</p></div>
+      <button class="icon-btn" onclick="cancelBpEdit()">✕</button>
+    </div>
+    <div class="bp-toolbar">
+      <span class="bp-count" id="bpEditCount"></span>
+      <button class="bp-reset" onclick="bpEditSelectAll()">Select all</button>
+    </div>
+    <div class="chip-row" id="bpEditChips"></div>
+    <div class="info-note">ⓘ Saving will refresh the page so Trending Spotlight, Trending Category and Trending Keyword all reflect the new scope.</div>
+    <div class="modal-footer">
+      <button class="btn-ghost" style="color:var(--text-muted);border-color:var(--border)" onclick="cancelBpEdit()">Cancel</button>
+      <div class="footer-right"><button class="btn-primary" onclick="saveBpEdit()">Save</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Topic / Keyword detail drawer (F004, F012-F014) -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="if(event.target===this) closeDrawer()">
+  <div class="drawer-panel" id="drawerPanel">
+    <div id="drawerContent"></div>
+  </div>
+</div>
+
+<!-- Add to Campaign wizard F016 -->
+<div class="modal-overlay" id="campaignModal" onclick="if(event.target===this) closeModal('campaignModal')">
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <div><h2>Add to Campaign</h2><p class="modal-sub">F016 · Select where these keywords should be added</p></div>
+      <button class="icon-btn" onclick="closeModal('campaignModal')">✕</button>
+    </div>
+    <div class="stepper">
+      <div class="step-dot" data-step="1"><span>1</span><label>Campaign</label></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="2"><span>2</span><label>Ad Group</label></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="3"><span>3</span><label>Match &amp; Bid</label></div>
+    </div>
+    <div id="campaignStepBody"></div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('campaignModal')">Cancel</button>
+      <div class="footer-right">
+        <button class="btn-secondary" id="campBack" onclick="campBack()">Back</button>
+        <button class="btn-primary" id="campNext" onclick="campNext()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== utils ===================== */
+function seedFromString(str){ let h=0; for(let i=0;i<str.length;i++){ h=Math.imul(31,h)+str.charCodeAt(i)|0; } return h>>>0; }
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed>>>15, 1 | seed);
+    t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
+  };
+}
+function formatPct(n){ const sign = n>0?'+':''; return `${sign}${n.toFixed(1)}%`; }
+function formatK(n){
+  if(n>=1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'')+'M';
+  if(n>=1000) return (n/1000).toFixed(1).replace(/\.0$/,'')+'K';
+  return String(n);
+}
+function labelize(code){ return code.split('_').map(w=>w[0]+w.slice(1).toLowerCase()).join(' '); }
+function monthLabels(n){
+  const out=[]; const now=new Date();
+  for(let i=n-1;i>=0;i--){ const d=new Date(now.getFullYear(), now.getMonth()-i, 1); out.push(d.toLocaleString('en-US',{month:'short'})+' '+d.getFullYear()); }
+  return out;
+}
+function futureMonthLabels(n){
+  const out=[]; const now=new Date();
+  for(let i=1;i<=n;i++){ const d=new Date(now.getFullYear(), now.getMonth()+i, 1); out.push(d.toLocaleString('en-US',{month:'short'})+' '+d.getFullYear()); }
+  return out;
+}
+function genSeries(seedStr, months=12, base=50, volatility=18){
+  const rnd = mulberry32(seedFromString(seedStr));
+  let v = base + (rnd()*20-10);
+  const arr=[];
+  for(let i=0;i<months;i++){ v += (rnd()*2-1)*volatility*0.5; v = Math.max(4, Math.min(98, v)); arr.push(Math.round(v)); }
+  return arr;
+}
+function fixRoundTo100(arr){ const diff = 100 - arr.reduce((a,b)=>a+b,0); arr[0]+=diff; return arr; }
+function genDemographics(seedStr){
+  const rnd = mulberry32(seedFromString(seedStr+'-demo'));
+  let age = [rnd(),rnd(),rnd(),rnd(),rnd()]; const asum=age.reduce((a,b)=>a+b,0);
+  age = fixRoundTo100(age.map(v=>Math.round(v/asum*100)));
+  let gender=[rnd(),rnd(),rnd()*0.3]; const gsum=gender.reduce((a,b)=>a+b,0);
+  gender = fixRoundTo100(gender.map(v=>Math.round(v/gsum*100)));
+  return {age, gender};
+}
+function genPins(seedStr,count){
+  const rnd = mulberry32(seedFromString(seedStr+'-pins'));
+  return Array.from({length:count},()=>({ saves: Math.round(200+rnd()*4000), clicks: rnd()>0.3? Math.round(20+rnd()*900): null }));
+}
+function growthFor(seedStr, negBias=0.3){
+  const rnd = mulberry32(seedFromString(seedStr+'-growth'));
+  const v = (rnd()*140) - (140*negBias);
+  return Math.round(v*10)/10;
+}
+const PALETTE_PAIRS = [['#0A6FE8','#AEDFFF'],['#08C5A2','#AEDFFF'],['#FF8041','#FFD9C2'],['#003873','#0A6FE8'],['#08C5A2','#003873']];
+function thumbGradient(seed){ const [a,b]=PALETTE_PAIRS[seedFromString(seed)%PALETTE_PAIRS.length]; return `linear-gradient(135deg, ${a}, ${b})`; }
+
+/* ===================== chart builders ===================== */
+function svgLineChart({series, predicted=[], months, highlightFrom=null, uid, width=640, height=190}){
+  const padding={top:14,right:14,bottom:24,left:10};
+  const innerW = width-padding.left-padding.right, innerH = height-padding.top-padding.bottom;
+  const total = series.length + predicted.length;
+  const stepX = innerW/(total-1);
+  const xFor = i => padding.left + i*stepX;
+  const yFor = v => padding.top + innerH - (v/100)*innerH;
+  const histPts = series.map((v,i)=>[xFor(i), yFor(v)]);
+  const pathHist = 'M'+histPts.map(p=>p.join(',')).join(' L');
+  const areaPath = pathHist + ` L${xFor(series.length-1)},${padding.top+innerH} L${xFor(0)},${padding.top+innerH} Z`;
+  let predPath='';
+  if(predicted.length){
+    const predPts=[histPts[histPts.length-1], ...predicted.map((v,i)=>[xFor(series.length+i), yFor(v)])];
+    predPath = 'M'+predPts.map(p=>p.join(',')).join(' L');
+  }
+  let highlightRect='';
+  if(highlightFrom!=null){
+    const x1=xFor(highlightFrom), x2=xFor(series.length-1);
+    highlightRect = `<rect x="${x1}" y="${padding.top}" width="${Math.max(2,x2-x1)}" height="${innerH}" fill="#0A6FE8" opacity="0.09"/>`;
+  }
+  let grid='';
+  for(let g=0; g<=3; g++){ const yy=padding.top+innerH*g/3; grid += `<line x1="${padding.left}" y1="${yy}" x2="${width-padding.right}" y2="${yy}" stroke="#E7ECF2" stroke-width="1"/>`; }
+  const dots = histPts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#0A6FE8"><title>${months[i]}: ${series[i]}</title></circle>`).join('');
+  let xLabels=''; const every=Math.ceil(total/6);
+  months.forEach((m,i)=>{ if(i%every===0){ xLabels += `<text x="${xFor(i)}" y="${height-6}" font-size="9" fill="#8896A6" text-anchor="middle">${m}</text>`; } });
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" class="chart-svg">
+    <defs><linearGradient id="grad-${uid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A6FE8" stop-opacity="0.18"/><stop offset="100%" stop-color="#0A6FE8" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${grid}${highlightRect}
+    <path d="${areaPath}" fill="url(#grad-${uid})" stroke="none"/>
+    <path d="${pathHist}" fill="none" stroke="#0A6FE8" stroke-width="2.5"/>
+    ${predPath?`<path d="${predPath}" fill="none" stroke="#08C5A2" stroke-width="2.5" stroke-dasharray="5,4"/>`:''}
+    ${dots}${xLabels}
+  </svg>`;
+}
+function svgMultiLineChart({seriesList, labels, width=640, height=220}){
+  const padding={top:14,right:14,bottom:24,left:30};
+  const innerW=width-padding.left-padding.right, innerH=height-padding.top-padding.bottom;
+  const maxV = Math.max(5, ...seriesList.flatMap(s=>s.values)) * 1.2;
+  const n = labels.length;
+  const stepX = n>1 ? innerW/(n-1) : 0;
+  const xFor = i => padding.left + i*stepX;
+  const yFor = v => padding.top + innerH - (v/maxV)*innerH;
+  let grid='';
+  for(let g=0; g<=3; g++){ const yy=padding.top+innerH*g/3; const val=Math.round(maxV*(3-g)/3); grid += `<line x1="${padding.left}" y1="${yy}" x2="${width-padding.right}" y2="${yy}" stroke="#E7ECF2" stroke-width="1"/><text x="2" y="${yy+3}" font-size="9" fill="#8896A6">${val}%</text>`; }
+  const paths = seriesList.map(s=>{
+    const pts = s.values.map((v,i)=>[xFor(i),yFor(v)]);
+    return `<path d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${s.color}" stroke-width="2.2"/>`;
+  }).join('');
+  let xLabels=''; const every=Math.max(1,Math.ceil(n/6));
+  labels.forEach((l,i)=>{ if(i%every===0 || i===n-1){ xLabels += `<text x="${xFor(i)}" y="${height-6}" font-size="9" fill="#8896A6" text-anchor="middle">${l}</text>`; } });
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" class="chart-svg">${grid}${paths}${xLabels}</svg>`;
+}
+function ageBarsHTML(ageArr){
+  const labels=['18–24','25–34','35–44','45–54','55+'];
+  return `<div class="age-bars">${labels.map((l,i)=>`
+    <div class="age-row"><span>${l}</span><div class="age-track"><div class="age-fill" style="width:${ageArr[i]}%"></div></div><span>${ageArr[i]}%</span></div>`).join('')}</div>`;
+}
+function genderDonutHTML(g){
+  const c1=g[0], c2=g[0]+g[1];
+  return `<div class="donut-wrap">
+    <div class="donut" style="background:conic-gradient(var(--blue) 0% ${c1}%, var(--teal) ${c1}% ${c2}%, #C7D0DA ${c2}% 100%)"><div class="donut-hole"></div></div>
+    <div class="donut-legend">
+      <div><span class="dot" style="background:var(--blue)"></span>Male ${g[0]}%</div>
+      <div><span class="dot" style="background:var(--teal)"></span>Female ${g[1]}%</div>
+      <div><span class="dot" style="background:#C7D0DA"></span>Unspecified ${g[2]}%</div>
+    </div>
+  </div>`;
+}
+function pinGridHTML(pins){
+  const colors=['#0A6FE8','#08C5A2','#FF8041','#AEDFFF','#003873','#7C9CBF','#0A6FE8','#08C5A2'];
+  return pins.map((p,i)=>`
+    <div class="pin-card" style="background:linear-gradient(135deg, ${colors[i%colors.length]}, ${colors[(i+2)%colors.length]})" onclick="mockPinClick()">
+      <div class="pin-overlay">${p.saves?`<span>❤ ${formatK(p.saves)}</span>`:''}${p.clicks?`<span>🔗 ${formatK(p.clicks)}</span>`:''}</div>
+    </div>`).join('');
+}
+function mockPinClick(){ toast('Would open this Pin on Pinterest in a new tab (mocked).', 'info'); }
+function sparklineSVG(seriesArr, width=100, height=28){
+  const min=Math.min(...seriesArr), max=Math.max(...seriesArr);
+  const range=Math.max(1, max-min);
+  const stepX = width/(seriesArr.length-1);
+  const pts = seriesArr.map((v,i)=>[+(i*stepX).toFixed(1), +(height-2-((v-min)/range)*(height-4)).toFixed(1)]);
+  const path = 'M'+pts.map(p=>p.join(',')).join(' L');
+  return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" class="spark-svg"><path d="${path}" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+
+/* ===================== mock data ===================== */
+const clusters = [
+  {id:'bakeware', name:'Bakeware & Baking Tools', types:'Baking pans · Cookie sheets · Muffin tins', interest:'FOOD_AND_DRINKS', catLabel:'Bakeware', selected:true},
+  {id:'cat', name:'Cat Supplies', types:'Cat trees · Litter boxes · Scratching posts', interest:'ANIMALS', catLabel:'Cat Furniture', selected:true},
+  {id:'walldecor', name:'Wall Art & Decor', types:'Canvas prints · Framed art · Wall mirrors', interest:'HOME_DECOR', catLabel:'Wall Art', selected:true},
+  {id:'storage', name:'Kitchen Storage & Organization', types:'Pantry bins · Drawer organizers · Spice racks', interest:'HOME_DECOR', catLabel:'Kitchen Storage & Organization', selected:true},
+];
+(function initClustersFromStorage(){
+  try{
+    const raw = localStorage.getItem('gtd_business_profile_v1');
+    if(raw){ const selectedIds = new Set(JSON.parse(raw)); clusters.forEach(c=>c.selected = selectedIds.has(c.id)); }
+  }catch(e){}
+})();
+
+const TOPICS = [
+  {id:'t1', title:'Cozy Autumn Baking', description:"Warm spiced bakes and rustic bakeware styling are trending as the season turns.", interest:'FOOD_AND_DRINKS'},
+  {id:'t2', title:'Minimalist Kitchen Organization', description:'Clear bins and labeled pantry systems dominate kitchen organization saves.', interest:'HOME_DECOR'},
+  {id:'t3', title:'Cat-Friendly Small Space Furniture', description:'Space-saving cat trees and wall-mounted perches for apartment living.', interest:'ANIMALS'},
+  {id:'t4', title:'Neutral Boho Wall Gallery', description:'Warm neutral tones and mixed-texture frames for gallery wall layouts.', interest:'HOME_DECOR'},
+  {id:'t5', title:'Sheet Pan Dinner Ideas', description:'One-pan weeknight dinners keep gaining saves ahead of back-to-school season.', interest:'FOOD_AND_DRINKS'},
+  {id:'t6', title:'Pet Enrichment DIY Toys', description:'DIY enrichment toys and puzzle feeders for indoor cats.', interest:'ANIMALS'},
+  {id:'t7', title:'Modern Farmhouse Pantry', description:'Farmhouse-style labeled jars and open shelving for pantry makeovers.', interest:'HOME_DECOR'},
+  {id:'t8', title:'Fall Comfort Food Recipes', description:'Soups, casseroles and slow-cooker meals trending into the fall.', interest:'FOOD_AND_DRINKS'},
+  {id:'t9', title:'Kitten-Proofing Your Home', description:'New kitten owners searching for safe furniture and litter setups.', interest:'ANIMALS'},
+  {id:'t10', title:'Statement Wall Mirrors', description:'Oversized round mirrors as a living room focal point.', interest:'HOME_DECOR'},
+  {id:'t11', title:'Everyday Capsule Wardrobe', description:'Minimal, mix-and-match wardrobe staples for fall.', interest:'FASHION'},
+  {id:'t12', title:'Clean Girl Makeup Routine', description:'Dewy, minimal makeup looks continue to trend.', interest:'BEAUTY'},
+  {id:'t13', title:'Backyard Wedding Decor Ideas', description:'DIY-friendly backyard wedding styling ideas.', interest:'WEDDING'},
+  {id:'t14', title:'Micro-Wedding Destinations 2026', description:'Small destination wedding venues gaining interest.', interest:'TRAVEL'},
+  {id:'t15', title:'Toddler Sensory Play Activities', description:'At-home sensory bins and activities for toddlers.', interest:'PARENTING'},
+  {id:'t16', title:'Small Space Garden Balconies', description:'Container gardening ideas for balconies and patios.', interest:'GARDENING'},
+];
+const INTERESTS_15 = ['ANIMALS','ARCHITECTURE','ART','BEAUTY','DIY_AND_CRAFTS','EDUCATION','EVENT_PLANNING','FASHION','FOOD_AND_DRINKS','GARDENING','HEALTH','HOME_DECOR','PARENTING','TRAVEL','WEDDING'];
+
+const BASE_TERMS = [
+  {term:'kitchen storage bin', cluster:'storage'}, {term:'cat tree condo', cluster:'cat'},
+  {term:'wall art canvas set', cluster:'walldecor'}, {term:'silicone baking mat', cluster:'bakeware'},
+  {term:'floating wall shelf', cluster:'walldecor'}, {term:'farmhouse pantry organizer', cluster:'storage'},
+  {term:'cat scratching post', cluster:'cat'}, {term:'gallery wall frame set', cluster:'walldecor'},
+  {term:'stackable pantry bin', cluster:'storage'}, {term:'nonstick muffin tin', cluster:'bakeware'},
+  {term:'acrylic drawer organizer', cluster:'storage'}, {term:'cat window perch', cluster:'cat'},
+  {term:'round wall mirror', cluster:'walldecor'}, {term:'silicone baking mold', cluster:'bakeware'},
+  {term:'wire pantry basket', cluster:'storage'}, {term:'cat litter mat', cluster:'cat'},
+  {term:'cookie sheet set', cluster:'bakeware'}, {term:'herb drying rack', cluster:'bakeware'},
+  {term:'wall mounted cat shelf', cluster:'cat'}, {term:'spice rack organizer', cluster:'storage'},
+];
+const MODIFIERS = ['modern','farmhouse','small space','minimalist','stainless steel','boho','extra large','with lid','under $30','vintage','non-slip','set of 3','multi-tier','wall mounted','for beginners'];
+const TAB_OFFSET = {top_rank:0, growing:5, seasonal:10};
+function buildKeywordDataset(tab, count=42){
+  const items=[];
+  for(let i=0;i<count;i++){
+    const base = BASE_TERMS[i % BASE_TERMS.length];
+    const modifier = MODIFIERS[(i*7 + TAB_OFFSET[tab]) % MODIFIERS.length];
+    items.push({ term:`${modifier} ${base.term}`, cluster: base.cluster, tab });
+  }
+  return items;
+}
+function metricsFor(item){
+  // Fixed 7-day/30-day windows — independent of the page's 7D/30D/90D time-range selector (§5.11)
+  const weeklyChange = growthFor(item.term+'-weekly', 0.35);
+  const monthlyChange = growthFor(item.term+'-monthly', 0.3);
+  return {weeklyChange, monthlyChange};
+}
+
+const RECO_MODIFIERS = ['for kitchen','modern','set of 4','small space','boho style','vintage look','under $30','with lid','stainless steel','for beginners','farmhouse','wall mounted','multi pack','heavy duty','minimalist'];
+const FORCE_EMPTY_RECO = new Set(['Statement Wall Mirrors']);
+const FORCE_NO_DEMO = new Set(['Kitchen Storage & Organization']);
+function genRecoRows(seedStr){
+  if(FORCE_EMPTY_RECO.has(seedStr)) return [];
+  const rnd = mulberry32(seedFromString(seedStr+'-reco'));
+  // The Pinterest trending-keyword feed only ever returns 50 terms per sub-filter; once
+  // customer-profile filtering runs on top, many terms end up with 0 personalized hits.
+  if(rnd() < 0.35) return [];
+  const n = 1+Math.floor(rnd()*20);
+  const rows=[];
+  for(let i=0;i<n;i++){
+    const mod = RECO_MODIFIERS[Math.floor(rnd()*RECO_MODIFIERS.length)];
+    const keyword = rnd()>0.5 ? `${seedStr.toLowerCase()} ${mod}` : `${mod} ${seedStr.toLowerCase()}`;
+    rows.push({
+      keyword, iq: Math.round(40+rnd()*59), searchVolume: Math.round(500+rnd()*250000),
+      svTrendUp: rnd()>0.4, competing: Math.round(50+rnd()*5000), bid: +(0.35+rnd()*2.85).toFixed(2),
+      matchType:'Broad', reason:`Strong overlap with your catalog — clear commercial intent for "${seedStr}".`
+    });
+  }
+  return rows;
+}
+const recoCache = {};
+function getRecoRows(term){
+  if(!recoCache[term]) recoCache[term] = genRecoRows(term);
+  return recoCache[term];
+}
+function recommendedCountFor(term){ return getRecoRows(term).length; }
+function searchVolumeRankFor(term){
+  const rows = getRecoRows(term);
+  if(rows.length===0) return null;
+  const vols = rows.map(r=>r.searchVolume);
+  return {min:Math.min(...vols), max:Math.max(...vols)};
+}
+function genRelatedKeywords(seedStr){
+  const rnd = mulberry32(seedFromString(seedStr+'-related'));
+  const n = 5+Math.floor(rnd()*5);
+  const out=[];
+  for(let i=0;i<n;i++){
+    const mod = RECO_MODIFIERS[Math.floor(rnd()*RECO_MODIFIERS.length)];
+    out.push(rnd()>0.5 ? `${seedStr.toLowerCase()} ${mod}` : `${mod} ${seedStr.toLowerCase()}`);
+  }
+  return [...new Set(out)];
+}
+
+const CAMPAIGNS = [
+  {id:'c1', name:'Cat Supplies - Brand Awareness', status:'Active', adGroups:[{id:'ag1',name:'Cat Trees'},{id:'ag2',name:'Litter Solutions'}]},
+  {id:'c2', name:'Kitchen Essentials - Auto', status:'Active', adGroups:[{id:'ag3',name:'Bakeware - Auto'},{id:'ag4',name:'Cookware - Auto'},{id:'ag5',name:'Storage - Auto'}]},
+  {id:'c3', name:'Kitchen Essentials - Manual', status:'Active', adGroups:[{id:'ag6',name:'Bakeware - Exact'}]},
+  {id:'c4', name:'Holiday Wall Decor 2025', status:'Paused', adGroups:[{id:'ag7',name:'Canvas Prints'},{id:'ag8',name:'Framed Art'}]},
+  {id:'c5', name:'Spice Rack Launch', status:'Paused', adGroups:[]},
+];
+function sortedCampaigns(){
+  return [...CAMPAIGNS].sort((a,b)=> a.status!==b.status ? (a.status==='Active'?-1:1) : a.name.localeCompare(b.name));
+}
+function buildCategoriesFromClusters(){
+  return clusters.map(c=>({ id:c.id, clusterId:c.id, label:c.catLabel, growth: growthFor(c.catLabel+'-cat',0.15), relVolume: Math.round(30+mulberry32(seedFromString(c.catLabel+'-vol'))()*70) }));
+}
+
+/* Brand SOV mock data (F018, adapted from 26Q3-Sprint3-Brand-SOV.md) */
+const BRAND_POOL = ['Nova Home','PurrLoft','PetNest','PawMercantile','UrbanBloom','GreenNest Living','Bakerly','Ovenhaus','CrumbCraft','FrameWorks Co.','WallNest','Gallery & Grain','StackSmart','TidyNest','ClearSpace Home','Homestead Supply','Meadow & Main','BrightNest'];
+const SOV_COLORS = ['#0A6FE8','#08C5A2','#FF8041','#003873','#7B61FF','#B33DC6','#E5484D','#F5A623','#3DB5E6','#4C9F70'];
+function genBrandSov(categoryLabel, timeRange){
+  const rnd = mulberry32(seedFromString(categoryLabel+'-brandsov-'+timeRange));
+  const brands = BRAND_POOL.map(name=>({name, raw: 0.15+rnd()}));
+  const totalRaw = brands.reduce((s,b)=>s+b.raw,0) * 1.18;
+  const rows = brands.map(b=>{
+    const sovVal = b.raw/totalRaw*100;
+    const adsRatio = 0.15+rnd()*0.5;
+    const ads = sovVal*adsRatio;
+    const product = sovVal-ads;
+    const top10 = Math.min(sovVal, sovVal*(0.3+rnd()*0.6));
+    return {
+      name:b.name, productCount: Math.round(5+rnd()*395),
+      sov:+sovVal.toFixed(1), ads:+ads.toFixed(1), product:+product.toFixed(1), top10:+top10.toFixed(1)
+    };
+  });
+  const used = rows.reduce((s,r)=>s+r.sov,0);
+  const unbranded = Math.max(2, +(100-used).toFixed(1));
+  rows.push({name:'Unbranded', productCount: Math.round(50+rnd()*300), sov:unbranded, ads:0, product:unbranded, top10:0});
+  return rows.sort((a,b)=>b.sov-a.sov);
+}
+function genSovSeries(seedStr, points){
+  const rnd = mulberry32(seedFromString(seedStr+'-sovseries'));
+  let v = 3+rnd()*15; const arr=[];
+  for(let i=0;i<points;i++){ v += (rnd()*2-1)*2.5; v=Math.max(0.5, Math.min(35, v)); arr.push(+v.toFixed(1)); }
+  return arr;
+}
+function sovPointsFor(range){ return range==='4W'?4:(range==='12W'?12:6); }
+function sovLabelsFor(range){
+  if(range==='6M') return monthLabels(6);
+  const n = sovPointsFor(range); const out=[];
+  for(let i=1;i<=n;i++){ out.push('Wk '+i); }
+  return out;
+}
+
+/* ===================== state ===================== */
+let currentRole = 'Editor';
+let spotlightView = 'relevant';
+let lastSpotlightList = [];
+let tk = { tab:'top_rank', timeRange:'30D', sortBy:'svr', page:0, pageSize:20, dataset:[] };
+let expandedRows = {}; // term -> { rows, selected:Set(index), matchOverrides:{} } — F019 inline二级列表, aggregates into the page-level floating bar
+let camp = { step:1, campaignId:null, adGroupId:null, minBid:0.10, rows:[] };
+const addedTracker = {};
+let drawerStack = [];
+let categoryPageState = { id:null, tab:'overview' };
+let sov = { timeRange:'4W', rows:[], sortBy:'sov', filterText:'', page:0, pageSize:10 };
+let sovInitializedFor = null;
+let currentCategoryForSov = null;
+let bpEditDraft = null;
+
+function setRole(v){ currentRole=v; updatePageFloatingBar(); }
+
+/* ===================== overlay / scroll-lock plumbing ===================== */
+function anyOverlayVisible(){
+  return document.getElementById('drawerBackdrop').classList.contains('show')
+    || document.getElementById('campaignModal').classList.contains('show')
+    || document.getElementById('bpEditModal').classList.contains('show');
+}
+function refreshScrollLock(){ document.body.style.overflow = anyOverlayVisible() ? 'hidden' : ''; }
+function openModal(id){ document.getElementById(id).classList.add('show'); refreshScrollLock(); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); refreshScrollLock(); }
+
+/* ===================== Business Profile (F001) ===================== */
+function renderBusinessProfile(){
+  const selected = clusters.filter(c=>c.selected);
+  const names = selected.map(c=>c.name);
+  let summary;
+  if(names.length===0){
+    summary = 'No categories selected — showing all trending topics by default.';
+  } else {
+    const shown = names.slice(0,4);
+    const rest = names.length - shown.length;
+    summary = `Business profile: ${names.length} ${names.length===1?'category':'categories'} — ${shown.join(', ')}${rest>0?` and ${rest} more`:''}.`;
+  }
+  document.getElementById('bpSummaryText').textContent = summary;
+}
+function openBpEditModal(){
+  bpEditDraft = clusters.map(c=>({...c}));
+  renderBpEditModal();
+  openModal('bpEditModal');
+}
+function renderBpEditModal(){
+  document.getElementById('bpEditChips').innerHTML = bpEditDraft.map(c=>`
+    <label class="chip ${c.selected?'selected':''}">
+      <input type="checkbox" ${c.selected?'checked':''} onchange="toggleBpDraft('${c.id}')">
+      <span class="chip-check"></span>
+      <span><span class="chip-title">${c.name}</span><span class="chip-sub">${c.types}</span></span>
+    </label>`).join('');
+  document.getElementById('bpEditCount').textContent = `${bpEditDraft.filter(c=>c.selected).length} of ${bpEditDraft.length} categories selected`;
+}
+function toggleBpDraft(id){ const c=bpEditDraft.find(x=>x.id===id); c.selected=!c.selected; renderBpEditModal(); }
+function bpEditSelectAll(){ bpEditDraft.forEach(c=>c.selected=true); renderBpEditModal(); }
+function cancelBpEdit(){ closeModal('bpEditModal'); }
+function saveBpEdit(){
+  const selectedIds = bpEditDraft.filter(c=>c.selected).map(c=>c.id);
+  localStorage.setItem('gtd_business_profile_v1', JSON.stringify(selectedIds));
+  location.reload();
+}
+function relevantInterests(){ return new Set(clusters.filter(c=>c.selected).map(c=>c.interest)); }
+
+/* ===================== Trending Spotlight (F002/F003) ===================== */
+function populateInterestSelect(){
+  document.getElementById('interestSelect').innerHTML =
+    `<option value="relevant">Relevant (default)</option><option value="ALL">All</option>` +
+    INTERESTS_15.map(code=>`<option value="${code}">${labelize(code)}</option>`).join('');
+}
+function computeSpotlightList(){
+  let list, emptyNote='';
+  if(spotlightView==='relevant'){
+    const interests = relevantInterests();
+    if(interests.size===0){ emptyNote = `<p class="empty-note">No categories selected — showing all trending topics</p>`; list=[...TOPICS]; }
+    else{ list = TOPICS.filter(t=>interests.has(t.interest)); }
+    list = list.map(t=>({...t, growth:growthFor(t.title)})).sort((a,b)=>b.growth-a.growth).slice(0,10);
+  } else if(spotlightView==='ALL'){
+    list = TOPICS.map(t=>({...t, growth:growthFor(t.title)})).sort((a,b)=>b.growth-a.growth).slice(0,10);
+  } else {
+    list = TOPICS.filter(t=>t.interest===spotlightView).map(t=>({...t, growth:growthFor(t.title)})).sort((a,b)=>b.growth-a.growth).slice(0,5);
+  }
+  return {list, emptyNote};
+}
+function renderSpotlight(){
+  const {list, emptyNote} = computeSpotlightList();
+  lastSpotlightList = list;
+  document.getElementById('spotlightEmptyNote').innerHTML = emptyNote;
+  const grid = document.getElementById('spotlightGrid');
+  grid.innerHTML = list.length===0
+    ? `<div class="empty-block">No trending topics found for this interest yet.</div>`
+    : list.map(t=>`
+      <div class="topic-card" onclick='openTopicDrawer(${JSON.stringify(t.id)})'>
+        <div class="topic-thumb" style="background:${thumbGradient(t.title)}"><span class="growth-badge ${t.growth>=0?'pos':'neg'}">${formatPct(t.growth)}</span></div>
+        <div class="topic-body"><div class="topic-title">${t.title}</div><div class="topic-desc">${t.description}</div></div>
+      </div>`).join('');
+}
+
+/* ===================== Trending Category (F005) ===================== */
+function renderMyCategory(){
+  const selectedIds = new Set(clusters.filter(c=>c.selected).map(c=>c.id));
+  const cats = buildCategoriesFromClusters().filter(c=>selectedIds.has(c.clusterId)).sort((a,b)=>b.growth-a.growth);
+  const wrap = document.getElementById('categoryList');
+  wrap.innerHTML = cats.length===0
+    ? `<div class="empty-block">No matching trending categories found for your business profile.</div>`
+    : cats.map(c=>`
+      <div class="cat-row" onclick='openCategoryPage(${JSON.stringify(c.id)})'>
+        <div class="cat-name">${c.label}</div>
+        <div class="cat-metrics">
+          <span class="growth-pill ${c.growth>=0?'pos':'neg'}">${c.growth>=0?'▲':'▼'} ${Math.abs(c.growth).toFixed(1)}%</span>
+          <span class="relvol">Relative volume: ${c.relVolume}</span>
+        </div>
+      </div>`).join('');
+}
+
+/* ===================== Trending Keyword — one-level list (F007-F011) ===================== */
+function loadTabDataset(){ tk.dataset = buildKeywordDataset(tk.tab, 50); expandedRows = {}; }
+function currentFilteredSorted(){
+  let items = tk.dataset.map(it=>{
+    const m = metricsFor(it);
+    const svr = searchVolumeRankFor(it.term);
+    return { ...it, ...m, recommendedCount: recommendedCountFor(it.term), svrMin: svr?svr.min:null, svrMax: svr?svr.max:null };
+  });
+  // v3.4: drop trending keywords with 0 personalized recommendations before sorting/paginating
+  items = items.filter(it=>it.recommendedCount>0);
+  items.sort((a,b)=>{
+    if(tk.sortBy==='weekly') return b.weeklyChange-a.weeklyChange;
+    if(tk.sortBy==='monthly') return b.monthlyChange-a.monthlyChange;
+    return b.svrMax-a.svrMax;
+  });
+  return items;
+}
+function renderKeywordControls(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tk.tab));
+  document.querySelectorAll('.time-pill').forEach(b=>b.classList.toggle('active', b.dataset.range===tk.timeRange));
+  document.getElementById('sortSelect').value = tk.sortBy;
+}
+function kwListHeadHTML(){
+  return `<div class="kw-list-head">
+    <span></span><span>Keyword</span><span>Recommended Keywords</span><span>Search Trend</span><span>Search Volume Rank</span><span>Weekly Change</span><span>Monthly Change</span>
+  </div>`;
+}
+function kwRowHTML(it){
+  // v3.4: every rendered row already has recommendedCount >= 1 (0-hit terms are filtered out in
+  // currentFilteredSorted), so svrMin/svrMax are never null here and the badge never shows "0".
+  const isOpen = !!expandedRows[it.term];
+  const sparkline = sparklineSVG(genSeries(it.term+'-spark', 10, 50, 18));
+  return `<div class="kw-row-wrap">
+    <div class="kw-row">
+      <button class="expand-icon ${isOpen?'open':''}" onclick='toggleRowExpand(${JSON.stringify(it.term)})' aria-label="Expand">${isOpen?'▾':'▸'}</button>
+      <button class="kw-term-cell" onclick='openKeywordFresh(${JSON.stringify(it.term)})'>${it.term}</button>
+      <span class="reco-badge">${it.recommendedCount}</span>
+      <span>${sparkline}</span>
+      <span class="svr-cell">${formatK(it.svrMin)}–${formatK(it.svrMax)}</span>
+      <span class="change-cell ${it.weeklyChange>=0?'pos':'neg'}">${formatPct(it.weeklyChange)}</span>
+      <span class="change-cell ${it.monthlyChange>=0?'pos':'neg'}">${formatPct(it.monthlyChange)}</span>
+    </div>
+    ${renderExpandPanel(it.term)}
+  </div>`;
+}
+function renderKeywordList(reset){
+  if(reset){ tk.page = 0; expandedRows = {}; }
+  const all = currentFilteredSorted();
+  const list = document.getElementById('keywordList');
+  const footer = document.getElementById('keywordFooter');
+  const emptyBlock = document.getElementById('keywordEmpty');
+  if(all.length===0){ list.innerHTML=''; footer.style.display='none'; emptyBlock.style.display='block'; updatePageFloatingBar(); return; }
+  emptyBlock.style.display='none';
+  const shown = all.slice(0, (tk.page+1)*tk.pageSize);
+  list.innerHTML = kwListHeadHTML() + shown.map(kwRowHTML).join('');
+  const done = shown.length>=all.length;
+  footer.style.display='block';
+  footer.textContent = done ? 'No more results' : 'Loading more…';
+  document.getElementById('kwSentinel').dataset.done = done ? '1':'0';
+  updatePageFloatingBar();
+}
+function setTab(tab){ tk.tab=tab; tk.sortBy = tab==='growing'?'monthly':'svr'; loadTabDataset(); renderKeywordControls(); renderKeywordList(true); }
+function setTimeRange(r){ tk.timeRange=r; renderKeywordControls(); renderKeywordList(true); }
+function setSort(v){ tk.sortBy=v; renderKeywordList(true); }
+function setupInfiniteScroll(){
+  const el = document.getElementById('kwSentinel');
+  new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting && el.dataset.done!=='1'){ tk.page++; renderKeywordList(false); } });
+  }, {rootMargin:'200px'}).observe(el);
+}
+
+/* ===================== Trending Keyword — inline二级列表 & page-level Add to Campaign (F015, F019) ===================== */
+function toggleRowExpand(term){
+  if(expandedRows[term]){ delete expandedRows[term]; }
+  else { expandedRows[term] = { rows: getRecoRows(term).map(r=>({...r})), selected:new Set(), matchOverrides:{} }; }
+  renderKeywordList(false);
+}
+function renderExpandPanel(term){
+  const state = expandedRows[term];
+  if(!state) return '';
+  if(state.rows.length===0){
+    return `<div class="kw-expand-panel open"><div class="empty-block">No personalized keyword recommendations for this keyword yet.</div></div>`;
+  }
+  return `<div class="kw-expand-panel open">
+    <div class="kw-expand-title">Recommended Keywords <span class="fcode">F015</span></div>
+    <table class="reco-table"><thead><tr>
+      <th></th><th>Keyword</th>
+      <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"iq")'>IQ</th>
+      <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"searchVolume")'>Search Volume</th>
+      <th>SV Trend</th>
+      <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"competing")'>Competing Products</th>
+      <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"bid")'>Suggested Bid</th>
+      <th>Match Type</th>
+    </tr></thead><tbody>
+    ${state.rows.map((r,i)=>`
+      <tr class="${state.selected.has(i)?'row-selected':''}">
+        <td><input type="checkbox" ${state.selected.has(i)?'checked':''} onchange='toggleExpandRecoRow(${JSON.stringify(term)}, ${i})'></td>
+        <td title="${r.reason}">${r.keyword}</td>
+        <td>${r.iq}</td>
+        <td>${formatK(r.searchVolume)}</td>
+        <td class="${r.svTrendUp?'pos':'neg'}">${r.svTrendUp?'▲':'▼'}</td>
+        <td>${r.competing.toLocaleString()}</td>
+        <td>$${r.bid.toFixed(2)}</td>
+        <td><select onchange='setExpandRecoMatch(${JSON.stringify(term)}, ${i}, this.value)'>
+          ${['Broad','Phrase','Exact'].map(mt=>`<option ${(state.matchOverrides[i]||'Broad')===mt?'selected':''}>${mt}</option>`).join('')}
+        </select></td>
+      </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+function sortExpandReco(term, field){
+  const st = expandedRows[term]; if(!st) return;
+  st.rows.sort((a,b)=>b[field]-a[field]); st.selected.clear();
+  renderKeywordList(false);
+}
+function toggleExpandRecoRow(term, i){
+  const st = expandedRows[term]; if(!st) return;
+  st.selected.has(i) ? st.selected.delete(i) : st.selected.add(i);
+  renderKeywordList(false);
+}
+function setExpandRecoMatch(term, i, v){ const st=expandedRows[term]; if(st) st.matchOverrides[i]=v; }
+function aggregatedSelection(){
+  const out=[];
+  Object.entries(expandedRows).forEach(([term, st])=>{
+    st.selected.forEach(i=>{
+      const r = st.rows[i];
+      out.push({ seedTerm:term, keyword:r.keyword, matchType: st.matchOverrides[i]||r.matchType||'Broad', bid:r.bid });
+    });
+  });
+  return out;
+}
+function cancelPageSelection(){
+  Object.values(expandedRows).forEach(st=>st.selected.clear());
+  renderKeywordList(false);
+}
+function updatePageFloatingBar(){
+  const bar = document.getElementById('pageFloatingBar');
+  if(!bar) return;
+  const items = aggregatedSelection();
+  const n = items.length;
+  if(n===0){ bar.classList.remove('show'); return; }
+  const termCount = Object.values(expandedRows).filter(st=>st.selected.size>0).length;
+  bar.classList.add('show');
+  document.getElementById('pageFloatingCount').textContent = `${n} keyword${n>1?'s':''} selected across ${termCount} trending term${termCount>1?'s':''}`;
+  const btn = document.getElementById('pageAddToCampaignBtn');
+  const isViewer = currentRole==='Viewer';
+  btn.disabled = isViewer;
+  btn.title = isViewer ? "You don't have permission to add keywords" : '';
+}
+
+/* ===================== Drawer stack: Topic (F004) + Keyword (F012-F014) ===================== */
+function showDrawerUI(){ document.getElementById('drawerBackdrop').classList.add('show'); refreshScrollLock(); }
+function hideDrawerUI(){ document.getElementById('drawerBackdrop').classList.remove('show'); refreshScrollLock(); }
+function openDrawer(entry){
+  if(entry.type==='topic' && !entry.navList){ entry.navList = lastSpotlightList.map(t=>t.id); }
+  drawerStack = [entry];
+  renderDrawerTop();
+  showDrawerUI();
+}
+function pushDrawer(entry){ drawerStack.push(entry); renderDrawerTop(); }
+function popDrawer(){ drawerStack.pop(); if(drawerStack.length===0) closeDrawer(); else renderDrawerTop(); }
+function closeDrawer(){ drawerStack=[]; hideDrawerUI(); }
+function renderDrawerTop(){
+  const entry = drawerStack[drawerStack.length-1];
+  if(entry.type==='topic') renderTopicDrawerContent(entry); else renderKeywordDrawerContent(entry);
+  document.getElementById('drawerPanel').scrollTop = 0;
+}
+function openTopicDrawer(id){ openDrawer({type:'topic', id}); }
+function openKeywordFresh(term){ openDrawer({type:'keyword', term, backLabel:null}); }
+function relatedKeywordClick(term, context){
+  if(context==='topic'){ pushDrawer({type:'keyword', term, backLabel:'Topic'}); }
+  else { openDrawer({type:'keyword', term, backLabel:'Category'}); }
+}
+function renderDrawerBackLink(entry){
+  if(!entry.backLabel) return '';
+  return `<button class="back-link" onclick="popDrawer()">‹ Back to ${entry.backLabel}</button>`;
+}
+function renderTopicNav(entry){
+  const idx = entry.navList.indexOf(entry.id);
+  const atStart = idx<=0, atEnd = idx>=entry.navList.length-1;
+  return `<div class="drawer-nav">
+    <button class="nav-btn" ${atStart?'disabled':''} onclick="topicPrevNext(-1)">‹ Prev</button>
+    <span class="nav-pos">${idx+1} / ${entry.navList.length}</span>
+    <button class="nav-btn" ${atEnd?'disabled':''} onclick="topicPrevNext(1)">Next ›</button>
+  </div>`;
+}
+function topicPrevNext(dir){
+  const entry = drawerStack[drawerStack.length-1];
+  const idx = entry.navList.indexOf(entry.id) + dir;
+  if(idx<0 || idx>=entry.navList.length) return;
+  entry.id = entry.navList[idx];
+  renderDrawerTop();
+}
+function renderTopicDrawerContent(entry){
+  const t = TOPICS.find(x=>x.id===entry.id);
+  const growth = growthFor(t.title);
+  const series = genSeries(t.title, 12, 50, 20);
+  const months = monthLabels(12);
+  const pins = genPins(t.title, 6);
+  const related = genRelatedKeywords(t.title);
+  document.getElementById('drawerContent').innerHTML = `
+    ${renderTopicNav(entry)}
+    <div class="modal-head">
+      <div><h2>${t.title}</h2><p class="modal-sub">${t.description}</p></div>
+      <button class="icon-btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="growth-line">Growth (MoM): <b class="${growth>=0?'pos':'neg'}">${formatPct(growth)}</b></div>
+    <div class="section-label">Trend</div>
+    ${svgLineChart({series, months, uid:'topic-'+t.id})}
+    <div class="section-label">Top Pins <span style="text-transform:none;font-weight:400">(up to 6)</span></div>
+    <div class="pin-grid">${pinGridHTML(pins)}</div>
+    <div class="pin-credit">Powered by Pinterest</div>
+    <div class="section-label">Related Keywords <span class="fcode">F017</span></div>
+    ${related.length? `<div class="tag-list">${related.map(k=>`<button class="keyword-chip" onclick='relatedKeywordClick(${JSON.stringify(k)}, "topic")'>${k}</button>`).join('')}</div>` : `<div class="empty-block">No related keywords available yet.</div>`}
+  `;
+}
+function renderKeywordDrawerContent(entry){
+  const term = entry.term;
+  const item = tk.dataset.find(x=>x.term===term) || {term, cluster:'', tab:tk.tab};
+  const metrics = metricsFor(item, tk.timeRange);
+  const recommendedCount = recommendedCountFor(term);
+  const series = genSeries(term, 12, 50, 20);
+  const months = monthLabels(12);
+  const highlightFrom = tk.timeRange==='7D' ? 11 : (tk.timeRange==='30D' ? 10 : 9);
+  const demo = genDemographics(term);
+  const pins4 = genPins(term, 4);
+  document.getElementById('drawerContent').innerHTML = `
+    ${renderDrawerBackLink(entry)}
+    <div class="modal-head">
+      <div><h2>${term}${recommendedCount>0?`<span class="reco-badge inline">${recommendedCount} recommended</span>`:''}</h2><p class="modal-sub">Pinterest search term · lightweight detail (v3.3 — no keyword recommendation table here, see Trending Keyword list)</p></div>
+      <button class="icon-btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="growth-line">Weekly Change <b class="${metrics.weeklyChange>=0?'pos':'neg'}">${formatPct(metrics.weeklyChange)}</b> · Monthly Change <b class="${metrics.monthlyChange>=0?'pos':'neg'}">${formatPct(metrics.monthlyChange)}</b></div>
+    <div class="section-label">Trend (12 Months)</div>
+    ${svgLineChart({series, months, highlightFrom, uid:'kw-'+seedFromString(term)})}
+    <div class="chart-caption">Shaded area approximates the selected ${tk.timeRange} range within the fixed 12-month view.</div>
+    <div class="section-label">Audience</div>
+    <div class="demo-grid">${ageBarsHTML(demo.age)}${genderDonutHTML(demo.gender)}</div>
+    <div class="section-label">Top Pins</div>
+    <div class="pin-grid" id="kwPinGrid">${pinGridHTML(pins4)}</div>
+    <button class="text-btn" id="pinShowMoreBtn" onclick='expandPins(${JSON.stringify(term)})'>Show more (up to 8)</button>
+    <div class="pin-credit">Powered by Pinterest</div>
+    <div class="info-note">ⓘ To view recommendations or add this keyword to a Campaign, close this drawer and expand this term's row in the Trending Keyword list below (F019). If this term isn't in the current 50-keyword list, that isn't possible yet — see PRD open item 16.</div>
+  `;
+}
+function expandPins(term){
+  document.getElementById('kwPinGrid').innerHTML = pinGridHTML(genPins(term, 8));
+  document.getElementById('pinShowMoreBtn').style.display='none';
+}
+
+/* ===================== Trending Category detail page (F006) + Overview tab ===================== */
+function openCategoryPage(id){
+  categoryPageState = {id, tab:'overview'};
+  document.getElementById('dashboardPage').style.display='none';
+  document.getElementById('categoryPage').style.display='block';
+  window.scrollTo(0,0);
+  renderCategoryPage();
+}
+function closeCategoryPage(){
+  document.getElementById('categoryPage').style.display='none';
+  document.getElementById('dashboardPage').style.display='block';
+  window.scrollTo(0,0);
+}
+function setCategoryTab(tab){ categoryPageState.tab=tab; renderCategoryPage(); }
+function renderCategoryPage(){
+  const c = buildCategoriesFromClusters().find(x=>x.id===categoryPageState.id);
+  document.getElementById('catPageTitle').textContent = c.label;
+  document.getElementById('catPageGrowth').innerHTML = `<span class="growth-pill ${c.growth>=0?'pos':'neg'}">${c.growth>=0?'▲':'▼'} ${Math.abs(c.growth).toFixed(1)}%</span>`;
+  document.querySelectorAll('.page-tab').forEach(btn=>btn.classList.toggle('active', btn.dataset.tab===categoryPageState.tab));
+  document.getElementById('categoryOverviewTab').style.display = categoryPageState.tab==='overview' ? 'block':'none';
+  document.getElementById('categoryBrandSovTab').style.display = categoryPageState.tab==='brand_sov' ? 'block':'none';
+  if(categoryPageState.tab==='overview') renderCategoryOverviewTab(c); else renderCategoryBrandSovTab(c);
+}
+function renderCategoryOverviewTab(c){
+  const series = genSeries(c.label, 12, 55, 16);
+  const predicted = genSeries(c.label+'-pred', 3, series[series.length-1], 10);
+  const months = [...monthLabels(12), ...futureMonthLabels(3)];
+  const demo = FORCE_NO_DEMO.has(c.label) ? null : genDemographics(c.label);
+  const related = genRelatedKeywords(c.label);
+  document.getElementById('categoryOverviewTab').innerHTML = `
+    <div class="section-label">Trend &amp; Forecast</div>
+    ${svgLineChart({series, predicted, months, uid:'catpg-'+c.id})}
+    <div class="chart-legend"><span><i style="border-color:var(--blue)"></i>Historical</span><span><i style="border-color:var(--teal);border-style:dashed"></i>Predicted (next 90 days)</span></div>
+    <div class="section-label">Audience</div>
+    ${demo ? `<div class="demo-grid">${ageBarsHTML(demo.age)}${genderDonutHTML(demo.gender)}</div>` : `<div class="empty-block">No audience data available for this category.</div>`}
+    <div class="pin-note">ⓘ Pin samples aren't shown here — pending confirmation that the Pinterest category-details API returns a pins field (see PRD open item #5).</div>
+    <div class="section-label">Related Keywords <span class="fcode">F017</span></div>
+    ${related.length? `<div class="tag-list">${related.map(k=>`<button class="keyword-chip" onclick='relatedKeywordClick(${JSON.stringify(k)}, "category")'>${k}</button>`).join('')}</div>` : `<div class="empty-block">No related keywords available yet.</div>`}
+  `;
+}
+
+/* ===================== Trending Category detail page — Brand SOV tab (F018) ===================== */
+function loadSov(categoryLabel){ sov.rows = genBrandSov(categoryLabel, sov.timeRange); }
+function sovFilteredSorted(){
+  const rows = sov.rows.filter(r=>r.name.toLowerCase().includes(sov.filterText.toLowerCase()));
+  const fieldMap = {count:'productCount', sov:'sov', ads:'ads', product:'product', top10:'top10'};
+  const field = fieldMap[sov.sortBy] || 'sov';
+  return [...rows].sort((a,b)=>b[field]-a[field]);
+}
+function renderCategoryBrandSovTab(c){
+  currentCategoryForSov = c;
+  if(sovInitializedFor !== c.id){ sov = {timeRange:'4W', rows:[], sortBy:'sov', filterText:'', page:0, pageSize:10}; sovInitializedFor = c.id; }
+  loadSov(c.label);
+  const panel = document.getElementById('categoryBrandSovTab');
+  panel.innerHTML = `
+    <div class="sov-toolbar">
+      <div class="control-group"><span>Time range</span>
+        <select onchange="setSovRange(this.value)">
+          <option value="4W" ${sov.timeRange==='4W'?'selected':''}>Last 4 Weeks</option>
+          <option value="12W" ${sov.timeRange==='12W'?'selected':''}>Last 12 Weeks</option>
+          <option value="6M" ${sov.timeRange==='6M'?'selected':''}>Last 6 Months</option>
+        </select>
+      </div>
+    </div>
+    <div class="info-note">ⓘ Scoped to "${c.label}" as the sole Pinterest search term for this category (adapted from 26Q3-Sprint3-Brand-SOV.md — see PRD open item on Brand SOV category adaptation).</div>
+    <div class="section-label" style="margin-top:22px">Top 10 Brand SOV</div>
+    <div id="sovChartWrap"></div>
+    <div class="section-label">All Brands</div>
+    <div class="sov-table-toolbar">
+      <input type="text" placeholder="Filter by brand name" oninput="setSovFilter(this.value)" value="${sov.filterText}">
+      <button class="btn-secondary" onclick="exportSov()">Export</button>
+    </div>
+    <div id="sovTableWrap"></div>
+    <div class="pin-credit">Powered by Pinterest (crawled search results)</div>
+  `;
+  renderSovChart();
+  renderSovTable();
+}
+function renderSovChart(){
+  const top10 = sov.rows.filter(r=>r.name!=='Unbranded').sort((a,b)=>b.sov-a.sov).slice(0,10);
+  const points = sovPointsFor(sov.timeRange);
+  const labels = sovLabelsFor(sov.timeRange);
+  const seriesList = top10.map((b,i)=>({name:b.name, color:SOV_COLORS[i%SOV_COLORS.length], values: genSovSeries(b.name+'-'+categoryPageState.id+'-'+sov.timeRange, points)}));
+  const wrap = document.getElementById('sovChartWrap');
+  if(seriesList.length===0){ wrap.innerHTML = `<div class="empty-block">No brand data available for this period.</div>`; return; }
+  wrap.innerHTML = svgMultiLineChart({seriesList, labels}) +
+    `<div class="sov-legend">${seriesList.map(s=>`<span><span class="dot" style="background:${s.color}"></span>${s.name} (${s.values[s.values.length-1]}%)</span>`).join('')}</div>`;
+}
+function renderSovTable(){
+  const filtered = sovFilteredSorted();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/sov.pageSize));
+  sov.page = Math.min(sov.page, totalPages-1);
+  const pageRows = filtered.slice(sov.page*sov.pageSize, (sov.page+1)*sov.pageSize);
+  const wrap = document.getElementById('sovTableWrap');
+  if(filtered.length===0){ wrap.innerHTML = `<div class="empty-block">No brands found matching your filter.</div>`; return; }
+  wrap.innerHTML = `<table class="reco-table"><thead><tr>
+      <th>Brand Name</th>
+      <th class="sortable" onclick="setSovSort('count')">Product Count</th>
+      <th class="sortable" onclick="setSovSort('sov')">Brand SOV</th>
+      <th class="sortable" onclick="setSovSort('ads')">Ads SOV</th>
+      <th class="sortable" onclick="setSovSort('product')">Product pin SOV</th>
+      <th class="sortable" onclick="setSovSort('top10')">Top 10 SOV</th>
+    </tr></thead><tbody>
+    ${pageRows.map(r=>`<tr><td>${r.name}</td><td>${r.productCount.toLocaleString()}</td><td>${r.sov.toFixed(1)}%</td><td>${r.ads.toFixed(1)}%</td><td>${r.product.toFixed(1)}%</td><td>${r.top10.toFixed(1)}%</td></tr>`).join('')}
+    </tbody></table>
+    <div class="pagination">
+      <button class="btn-secondary" ${sov.page===0?'disabled':''} onclick="sovPage(-1)">‹ Prev</button>
+      <span>Page ${sov.page+1} of ${totalPages}</span>
+      <button class="btn-secondary" ${sov.page>=totalPages-1?'disabled':''} onclick="sovPage(1)">Next ›</button>
+    </div>`;
+}
+function setSovSort(field){ sov.sortBy=field; renderSovTable(); }
+function setSovFilter(v){ sov.filterText=v; sov.page=0; renderSovTable(); }
+function sovPage(delta){ sov.page+=delta; renderSovTable(); }
+function setSovRange(v){ sov.timeRange=v; sov.page=0; loadSov(currentCategoryForSov.label); renderSovChart(); renderSovTable(); }
+function exportSov(){ toast(`Exported ${sovFilteredSorted().length} rows as CSV (mocked).`, 'info'); }
+
+/* ===================== Add to Campaign wizard (F016) ===================== */
+function openCampaignModal(){
+  const items = aggregatedSelection();
+  if(currentRole==='Viewer' || items.length===0) return;
+  camp = { step:1, campaignId:null, adGroupId:null, minBid:0.10,
+    rows: items.map(it=>({ keyword:it.keyword, matchType:it.matchType, bid:it.bid })) };
+  renderCampaignStep();
+  openModal('campaignModal');
+}
+function renderCampaignStep(){
+  document.querySelectorAll('.step-dot').forEach((d,idx)=>{
+    d.classList.toggle('active', idx+1===camp.step);
+    d.classList.toggle('done', idx+1<camp.step);
+  });
+  const body = document.getElementById('campaignStepBody');
+  if(camp.step===1){
+    body.innerHTML = `<div class="section-label">Select Campaign</div><div class="list-select">
+      ${sortedCampaigns().map(c=>`
+        <label class="list-row ${camp.campaignId===c.id?'selected':''}">
+          <input type="radio" name="campaignPick" ${camp.campaignId===c.id?'checked':''} onchange="pickCampaign('${c.id}')">
+          <span class="row-name">${c.name}</span>
+          <span class="status-badge ${c.status.toLowerCase()}">${c.status}</span>
+        </label>`).join('')}
+      </div>`;
+  } else if(camp.step===2){
+    const c = CAMPAIGNS.find(x=>x.id===camp.campaignId);
+    body.innerHTML = c.adGroups.length===0
+      ? `<div class="section-label">Select Ad Group</div><div class="empty-block">No available Ad Groups in this Campaign</div>`
+      : `<div class="section-label">Select Ad Group</div><div class="list-select">
+        ${c.adGroups.map(ag=>`
+          <label class="list-row ${camp.adGroupId===ag.id?'selected':''}">
+            <input type="radio" name="adGroupPick" ${camp.adGroupId===ag.id?'checked':''} onchange="pickAdGroup('${ag.id}')">
+            <span class="row-name">${ag.name}</span>
+          </label>`).join('')}
+        </div>${c.adGroups.length===1?'<p class="empty-note">Only one Ad Group available — auto-selected.</p>':''}`;
+  } else {
+    body.innerHTML = `<div class="section-label">Confirm Match Type &amp; Bid</div>
+      <div class="batch-row">
+        <span>Set all Match Type:</span>
+        <select onchange="batchSetMatch(this.value)">
+          <option value="">—</option><option>Broad</option><option>Phrase</option><option>Exact</option>
+        </select>
+        <span>Set all Bid:</span>
+        <input type="number" step="0.01" min="0" placeholder="0.00" onchange="batchSetBid(this.value)">
+      </div>
+      <table class="reco-table"><thead><tr><th>Keyword</th><th>Match Type</th><th>Bid</th></tr></thead><tbody>
+        ${camp.rows.map((r,i)=>`
+          <tr><td>${r.keyword}</td>
+            <td><select onchange="camp.rows[${i}].matchType=this.value; renderCampaignStep()">
+              ${['Broad','Phrase','Exact'].map(mt=>`<option ${r.matchType===mt?'selected':''}>${mt}</option>`).join('')}
+            </select></td>
+            <td><input type="number" step="0.01" value="${r.bid.toFixed(2)}" onchange="setRowBid(${i}, this.value)">
+              ${r.bid<camp.minBid?`<span class="bid-error">Bid must be at least $${camp.minBid.toFixed(2)}</span>`:''}</td>
+          </tr>`).join('')}
+      </tbody></table>`;
+  }
+  updateCampaignNav();
+}
+function pickCampaign(id){ camp.campaignId=id; const c=CAMPAIGNS.find(x=>x.id===id); camp.adGroupId = c.adGroups.length===1 ? c.adGroups[0].id : null; renderCampaignStep(); }
+function pickAdGroup(id){ camp.adGroupId=id; renderCampaignStep(); }
+function batchSetMatch(v){ if(!v) return; camp.rows.forEach(r=>r.matchType=v); renderCampaignStep(); }
+function batchSetBid(v){ const n=parseFloat(v); if(isNaN(n)) return; camp.rows.forEach(r=>r.bid=n); renderCampaignStep(); }
+function setRowBid(i,v){ camp.rows[i].bid = parseFloat(v)||0; renderCampaignStep(); }
+function updateCampaignNav(){
+  const backBtn=document.getElementById('campBack'), nextBtn=document.getElementById('campNext');
+  backBtn.style.visibility = camp.step===1 ? 'hidden' : 'visible';
+  let ok = true;
+  if(camp.step===1) ok = !!camp.campaignId;
+  if(camp.step===2) ok = !!camp.adGroupId;
+  if(camp.step===3) ok = camp.rows.every(r=>r.bid>=camp.minBid);
+  nextBtn.disabled = !ok;
+  nextBtn.textContent = camp.step===3 ? 'Confirm' : 'Next';
+}
+function campBack(){ if(camp.step>1){ camp.step--; renderCampaignStep(); } }
+function campNext(){ if(camp.step<3){ camp.step++; renderCampaignStep(); } else { confirmAddToCampaign(); } }
+function confirmAddToCampaign(){
+  const agId = camp.adGroupId;
+  addedTracker[agId] = addedTracker[agId] || new Set();
+  let added=0, skipped=0;
+  camp.rows.forEach(r=>{
+    const key = r.keyword+'|'+r.matchType;
+    if(addedTracker[agId].has(key)) skipped++; else { addedTracker[agId].add(key); added++; }
+  });
+  const c = CAMPAIGNS.find(x=>x.id===camp.campaignId);
+  const ag = c.adGroups.find(a=>a.id===agId);
+  closeModal('campaignModal');
+  Object.values(expandedRows).forEach(st=>st.selected.clear());
+  renderKeywordList(false);
+  if(added===0) toast('All selected keywords already exist in this Ad Group', 'warn');
+  else if(skipped===0) toast(`Successfully added ${added} keyword${added>1?'s':''} to ${ag.name}`, 'success');
+  else toast(`${added} keywords added, ${skipped} skipped (already exist)`, 'warn');
+}
+
+/* ===================== toast ===================== */
+function toast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type||'success'}`;
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(()=>t.classList.remove('show'), 4200);
+}
+
+/* ===================== keyboard ===================== */
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  if(document.getElementById('campaignModal').classList.contains('show')){ closeModal('campaignModal'); return; }
+  if(document.getElementById('bpEditModal').classList.contains('show')){ cancelBpEdit(); return; }
+  if(document.getElementById('drawerBackdrop').classList.contains('show')){ closeDrawer(); return; }
+});
+
+/* ===================== init ===================== */
+renderBusinessProfile();
+populateInterestSelect();
+renderSpotlight();
+renderMyCategory();
+loadTabDataset();
+renderKeywordControls();
+renderKeywordList(true);
+setupInfiniteScroll();
+</script>
+</body>
+</html>

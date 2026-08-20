@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Social Momentum — Prototype Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#003873; --blue:#0A6FE8; --grey:#EEF0F2; --teal:#08C5A2; --border:#E1E6EC; --text:#1C2733; --text-muted:#5B6B7C; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#F7F9FC;font-family:'Poppins',system-ui,sans-serif;color:var(--text)}
+  .logo{font-weight:700;font-size:19px;color:var(--navy);display:flex;align-items:center;gap:6px;padding:20px 24px}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--blue);display:inline-block}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 24px 80px}
+  h1{font-size:24px;color:var(--navy);margin:10px 0 4px}
+  .subtitle{color:var(--text-muted);font-size:14px;margin:0 0 28px}
+  .card{display:block;background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 22px;margin-bottom:16px;text-decoration:none;color:inherit;box-shadow:0 2px 10px rgba(0,56,115,.07);transition:.15s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,56,115,.12)}
+  .card-title{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .fcode{font-size:10.5px;font-weight:600;color:var(--text-muted);background:var(--grey);border-radius:20px;padding:2px 8px}
+  .card-desc{font-size:13px;color:var(--text-muted);line-height:1.5}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--text-muted);margin:26px 0 10px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="logo"><span class="dot"></span>pacvue</div>
+<div class="wrap">
+  <h1>Social Momentum — Prototype Index</h1>
+  <p class="subtitle">Interactive HTML prototypes for 26Q3. All data is mocked; nothing here connects to a real backend.</p>
+
+  <div class="section-label">Global Trend</div>
+  <a class="card" href="26Q3-Sprint2-Global-Trend-Dashboard.html">
+    <div class="card-title">Global Trend Dashboard <span class="fcode">26Q3-Sprint2-Global-Trend-Dashboard.md</span></div>
+    <div class="card-desc">Business Profile, Trending Spotlight, My Category (incl. Brand SOV tab) and Trending Keyword — the personalized trend discovery dashboard.</div>
+  </a>
+
+  <div class="section-label">Research Group</div>
+  <a class="card" href="26Q3-Sprint1-Research-Group-List.html">
+    <div class="card-title">Research Group — List <span class="fcode">26Q3-Sprint1-Research-Group.md</span></div>
+    <div class="card-desc">Create, search, filter, edit and delete private keyword research groups; each card surfaces an AI-generated status summary.</div>
+  </a>
+  <a class="card" href="26Q3-Sprint1-Research-Group-Detail.html?group=bakeware-core">
+    <div class="card-title">Research Group — Detail <span class="fcode">+ 26Q3-Sprint3-Brand-SOV.md</span></div>
+    <div class="card-desc">Keyword Analysis (Related Keywords Performance, Active Keywords Optimization, New Keyword Recommendations, Add to Campaign) plus the Brand SOV tab.</div>
+  </a>
+</div>
+</body>
+</html>

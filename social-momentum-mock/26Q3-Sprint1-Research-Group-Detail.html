@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Research Group Detail — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#003873; --blue:#0A6FE8; --grey:#EEF0F2; --orange:#FF8041;
+    --sky:#AEDFFF; --teal:#08C5A2; --white:#FFFFFF; --red:#E5484D; --purple:#7B61FF;
+    --text:#1C2733; --text-muted:#5B6B7C; --border:#E1E6EC;
+    --radius:14px; --shadow:0 2px 10px rgba(0,56,115,.07),0 1px 2px rgba(0,56,115,.05);
+    --font:'Poppins',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#F7F9FC;font-family:var(--font);color:var(--text);}
+  a{color:var(--blue)}
+  .proto-banner{background:var(--navy);color:#fff;text-align:center;font-size:12.5px;padding:7px 12px;letter-spacing:.2px}
+  .proto-banner b{color:var(--sky)}
+  .topbar{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:40}
+  .logo{font-weight:700;font-size:19px;color:var(--navy);display:flex;align-items:center;gap:6px}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--blue);display:inline-block}
+  .topnav{display:flex;gap:4px;margin-left:22px}
+  .topnav a{font-size:13px;color:var(--text-muted);text-decoration:none;padding:8px 14px;border-radius:8px}
+  .topnav a.active{background:var(--grey);color:var(--navy);font-weight:600}
+  .topbar-left{display:flex;align-items:center}
+  .role-wrap{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted)}
+  .role-wrap select{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--text)}
+  .page{max-width:1180px;margin:0 auto;padding:24px 24px 80px}
+  .crumbs{font-size:12.5px;color:var(--text-muted);margin-bottom:6px}
+  .crumbs strong{color:var(--navy)}
+  .back-link{background:none;border:none;color:var(--blue);font-family:var(--font);font-size:13px;cursor:pointer;padding:0 0 10px;display:block}
+  .fcode{font-size:10.5px;font-weight:600;color:var(--text-muted);background:var(--grey);border-radius:20px;padding:2px 8px;letter-spacing:.3px}
+
+  .detail-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px}
+  .detail-title-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .detail-title-row h1{margin:0;font-size:24px;color:var(--navy)}
+  .head-actions{display:flex;gap:8px}
+  .icon-btn-sm{border:none;background:var(--grey);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:13px;color:var(--text-muted)}
+  .icon-btn-sm:hover{background:#E1E9F5;color:var(--navy)}
+  .status-badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
+  .status-badge.active{background:#E4F9F5;color:#068C71}
+  .status-badge.paused{background:var(--grey);color:var(--text-muted)}
+  .detail-tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 20px}
+  .rg-tag{font-size:11px;background:var(--grey);color:var(--text);padding:3px 10px;border-radius:20px}
+
+  .page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:6px 0 0}
+  .page-tab{border:none;background:none;font-family:var(--font);font-size:14px;color:var(--text-muted);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
+  .page-tab.active{color:var(--navy);font-weight:600;border-bottom-color:var(--blue)}
+  .tab-panel{padding-top:0}
+
+  .module{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:22px 24px;margin-bottom:22px}
+  .module-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+  .module-head h2{font-size:16px;margin:0;color:var(--navy);font-weight:600;display:flex;align-items:center;gap:8px}
+  .module-sub{font-size:12px;color:var(--text-muted);margin:0 0 14px}
+  .control-group{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-muted)}
+  select{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--text)}
+
+  .empty-block{padding:28px;text-align:center;color:var(--text-muted);font-size:13.5px;background:var(--grey);border-radius:12px}
+  .info-note{font-size:12px;color:var(--text-muted);background:var(--grey);border-radius:8px;padding:8px 12px;margin-top:10px}
+
+  table.dtable{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.dtable th{text-align:left;font-size:11px;color:var(--text-muted);font-weight:600;padding:9px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+  table.dtable th.sortable{cursor:pointer}
+  table.dtable th.sortable:hover{color:var(--blue)}
+  table.dtable td{padding:9px 8px;border-bottom:1px solid #F0F3F7;color:var(--text);vertical-align:middle}
+  table.dtable tr.row-selected{background:rgba(10,111,232,.05)}
+  table.dtable tr.clickable{cursor:pointer}
+  table.dtable tr.clickable:hover{background:#FAFBFD}
+  .pos{color:#068C71} .neg{color:#B23237} .flat{color:var(--text-muted)}
+  .sparkline{display:block}
+
+  .tag-core{font-size:10px;font-weight:600;background:#E4F9F5;color:#068C71;padding:2px 8px;border-radius:20px;margin-left:6px}
+  .tag-extended{font-size:10px;font-weight:600;background:var(--grey);color:var(--text-muted);padding:2px 8px;border-radius:20px;margin-left:6px}
+  .tag-hot{font-size:10px;font-weight:600;background:#FFF0E8;color:#C4571A;padding:2px 8px;border-radius:20px}
+  .tag-longtail{font-size:10px;font-weight:600;background:#EEF0F2;color:var(--text-muted);padding:2px 8px;border-radius:20px}
+  .tag-tentpole{font-size:10px;font-weight:600;background:#F1ECFF;color:#5B3FD6;padding:2px 8px;border-radius:20px}
+  .tag-new{font-size:10px;font-weight:700;background:var(--orange);color:#fff;padding:2px 8px;border-radius:20px}
+  .suggested-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+  .suggested-badge.conservative{background:#E9F1FF;color:var(--blue)}
+  .suggested-badge.aggressive{background:#FCEAEA;color:#B23237}
+  .event-peak{font-size:11px;color:var(--text-muted)}
+  .days-until{font-size:11px;font-weight:600;color:var(--red)}
+
+  .pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font-size:12.5px;color:var(--text-muted)}
+  .btn-primary{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer}
+  .btn-primary:disabled{background:#7C9CBF;cursor:not-allowed}
+  .btn-secondary{background:#fff;color:var(--navy);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-family:var(--font);font-size:13px;cursor:pointer}
+  .btn-secondary:disabled{opacity:.45;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:8px;padding:8px 16px;font-family:var(--font);font-size:13px;cursor:pointer}
+
+  .floating-bar{position:sticky;bottom:16px;margin:18px auto 0;max-width:640px;background:var(--navy);color:#fff;padding:12px 22px;display:none;align-items:center;justify-content:space-between;border-radius:12px;box-shadow:0 10px 30px rgba(0,20,50,.3)}
+  .floating-bar.show{display:flex}
+  .floating-bar .fb-actions{display:flex;gap:10px}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,30,60,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:100}
+  .modal-overlay.show{display:flex}
+  #campaignModal{z-index:110}
+  .modal-box{background:#fff;border-radius:16px;width:100%;max-width:720px;padding:26px 28px 22px;box-shadow:0 20px 60px rgba(0,20,50,.25)}
+  .modal-box.narrow{max-width:600px}
+  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .modal-head h2{margin:0;font-size:19px;color:var(--navy)}
+  .modal-sub{margin:4px 0 0;font-size:12.5px;color:var(--text-muted)}
+  .icon-btn{border:none;background:var(--grey);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--text-muted);flex:none}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--text-muted);margin:20px 0 10px;text-transform:uppercase}
+  .chart-svg{display:block}
+
+  .stepper{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:18px}
+  .step-dot{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-muted)}
+  .step-dot span{width:26px;height:26px;border-radius:50%;background:var(--grey);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .step-dot label{font-size:10.5px}
+  .step-dot.active span{background:var(--blue);color:#fff}
+  .step-dot.active label{color:var(--navy);font-weight:600}
+  .step-dot.done span{background:var(--teal);color:#fff}
+  .step-line{width:48px;height:2px;background:var(--border)}
+  .list-select{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto}
+  .list-row{display:flex;align-items:center;gap:10px;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer}
+  .list-row.selected{border-color:var(--blue);background:rgba(10,111,232,.05)}
+  .row-name{flex:1;font-size:13px}
+  .batch-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text-muted);margin-bottom:12px;flex-wrap:wrap}
+  .batch-row input{width:90px;font-family:var(--font);border:1px solid var(--border);border-radius:6px;padding:5px 8px}
+  .bid-error{display:block;color:var(--red);font-size:10.5px;margin-top:3px}
+  .modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--border)}
+  .modal-footer .footer-right{display:flex;gap:10px}
+  .modal-footer .btn-ghost{color:var(--text-muted);border-color:var(--border)}
+
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(0,30,60,.45);display:none;z-index:100}
+  .drawer-backdrop.show{display:block}
+  .drawer-panel{position:fixed;top:0;right:0;bottom:0;width:min(520px,92vw);background:#fff;box-shadow:-16px 0 40px rgba(0,20,50,.2);overflow-y:auto;padding:26px 28px 24px;transform:translateX(100%);transition:transform .25s ease}
+  .drawer-backdrop.show .drawer-panel{transform:translateX(0)}
+  .campaign-card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .campaign-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .campaign-card-head b{font-size:13.5px;color:var(--navy)}
+  .campaign-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .campaign-metric label{font-size:10px;color:var(--text-muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+
+  .toast{position:fixed;right:22px;bottom:22px;background:#fff;border-left:4px solid var(--teal);box-shadow:0 8px 24px rgba(0,20,50,.18);border-radius:10px;padding:13px 18px;font-size:13px;max-width:340px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;z-index:200}
+  .toast.show{transform:translateY(0);opacity:1}
+  .toast.warn{border-left-color:var(--orange)}
+  .toast.info{border-left-color:var(--blue)}
+
+  .sov-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .sov-legend{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:12px;font-size:12px;color:var(--text-muted)}
+  .sov-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+  .sov-table-toolbar{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px;flex-wrap:wrap;gap:10px}
+  .sov-table-toolbar input{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;width:220px}
+</style>
+</head>
+<body>
+
+<div class="proto-banner">原型对照 <b>26Q3-Sprint1-Research-Group.md v1.0</b> + <b>26Q3-Sprint3-Brand-SOV.md v1.0</b> · 可点击交互 Prototype，全部数据为模拟数据</div>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo"><span class="dot"></span>pacvue</div>
+    <div class="topnav">
+      <a href="26Q3-Sprint2-Global-Trend-Dashboard.html">Global Trend</a>
+      <a href="26Q3-Sprint1-Research-Group-List.html" class="active">Research Group</a>
+    </div>
+  </div>
+  <div class="role-wrap">
+    <span>Viewing as:</span>
+    <select id="roleSelect" onchange="setRole(this.value)">
+      <option>Account Admin</option>
+      <option selected>Editor</option>
+      <option>Viewer</option>
+    </select>
+  </div>
+</div>
+
+<div class="page">
+  <div class="crumbs">Cross Retailer - Tools / Social Momentum / Research Group / <strong id="crumbName"></strong></div>
+  <button class="back-link" onclick="location.href='26Q3-Sprint1-Research-Group-List.html'">‹ Back to Research Group</button>
+
+  <div class="detail-head">
+    <div class="detail-title-row">
+      <h1 id="groupTitle"></h1>
+      <span id="groupStatusBadge"></span>
+    </div>
+    <div class="head-actions" id="headActions">
+      <button class="icon-btn-sm" title="Edit" onclick="openEditModal()">✎</button>
+      <button class="icon-btn-sm" title="Delete" onclick="openDeleteModal()">🗑</button>
+    </div>
+  </div>
+  <div class="detail-tags" id="groupTags"></div>
+
+  <div class="page-tabs">
+    <button class="page-tab" data-tab="keyword_analysis" onclick="setDetailTab('keyword_analysis')">Keyword Analysis</button>
+    <button class="page-tab" data-tab="brand_sov" onclick="setDetailTab('brand_sov')">Brand SOV <span class="fcode">Sprint3</span></button>
+  </div>
+
+  <div class="tab-panel" id="keywordAnalysisTab" style="display:none">
+    <!-- Module A: Related Keywords Performance -->
+    <section class="module">
+      <div class="module-head">
+        <h2>Related Keywords Performance <span class="fcode">F007 · F009</span></h2>
+        <div class="control-group">
+          <span>Sort by</span>
+          <select id="perfSort" onchange="setPerfSort(this.value)">
+            <option value="mentions">Mentions</option>
+            <option value="growth">Growth Rate</option>
+          </select>
+        </div>
+      </div>
+      <p class="module-sub" id="perfCountLabel"></p>
+      <div id="perfTableWrap"></div>
+      <div class="pagination" id="perfPagination"></div>
+    </section>
+
+    <!-- Module B1: Active Keywords Optimization -->
+    <section class="module">
+      <div class="module-head">
+        <h2>Active Keywords Optimization <span class="fcode">F010 · F011</span></h2>
+      </div>
+      <p class="module-sub">Keywords already live on Amazon where Pinterest signal is rising and ROAS is beating your category average — click a keyword to see campaign-level performance.</p>
+      <div id="activeOptTableWrap"></div>
+    </section>
+
+    <!-- Module B2: New Keyword Recommendations -->
+    <section class="module">
+      <div class="module-head">
+        <h2>New Keyword Recommendations <span class="fcode">F012</span></h2>
+      </div>
+      <p class="module-sub">Hot, Long-tail and Tentpole Event opportunities not yet in your Amazon account.</p>
+      <div id="newRecsTableWrap"></div>
+      <div class="floating-bar" id="floatingBar">
+        <span id="floatingCount"></span>
+        <div class="fb-actions">
+          <button class="btn-ghost" onclick="clearSelection()">Clear</button>
+          <button class="btn-primary" id="addToCampaignBtn" onclick="openCampaignModal()">Add to Campaign</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tab-panel" id="brandSovTab" style="display:none">
+    <section class="module">
+      <div class="module-head">
+        <h2>Brand SOV <span class="fcode">Sprint3 · F006-F011</span></h2>
+      </div>
+      <div class="sov-toolbar">
+        <div class="control-group"><span>Keyword</span>
+          <select id="sovKeywordSelect" onchange="setSovKeyword(this.value)"></select>
+        </div>
+        <div class="control-group"><span>Time range</span>
+          <select onchange="setSovRange(this.value)">
+            <option value="4W">Last 4 Weeks</option>
+            <option value="12W">Last 12 Weeks</option>
+            <option value="6M">Last 6 Months</option>
+          </select>
+        </div>
+      </div>
+      <div class="section-label">Top 10 Brand SOV</div>
+      <div id="sovChartWrap"></div>
+      <div class="section-label">All Brands</div>
+      <div class="sov-table-toolbar">
+        <input type="text" placeholder="Filter by brand name" oninput="setSovFilter(this.value)">
+        <button class="btn-secondary" onclick="exportSov()">Export</button>
+      </div>
+      <div id="sovTableWrap"></div>
+      <div class="info-note">Powered by Pinterest (crawled search results) · Data source: 26Q3-Sprint3-Brand-SOV.md</div>
+    </section>
+  </div>
+</div>
+
+<!-- Active Keyword campaign detail drawer -->
+<div class="drawer-backdrop" id="campDrawerBackdrop" onclick="if(event.target===this) closeCampDrawer()">
+  <div class="drawer-panel" id="campDrawerPanel"><div id="campDrawerContent"></div></div>
+</div>
+
+<!-- Add to Campaign wizard -->
+<div class="modal-overlay" id="campaignModal" onclick="if(event.target===this) closeModal('campaignModal')">
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <div><h2>Add to Campaign</h2><p class="modal-sub">F013 · Select where these keywords should be added</p></div>
+      <button class="icon-btn" onclick="closeModal('campaignModal')">✕</button>
+    </div>
+    <div class="stepper">
+      <div class="step-dot" data-step="1"><span>1</span><label>Campaign</label></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="2"><span>2</span><label>Ad Group</label></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="3"><span>3</span><label>Match &amp; Bid</label></div>
+    </div>
+    <div id="campaignStepBody"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('campaignModal')">Cancel</button>
+      <div class="footer-right">
+        <button class="btn-secondary" id="campBack" onclick="campBack()">Back</button>
+        <button class="btn-primary" id="campNext" onclick="campNext()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit group modal (reused pattern from list page) -->
+<div class="modal-overlay" id="groupFormModal" onclick="if(event.target===this) closeModal('groupFormModal')">
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <div><h2>Edit Research Group</h2><p class="modal-sub">F005 · Update group name, keywords, or status</p></div>
+      <button class="icon-btn" onclick="closeModal('groupFormModal')">✕</button>
+    </div>
+    <label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px">Group Name</label>
+    <input type="text" id="formName" maxlength="50" oninput="validateForm()" style="width:100%;font-family:var(--font);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:6px">
+    <div id="nameError" style="font-size:11.5px;color:var(--red);margin-bottom:10px;display:none">This name already exists, please choose another.</div>
+    <label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px">Keywords <span style="font-weight:400;color:var(--text-muted)">(one per line, up to 5)</span></label>
+    <textarea id="formKeywords" oninput="validateForm()" style="width:100%;min-height:100px;font-family:var(--font);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:16px"></textarea>
+    <label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px">Status</label>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div class="toggle-switch" id="formStatusToggle" onclick="toggleFormStatus()" style="width:36px;height:20px;border-radius:20px;background:#C7D0DA;position:relative;cursor:pointer"><span class="knob" style="position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.15s"></span></div>
+      <span id="formStatusLabel" style="font-size:13px;color:var(--text-muted)">Enabled</span>
+    </div>
+    <div class="modal-footer" style="border-top:none;margin-top:10px">
+      <button class="btn-secondary" onclick="closeModal('groupFormModal')">Cancel</button>
+      <div class="footer-right"><button class="btn-primary" id="formSubmitBtn" onclick="submitForm()">Save</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this) closeModal('deleteModal')">
+  <div class="modal-box narrow" style="max-width:440px">
+    <div class="modal-head">
+      <div><h2>Delete Research Group</h2></div>
+      <button class="icon-btn" onclick="closeModal('deleteModal')">✕</button>
+    </div>
+    <p style="font-size:13.5px;color:var(--text);line-height:1.6" id="deleteBody"></p>
+    <div class="modal-footer" style="border-top:none">
+      <button class="btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+      <div class="footer-right"><button class="btn-primary" style="background:var(--red)" onclick="confirmDelete()">Delete</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== utils ===================== */
+function seedFromString(str){ let h=0; for(let i=0;i<str.length;i++){ h=Math.imul(31,h)+str.charCodeAt(i)|0; } return h>>>0; }
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed>>>15, 1 | seed);
+    t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
+  };
+}
+function formatPct(n){ const sign = n>0?'+':''; return `${sign}${n.toFixed(1)}%`; }
+function formatK(n){
+  if(n>=1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'')+'M';
+  if(n>=1000) return (n/1000).toFixed(1).replace(/\.0$/,'')+'K';
+  return String(n);
+}
+function monthLabels(n){
+  const out=[]; const now=new Date();
+  for(let i=n-1;i>=0;i--){ const d=new Date(now.getFullYear(), now.getMonth()-i, 1); out.push(d.toLocaleString('en-US',{month:'short'})+' '+d.getFullYear()); }
+  return out;
+}
+function toast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type||'success'}`;
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(()=>t.classList.remove('show'), 4200);
+}
+function sparklineSVG(values, color){
+  const w=90, h=26;
+  const min=Math.min(...values), max=Math.max(...values), range=(max-min)||1;
+  const stepX = w/(values.length-1);
+  const pts = values.map((v,i)=>[+(i*stepX).toFixed(1), +(h-((v-min)/range)*h).toFixed(1)]);
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" class="sparkline"><path d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${color||'#0A6FE8'}" stroke-width="1.8"/></svg>`;
+}
+function svgLineChart({series, months, width=640, height=170}){
+  const padding={top:12,right:12,bottom:22,left:8};
+  const innerW=width-padding.left-padding.right, innerH=height-padding.top-padding.bottom;
+  const stepX = innerW/(series.length-1);
+  const xFor=i=>padding.left+i*stepX, yFor=v=>padding.top+innerH-(v/100)*innerH;
+  const pts = series.map((v,i)=>[xFor(i),yFor(v)]);
+  const path = 'M'+pts.map(p=>p.join(',')).join(' L');
+  const area = path+` L${xFor(series.length-1)},${padding.top+innerH} L${xFor(0)},${padding.top+innerH} Z`;
+  let grid=''; for(let g=0;g<=3;g++){ const yy=padding.top+innerH*g/3; grid+=`<line x1="${padding.left}" y1="${yy}" x2="${width-padding.right}" y2="${yy}" stroke="#E7ECF2" stroke-width="1"/>`; }
+  let xLabels=''; const every=Math.ceil(series.length/6);
+  months.forEach((m,i)=>{ if(i%every===0){ xLabels+=`<text x="${xFor(i)}" y="${height-4}" font-size="9" fill="#8896A6" text-anchor="middle">${m}</text>`; } });
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" class="chart-svg">
+    <defs><linearGradient id="rgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0A6FE8" stop-opacity=".18"/><stop offset="100%" stop-color="#0A6FE8" stop-opacity="0"/></linearGradient></defs>
+    ${grid}<path d="${area}" fill="url(#rgGrad)" stroke="none"/><path d="${path}" fill="none" stroke="#0A6FE8" stroke-width="2.3"/>${xLabels}
+  </svg>`;
+}
+function svgMultiLineChart({seriesList, labels, width=640, height=220}){
+  const padding={top:14,right:14,bottom:24,left:30};
+  const innerW=width-padding.left-padding.right, innerH=height-padding.top-padding.bottom;
+  const maxV = Math.max(5, ...seriesList.flatMap(s=>s.values)) * 1.2;
+  const n = labels.length;
+  const stepX = n>1 ? innerW/(n-1) : 0;
+  const xFor = i => padding.left + i*stepX;
+  const yFor = v => padding.top + innerH - (v/maxV)*innerH;
+  let grid='';
+  for(let g=0; g<=3; g++){ const yy=padding.top+innerH*g/3; const val=Math.round(maxV*(3-g)/3); grid += `<line x1="${padding.left}" y1="${yy}" x2="${width-padding.right}" y2="${yy}" stroke="#E7ECF2" stroke-width="1"/><text x="2" y="${yy+3}" font-size="9" fill="#8896A6">${val}%</text>`; }
+  const paths = seriesList.map(s=>{
+    const pts = s.values.map((v,i)=>[xFor(i),yFor(v)]);
+    return `<path d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${s.color}" stroke-width="2.2"/>`;
+  }).join('');
+  let xLabels=''; const every=Math.max(1,Math.ceil(n/6));
+  labels.forEach((l,i)=>{ if(i%every===0 || i===n-1){ xLabels += `<text x="${xFor(i)}" y="${height-6}" font-size="9" fill="#8896A6" text-anchor="middle">${l}</text>`; } });
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" class="chart-svg">${grid}${paths}${xLabels}</svg>`;
+}
+
+/* ===================== mock data: groups (mirrors list page) ===================== */
+const GROUPS = [
+  {id:'bakeware-core', name:'Bakeware Core Terms', status:'Enabled', keywords:['silicone baking mat','muffin tin','cookie sheet']},
+  {id:'cat-furniture', name:'Cat Furniture Watch', status:'Enabled', keywords:['cat tree','scratching post','cat window perch']},
+  {id:'wall-decor', name:'Wall Decor Signals', status:'Enabled', keywords:['wall art canvas','gallery wall frame','round wall mirror']},
+  {id:'holiday-gifting', name:'Holiday Gifting 2026', status:'Paused', keywords:['holiday gift set','stocking stuffer']},
+  {id:'kitchen-storage', name:'Kitchen Storage Deep Dive', status:'Enabled', keywords:['pantry organizer','drawer organizer']},
+];
+const TENTPOLE_EVENTS = [
+  {groupId:'bakeware-core', name:'Thanksgiving', peakWindow:'Nov 9 – Nov 23', daysUntilPeak:14, keyword:'thanksgiving baking sheet set'},
+  {groupId:'cat-furniture', name:'Halloween', peakWindow:'Oct 12 – Oct 26', daysUntilPeak:8, keyword:'halloween cat costume'},
+  {groupId:'kitchen-storage', name:'Back to School', peakWindow:'Aug 1 – Aug 20', daysUntilPeak:3, keyword:'dorm room storage bins'},
+];
+
+function getParam(name){ return new URLSearchParams(location.search).get(name); }
+const groupId = getParam('group') || GROUPS[0].id;
+const group = GROUPS.find(g=>g.id===groupId) || GROUPS[0];
+
+/* ===================== generators ===================== */
+const RECO_MODS = ['modern','farmhouse','small space','minimalist','stainless steel','boho','extra large','with lid','under $30','vintage','non-slip','set of 3','multi-tier','wall mounted','for beginners','gift set','starter kit','value pack'];
+function genExtendedKeywords(coreKeywords, count){
+  const rnd = mulberry32(seedFromString(coreKeywords.join('|')+'-extended'));
+  const out = [];
+  for(let i=0;i<count;i++){
+    const base = coreKeywords[i % coreKeywords.length];
+    const mod = RECO_MODS[Math.floor(rnd()*RECO_MODS.length)];
+    out.push(rnd()>0.5 ? `${mod} ${base}` : `${base} ${mod}`);
+  }
+  return [...new Set(out)];
+}
+function gen30DaySeries(seedStr, base=45, vol=6){
+  const rnd = mulberry32(seedFromString(seedStr+'-30d'));
+  let v = base+rnd()*20; const arr=[];
+  for(let i=0;i<30;i++){ v += (rnd()*2-1)*vol; v=Math.max(3,Math.min(100,v)); arr.push(Math.round(v)); }
+  return arr;
+}
+function mentionsToBucket(m){
+  if(m<1000) return '<1K';
+  if(m<10000) return '1K–10K';
+  if(m<50000) return '10K–50K';
+  if(m<100000) return '50K–100K';
+  if(m<500000) return '100K–500K';
+  return '500K+';
+}
+function buildKeywordPerf(){
+  const extended = genExtendedKeywords(group.keywords, 12);
+  const all = [...group.keywords.map(k=>({term:k, tag:'Core'})), ...extended.map(k=>({term:k, tag:'Extended'}))];
+  return all.map(item=>{
+    const rnd = mulberry32(seedFromString(group.id+'-'+item.term+'-perf'));
+    const mentions = Math.round(500 + rnd()*300000);
+    const trend = gen30DaySeries(group.id+'-'+item.term);
+    const growthRate = Math.round(((rnd()*100)-30)*10)/10;
+    const svTrend = rnd()>0.66?'up':(rnd()>0.33?'flat':'down');
+    return {...item, mentions, bucket: mentionsToBucket(mentions), trend, growthRate, svTrend};
+  });
+}
+function suggestedBidFor(term){
+  const rnd = mulberry32(seedFromString(term+'-bid'));
+  return +(0.35+rnd()*2.85).toFixed(2);
+}
+function genCampaignsForKeyword(term){
+  const rnd = mulberry32(seedFromString(term+'-campaigns'));
+  const n = 2+Math.floor(rnd()*3);
+  const names = ['Auto Campaign','Manual - Exact','Manual - Broad','Brand Defense','Category Expansion'];
+  return Array.from({length:n},(_,i)=>({
+    name: names[i%names.length],
+    dailyBudget: Math.round(20+rnd()*180),
+    spendTrend: gen30DaySeries(term+'-spend-'+i, 40, 8).map(v=>Math.round(v*3)),
+    salesTrend: gen30DaySeries(term+'-sales-'+i, 40, 8).map(v=>Math.round(v*12)),
+    roasTrend: gen30DaySeries(term+'-roas-'+i, 40, 8).map(v=>+(v/25).toFixed(2)),
+  }));
+}
+function buildActiveOptimization(perf){
+  const candidates = perf.filter(p=>p.growthRate>15).slice(0,8);
+  return candidates.slice(0,6).map(p=>{
+    const rnd = mulberry32(seedFromString(group.id+'-'+p.term+'-active'));
+    const spend = Math.round(200+rnd()*4800);
+    const roas = +(1.5+rnd()*4).toFixed(2);
+    const suggested = p.growthRate>30 ? 'Aggressive' : 'Conservative';
+    return { term:p.term, spend, roas, svTrend:p.svTrend, pinterestGrowth:p.growthRate, pinterestTrend:p.trend.slice(-14), suggested };
+  }).sort((a,b)=>{
+    const pa=a.suggested==='Aggressive'?1:0, pb=b.suggested==='Aggressive'?1:0;
+    if(pa!==pb) return pb-pa;
+    return b.pinterestGrowth-a.pinterestGrowth;
+  });
+}
+function buildNewRecommendations(){
+  const rnd = mulberry32(seedFromString(group.id+'-newrecs'));
+  const hotLongtail = genExtendedKeywords(group.keywords, 20).map((term)=>{
+    const isLongtail = term.split(' ').length>=3 && rnd()>0.4;
+    const iq = Math.round(40+rnd()*59);
+    const searchVolume = Math.round(200+rnd()*80000);
+    const svTrend = rnd()>0.5?'up':'down';
+    const competing = Math.round(50+rnd()*4000);
+    const firstSeenDaysAgo = Math.floor(rnd()*30);
+    return {term, type: isLongtail?'Long-tail':'Hot', iq, searchVolume, svTrend, competing, isNew: firstSeenDaysAgo<=14, mentionsRank: rnd()*100000, tentpole:null};
+  });
+  const tentpole = TENTPOLE_EVENTS.filter(e=>e.groupId===group.id).map(e=>{
+    const r2 = mulberry32(seedFromString(e.keyword));
+    return {term:e.keyword, type:'Tentpole', iq: Math.round(60+r2()*30),
+      searchVolume: Math.round(5000+r2()*40000), svTrend:'up', competing: Math.round(200+r2()*2000),
+      isNew:false, mentionsRank: 999999, tentpole:e};
+  });
+  return [...tentpole, ...hotLongtail].slice(0,50);
+}
+function sortedNewRecs(list){
+  return [...list].sort((a,b)=>{
+    const ta=a.type==='Tentpole'?1:0, tb=b.type==='Tentpole'?1:0;
+    if(ta!==tb) return tb-ta;
+    const na=a.isNew?1:0, nb=b.isNew?1:0;
+    if(na!==nb) return nb-na;
+    return b.mentionsRank-a.mentionsRank;
+  });
+}
+
+/* Brand SOV mock (Sprint3, canonical keyword-selector version) */
+const BRAND_POOL = ['Nova Home','PurrLoft','PetNest','PawMercantile','UrbanBloom','GreenNest Living','Bakerly','Ovenhaus','CrumbCraft','FrameWorks Co.','WallNest','Gallery & Grain','StackSmart','TidyNest','ClearSpace Home','Homestead Supply','Meadow & Main','BrightNest'];
+const SOV_COLORS = ['#0A6FE8','#08C5A2','#FF8041','#003873','#7B61FF','#B33DC6','#E5484D','#F5A623','#3DB5E6','#4C9F70'];
+function genBrandSov(seedKey){
+  const rnd = mulberry32(seedFromString(seedKey+'-brandsov'));
+  const brands = BRAND_POOL.map(name=>({name, raw: 0.15+rnd()}));
+  const totalRaw = brands.reduce((s,b)=>s+b.raw,0) * 1.18;
+  const rows = brands.map(b=>{
+    const sovVal = b.raw/totalRaw*100;
+    const adsRatio = 0.15+rnd()*0.5;
+    const ads = sovVal*adsRatio, product = sovVal-ads;
+    const top10 = Math.min(sovVal, sovVal*(0.3+rnd()*0.6));
+    return {name:b.name, productCount: Math.round(5+rnd()*395), sov:+sovVal.toFixed(1), ads:+ads.toFixed(1), product:+product.toFixed(1), top10:+top10.toFixed(1)};
+  });
+  const used = rows.reduce((s,r)=>s+r.sov,0);
+  const unbranded = Math.max(2, +(100-used).toFixed(1));
+  rows.push({name:'Unbranded', productCount: Math.round(50+rnd()*300), sov:unbranded, ads:0, product:unbranded, top10:0});
+  return rows.sort((a,b)=>b.sov-a.sov);
+}
+function genSovSeries(seedStr, points){
+  const rnd = mulberry32(seedFromString(seedStr+'-sovseries'));
+  let v = 3+rnd()*15; const arr=[];
+  for(let i=0;i<points;i++){ v += (rnd()*2-1)*2.5; v=Math.max(0.5, Math.min(35, v)); arr.push(+v.toFixed(1)); }
+  return arr;
+}
+function sovPointsFor(range){ return range==='4W'?4:(range==='12W'?12:6); }
+function sovLabelsFor(range){
+  if(range==='6M') return monthLabels(6);
+  const n = sovPointsFor(range); const out=[];
+  for(let i=1;i<=n;i++){ out.push('Wk '+i); }
+  return out;
+}
+
+/* ===================== state ===================== */
+let currentRole = 'Editor';
+let perf = { sortBy:'mentions', page:0, pageSize:20, rows: buildKeywordPerf() };
+let selectedKeywords = new Set();
+let camp = { step:1, campaignId:null, adGroupId:null, minBid:0.10, rows:[] };
+const addedTracker = {};
+const CAMPAIGNS = [
+  {id:'c1', name:group.name+' - Brand Awareness', status:'Active', adGroups:[{id:'ag1',name:'Core Terms'},{id:'ag2',name:'Discovery'}]},
+  {id:'c2', name:group.name+' - Auto', status:'Active', adGroups:[{id:'ag3',name:'Auto - Broad'}]},
+  {id:'c3', name:group.name+' - Manual Exact', status:'Active', adGroups:[{id:'ag4',name:'Exact Match'},{id:'ag5',name:'Phrase Match'}]},
+  {id:'c4', name:group.name+' - Seasonal', status:'Paused', adGroups:[{id:'ag6',name:'Seasonal Push'}]},
+  {id:'c5', name:group.name+' - Retargeting', status:'Paused', adGroups:[]},
+];
+function sortedCampaigns(){ return [...CAMPAIGNS].sort((a,b)=> a.status!==b.status ? (a.status==='Active'?-1:1) : a.name.localeCompare(b.name)); }
+
+let sov = { keyword:'', timeRange:'4W', rows:[], sortBy:'sov', filterText:'', page:0, pageSize:10 };
+
+let detailTab = 'keyword_analysis';
+let formEditing = false;
+let formStatus = group.status;
+
+function setRole(v){ currentRole=v; renderHeader(); renderKeywordAnalysis(); }
+
+/* ===================== header / tabs ===================== */
+function renderHeader(){
+  document.getElementById('crumbName').textContent = group.name;
+  document.getElementById('groupTitle').textContent = group.name;
+  document.getElementById('groupStatusBadge').innerHTML = `<span class="status-badge ${group.status==='Enabled'?'active':'paused'}">${group.status}</span>`;
+  document.getElementById('groupTags').innerHTML = group.keywords.map(k=>`<span class="rg-tag">${k}</span>`).join('');
+  document.getElementById('headActions').style.display = currentRole==='Viewer' ? 'none' : 'flex';
+}
+function setDetailTab(tab){
+  detailTab = tab;
+  document.querySelectorAll('.page-tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.getElementById('keywordAnalysisTab').style.display = tab==='keyword_analysis' ? 'block':'none';
+  document.getElementById('brandSovTab').style.display = tab==='brand_sov' ? 'block':'none';
+  if(tab==='keyword_analysis') renderKeywordAnalysis(); else renderBrandSov();
+}
+
+/* ===================== Module A: Related Keywords Performance ===================== */
+function currentPerfSorted(){
+  return [...perf.rows].sort((a,b)=> perf.sortBy==='mentions' ? b.mentions-a.mentions : b.growthRate-a.growthRate);
+}
+function setPerfSort(v){ perf.sortBy=v; perf.page=0; renderPerfTable(); }
+function perfPage(delta){ perf.page+=delta; renderPerfTable(); }
+function renderPerfTable(){
+  const coreCount = perf.rows.filter(r=>r.tag==='Core').length;
+  const extCount = perf.rows.filter(r=>r.tag==='Extended').length;
+  document.getElementById('perfCountLabel').textContent = `Total ${perf.rows.length} keywords (Core: ${coreCount} / Extended: ${extCount})`;
+  const all = currentPerfSorted();
+  const totalPages = Math.max(1, Math.ceil(all.length/perf.pageSize));
+  perf.page = Math.min(perf.page, totalPages-1);
+  const pageRows = all.slice(perf.page*perf.pageSize, (perf.page+1)*perf.pageSize);
+  const canSelect = currentRole!=='Viewer';
+  document.getElementById('perfTableWrap').innerHTML = pageRows.length===0 ? `<div class="empty-block">No keyword data available. Please try again later.</div>` : `
+    <table class="dtable"><thead><tr>
+      ${canSelect?'<th></th>':''}
+      <th>Keyword</th><th>Search Rank</th><th>30-Day Trend</th><th>Growth Rate</th><th>Amazon SV Trend</th>
+    </tr></thead><tbody>
+    ${pageRows.map(r=>`<tr class="${selectedKeywords.has(r.term)?'row-selected':''}">
+      ${canSelect?`<td><input type="checkbox" ${selectedKeywords.has(r.term)?'checked':''} onchange="toggleSelect('${r.term.replace(/'/g,"\\'")}')"></td>`:''}
+      <td>${r.term}<span class="${r.tag==='Core'?'tag-core':'tag-extended'}">${r.tag}</span></td>
+      <td>${r.bucket}</td>
+      <td>${sparklineSVG(r.trend)}</td>
+      <td class="${r.growthRate>=0?'pos':'neg'}">${formatPct(r.growthRate)}</td>
+      <td class="${r.svTrend==='up'?'pos':(r.svTrend==='down'?'neg':'flat')}">${r.svTrend==='up'?'▲':(r.svTrend==='down'?'▼':'—')}</td>
+    </tr>`).join('')}
+    </tbody></table>`;
+  document.getElementById('perfPagination').innerHTML = `
+    <button class="btn-secondary" ${perf.page===0?'disabled':''} onclick="perfPage(-1)">‹ Prev</button>
+    <span>Page ${perf.page+1} of ${totalPages}</span>
+    <button class="btn-secondary" ${perf.page>=totalPages-1?'disabled':''} onclick="perfPage(1)">Next ›</button>`;
+}
+
+/* ===================== Module B1: Active Keywords Optimization ===================== */
+function renderActiveOpt(){
+  const rows = buildActiveOptimization(perf.rows);
+  document.getElementById('activeOptTableWrap').innerHTML = rows.length===0 ? `<div class="empty-block">No optimization suggestions available at this time.</div>` : `
+    <table class="dtable"><thead><tr>
+      <th>Keyword</th><th>30-Day Spend</th><th>30-Day ROAS</th><th>Amazon SV Trend</th><th>Pinterest Signal</th><th>Suggested Increase</th>
+    </tr></thead><tbody>
+    ${rows.map(r=>`<tr class="clickable" onclick='openCampDrawer(${JSON.stringify(r.term)})'>
+      <td>${r.term}</td>
+      <td>$${r.spend.toLocaleString()}</td>
+      <td>${r.roas.toFixed(2)}x</td>
+      <td class="${r.svTrend==='up'?'pos':(r.svTrend==='down'?'neg':'flat')}">${r.svTrend==='up'?'▲':(r.svTrend==='down'?'▼':'—')}</td>
+      <td>${sparklineSVG(r.pinterestTrend, '#08C5A2')} <span class="pos">${formatPct(r.pinterestGrowth)}</span></td>
+      <td><span class="suggested-badge ${r.suggested.toLowerCase()}">${r.suggested} (${r.suggested==='Aggressive'?'+50%':'+20%'})</span></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+function openCampDrawer(term){
+  const campaigns = genCampaignsForKeyword(term);
+  const series = gen30DaySeries(term+'-signal14').slice(-14);
+  document.getElementById('campDrawerContent').innerHTML = `
+    <div class="modal-head">
+      <div><h2>${term}</h2><p class="modal-sub">Pinterest signal (last 14 days) &amp; campaign performance</p></div>
+      <button class="icon-btn" onclick="closeCampDrawer()">✕</button>
+    </div>
+    ${svgLineChart({series, months: series.map((_,i)=>'D'+(i+1))})}
+    <div class="section-label">Campaigns</div>
+    ${campaigns.map(c=>`
+      <div class="campaign-card">
+        <div class="campaign-card-head"><b>${c.name}</b><span style="font-size:11.5px;color:var(--text-muted)">Daily Budget: $${c.dailyBudget}</span></div>
+        <div class="campaign-metrics">
+          <div class="campaign-metric"><label>Spend Trend</label>${sparklineSVG(c.spendTrend, '#0A6FE8')}</div>
+          <div class="campaign-metric"><label>Sales Trend</label>${sparklineSVG(c.salesTrend, '#08C5A2')}</div>
+          <div class="campaign-metric"><label>ROAS Trend</label>${sparklineSVG(c.roasTrend, '#FF8041')}</div>
+        </div>
+      </div>`).join('')}
+  `;
+  document.getElementById('campDrawerBackdrop').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeCampDrawer(){ document.getElementById('campDrawerBackdrop').classList.remove('show'); refreshBodyLock(); }
+
+/* ===================== Module B2: New Keyword Recommendations ===================== */
+function renderNewRecs(){
+  const rows = sortedNewRecs(buildNewRecommendations());
+  const canSelect = currentRole!=='Viewer';
+  document.getElementById('newRecsTableWrap').innerHTML = rows.length===0 ? `<div class="empty-block">No new keyword recommendations. The system will continue monitoring for signal changes.</div>` : `
+    <table class="dtable"><thead><tr>
+      ${canSelect?'<th></th>':''}
+      <th>Keyword</th><th>IQ</th><th>Amazon Monthly SV</th><th>SV Trend</th><th>Competing Products</th>
+    </tr></thead><tbody>
+    ${rows.map(r=>`<tr class="${selectedKeywords.has(r.term)?'row-selected':''}">
+      ${canSelect?`<td><input type="checkbox" ${selectedKeywords.has(r.term)?'checked':''} onchange="toggleSelect('${r.term.replace(/'/g,"\\'")}')"></td>`:''}
+      <td>${r.term}
+        <span class="${r.type==='Hot'?'tag-hot':(r.type==='Long-tail'?'tag-longtail':'tag-tentpole')}">${r.type}</span>
+        ${r.isNew?'<span class="tag-new">New</span>':''}
+        ${r.tentpole?`<div class="event-peak">${r.tentpole.name} · Peak ${r.tentpole.peakWindow} · <span class="days-until">Starts in ${r.tentpole.daysUntilPeak} days</span></div>`:''}
+      </td>
+      <td>${r.iq}</td>
+      <td>${formatK(r.searchVolume)}</td>
+      <td class="${r.svTrend==='up'?'pos':'neg'}">${r.svTrend==='up'?'▲':'▼'}</td>
+      <td>${r.competing.toLocaleString()}</td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+/* ===================== shared selection / floating bar ===================== */
+function toggleSelect(term){ selectedKeywords.has(term) ? selectedKeywords.delete(term) : selectedKeywords.add(term); renderKeywordAnalysis(); }
+function clearSelection(){ selectedKeywords.clear(); renderKeywordAnalysis(); }
+function updateFloatingBar(){
+  const bar = document.getElementById('floatingBar');
+  const n = selectedKeywords.size;
+  const showBar = n>0 && currentRole!=='Viewer';
+  bar.classList.toggle('show', showBar);
+  if(!showBar) return;
+  document.getElementById('floatingCount').textContent = `${n} keyword${n>1?'s':''} selected`;
+}
+function renderKeywordAnalysis(){
+  renderPerfTable();
+  renderActiveOpt();
+  renderNewRecs();
+  updateFloatingBar();
+}
+
+/* ===================== Add to Campaign wizard ===================== */
+function refreshBodyLock(){
+  const anyOpen = document.getElementById('campaignModal').classList.contains('show')
+    || document.getElementById('groupFormModal').classList.contains('show')
+    || document.getElementById('deleteModal').classList.contains('show')
+    || document.getElementById('campDrawerBackdrop').classList.contains('show');
+  document.body.style.overflow = anyOpen ? 'hidden' : '';
+}
+function openModal(id){ document.getElementById(id).classList.add('show'); refreshBodyLock(); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); refreshBodyLock(); }
+function openCampaignModal(){
+  if(currentRole==='Viewer' || selectedKeywords.size===0) return;
+  camp = { step:1, campaignId:null, adGroupId:null, minBid:0.10,
+    rows: [...selectedKeywords].map(term=>({keyword:term, matchType:'Broad', bid: suggestedBidFor(term)})) };
+  renderCampaignStep();
+  openModal('campaignModal');
+}
+function renderCampaignStep(){
+  document.querySelectorAll('.step-dot').forEach((d,idx)=>{
+    d.classList.toggle('active', idx+1===camp.step);
+    d.classList.toggle('done', idx+1<camp.step);
+  });
+  const body = document.getElementById('campaignStepBody');
+  if(camp.step===1){
+    body.innerHTML = `<div class="section-label">Select Campaign</div><div class="list-select">
+      ${sortedCampaigns().map(c=>`
+        <label class="list-row ${camp.campaignId===c.id?'selected':''}">
+          <input type="radio" name="campaignPick" ${camp.campaignId===c.id?'checked':''} onchange="pickCampaign('${c.id}')">
+          <span class="row-name">${c.name}</span>
+          <span class="status-badge ${c.status==='Active'?'active':'paused'}">${c.status}</span>
+        </label>`).join('')}
+      </div>`;
+  } else if(camp.step===2){
+    const c = CAMPAIGNS.find(x=>x.id===camp.campaignId);
+    body.innerHTML = c.adGroups.length===0
+      ? `<div class="section-label">Select Ad Group</div><div class="empty-block">No available Ad Groups in this Campaign</div>`
+      : `<div class="section-label">Select Ad Group</div><div class="list-select">
+        ${c.adGroups.map(ag=>`
+          <label class="list-row ${camp.adGroupId===ag.id?'selected':''}">
+            <input type="radio" name="adGroupPick" ${camp.adGroupId===ag.id?'checked':''} onchange="pickAdGroup('${ag.id}')">
+            <span class="row-name">${ag.name}</span>
+          </label>`).join('')}
+        </div>${c.adGroups.length===1?'<p class="module-sub">Only one Ad Group available — auto-selected.</p>':''}`;
+  } else {
+    body.innerHTML = `<div class="section-label">Confirm Match Type &amp; Bid</div>
+      <div class="batch-row">
+        <span>Set all Match Type:</span>
+        <select onchange="batchSetMatch(this.value)"><option value="">—</option><option>Broad</option><option>Phrase</option><option>Exact</option></select>
+        <span>Set all Bid:</span>
+        <input type="number" step="0.01" min="0" placeholder="0.00" onchange="batchSetBid(this.value)">
+      </div>
+      <table class="dtable"><thead><tr><th>Keyword</th><th>Match Type</th><th>Bid</th></tr></thead><tbody>
+        ${camp.rows.map((r,i)=>`
+          <tr><td>${r.keyword}</td>
+            <td><select onchange="camp.rows[${i}].matchType=this.value; renderCampaignStep()">
+              ${['Broad','Phrase','Exact'].map(mt=>`<option ${r.matchType===mt?'selected':''}>${mt}</option>`).join('')}
+            </select></td>
+            <td><input type="number" step="0.01" value="${r.bid.toFixed(2)}" onchange="setRowBid(${i}, this.value)">
+              ${r.bid<camp.minBid?`<span class="bid-error">Bid must be at least $${camp.minBid.toFixed(2)}</span>`:''}</td>
+          </tr>`).join('')}
+      </tbody></table>`;
+  }
+  updateCampaignNav();
+}
+function pickCampaign(id){ camp.campaignId=id; const c=CAMPAIGNS.find(x=>x.id===id); camp.adGroupId = c.adGroups.length===1 ? c.adGroups[0].id : null; renderCampaignStep(); }
+function pickAdGroup(id){ camp.adGroupId=id; renderCampaignStep(); }
+function batchSetMatch(v){ if(!v) return; camp.rows.forEach(r=>r.matchType=v); renderCampaignStep(); }
+function batchSetBid(v){ const n=parseFloat(v); if(isNaN(n)) return; camp.rows.forEach(r=>r.bid=n); renderCampaignStep(); }
+function setRowBid(i,v){ camp.rows[i].bid = parseFloat(v)||0; renderCampaignStep(); }
+function updateCampaignNav(){
+  const backBtn=document.getElementById('campBack'), nextBtn=document.getElementById('campNext');
+  backBtn.style.visibility = camp.step===1 ? 'hidden' : 'visible';
+  let ok = true;
+  if(camp.step===1) ok = !!camp.campaignId;
+  if(camp.step===2) ok = !!camp.adGroupId;
+  if(camp.step===3) ok = camp.rows.every(r=>r.bid>=camp.minBid);
+  nextBtn.disabled = !ok;
+  nextBtn.textContent = camp.step===3 ? 'Confirm' : 'Next';
+}
+function campBack(){ if(camp.step>1){ camp.step--; renderCampaignStep(); } }
+function campNext(){ if(camp.step<3){ camp.step++; renderCampaignStep(); } else { confirmAddToCampaign(); } }
+function confirmAddToCampaign(){
+  const agId = camp.adGroupId;
+  addedTracker[agId] = addedTracker[agId] || new Set();
+  let added=0, skipped=0;
+  camp.rows.forEach(r=>{
+    const key = r.keyword+'|'+r.matchType;
+    if(addedTracker[agId].has(key)) skipped++; else { addedTracker[agId].add(key); added++; }
+  });
+  const c = CAMPAIGNS.find(x=>x.id===camp.campaignId);
+  const ag = c.adGroups.find(a=>a.id===agId);
+  closeModal('campaignModal');
+  selectedKeywords.clear();
+  renderKeywordAnalysis();
+  if(added===0) toast('All selected keywords already exist in this Ad Group', 'warn');
+  else if(skipped===0) toast(`Successfully added ${added} keyword${added>1?'s':''} to ${ag.name}`, 'success');
+  else toast(`${added} keywords added, ${skipped} skipped (already exist)`, 'warn');
+}
+
+/* ===================== Edit / Delete group ===================== */
+function openEditModal(){
+  formStatus = group.status;
+  document.getElementById('formName').value = group.name;
+  document.getElementById('formKeywords').value = group.keywords.join('\n');
+  document.getElementById('nameError').style.display='none';
+  updateFormStatusUI();
+  openModal('groupFormModal');
+}
+function toggleFormStatus(){ formStatus = formStatus==='Enabled' ? 'Paused' : 'Enabled'; updateFormStatusUI(); }
+function updateFormStatusUI(){
+  document.getElementById('formStatusToggle').classList.toggle('on', formStatus==='Enabled');
+  document.getElementById('formStatusToggle').style.background = formStatus==='Enabled' ? 'var(--blue)' : '#C7D0DA';
+  document.getElementById('formStatusToggle').querySelector('.knob').style.left = formStatus==='Enabled' ? '18px' : '2px';
+  document.getElementById('formStatusLabel').textContent = formStatus;
+}
+function validateForm(){
+  const name = document.getElementById('formName').value.trim();
+  const nameTaken = GROUPS.some(g=> g.name.toLowerCase()===name.toLowerCase() && g.id!==group.id);
+  document.getElementById('nameError').style.display = (name.length>0 && nameTaken) ? 'block':'none';
+  const keywords = document.getElementById('formKeywords').value.split('\n').map(k=>k.trim()).filter(Boolean).slice(0,5);
+  document.getElementById('formSubmitBtn').disabled = name.length===0 || nameTaken || keywords.length===0;
+}
+function submitForm(){
+  const name = document.getElementById('formName').value.trim();
+  const keywords = [...new Set(document.getElementById('formKeywords').value.split('\n').map(k=>k.trim()).filter(Boolean))].slice(0,5);
+  const nameTaken = GROUPS.some(g=> g.name.toLowerCase()===name.toLowerCase() && g.id!==group.id);
+  if(name.length===0 || nameTaken || keywords.length===0) return;
+  group.name = name; group.keywords = keywords; group.status = formStatus;
+  perf = { sortBy:'mentions', page:0, pageSize:20, rows: buildKeywordPerf() };
+  renderHeader();
+  renderKeywordAnalysis();
+  closeModal('groupFormModal');
+  toast(`"${name}" has been updated.`, 'success');
+}
+function openDeleteModal(){
+  document.getElementById('deleteBody').textContent = `Are you sure you want to delete "${group.name}"? This will permanently remove the group and all its analysis data. This action cannot be undone.`;
+  openModal('deleteModal');
+}
+function confirmDelete(){
+  closeModal('deleteModal');
+  toast(`Research group "${group.name}" has been deleted.`, 'success');
+  setTimeout(()=>{ location.href='26Q3-Sprint1-Research-Group-List.html'; }, 900);
+}
+
+/* ===================== Brand SOV tab ===================== */
+function populateSovKeywordSelect(){
+  document.getElementById('sovKeywordSelect').innerHTML =
+    `<option value="">All Keywords (aggregate)</option>` + group.keywords.map(k=>`<option value="${k}">${k}</option>`).join('');
+}
+function sovSeedKey(){ return group.id+'-'+(sov.keyword||'ALL')+'-'+sov.timeRange; }
+function loadSov(){ sov.rows = genBrandSov(sovSeedKey()); }
+function setSovKeyword(v){ sov.keyword=v; sov.page=0; loadSov(); renderSovChart(); renderSovTable(); }
+function setSovRange(v){ sov.timeRange=v; sov.page=0; loadSov(); renderSovChart(); renderSovTable(); }
+function setSovFilter(v){ sov.filterText=v; sov.page=0; renderSovTable(); }
+function setSovSort(field){ sov.sortBy=field; renderSovTable(); }
+function sovPage(delta){ sov.page+=delta; renderSovTable(); }
+function sovFilteredSorted(){
+  const rows = sov.rows.filter(r=>r.name.toLowerCase().includes(sov.filterText.toLowerCase()));
+  const fieldMap = {count:'productCount', sov:'sov', ads:'ads', product:'product', top10:'top10'};
+  const field = fieldMap[sov.sortBy] || 'sov';
+  return [...rows].sort((a,b)=>b[field]-a[field]);
+}
+function exportSov(){ toast(`Exported ${sovFilteredSorted().length} rows as CSV (mocked).`, 'info'); }
+function renderSovChart(){
+  const top10 = sov.rows.filter(r=>r.name!=='Unbranded').sort((a,b)=>b.sov-a.sov).slice(0,10);
+  const points = sovPointsFor(sov.timeRange);
+  const labels = sovLabelsFor(sov.timeRange);
+  const seriesList = top10.map((b,i)=>({name:b.name, color:SOV_COLORS[i%SOV_COLORS.length], values: genSovSeries(b.name+'-'+sovSeedKey(), points)}));
+  const wrap = document.getElementById('sovChartWrap');
+  if(seriesList.length===0){ wrap.innerHTML = `<div class="empty-block">No brand data available for this period.</div>`; return; }
+  wrap.innerHTML = svgMultiLineChart({seriesList, labels}) +
+    `<div class="sov-legend">${seriesList.map(s=>`<span><span class="dot" style="background:${s.color}"></span>${s.name} (${s.values[s.values.length-1]}%)</span>`).join('')}</div>`;
+}
+function renderSovTable(){
+  const filtered = sovFilteredSorted();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/sov.pageSize));
+  sov.page = Math.min(sov.page, totalPages-1);
+  const pageRows = filtered.slice(sov.page*sov.pageSize, (sov.page+1)*sov.pageSize);
+  const wrap = document.getElementById('sovTableWrap');
+  if(filtered.length===0){ wrap.innerHTML = `<div class="empty-block">No brands found matching your filter.</div>`; return; }
+  wrap.innerHTML = `<table class="dtable"><thead><tr>
+      <th>Brand Name</th>
+      <th class="sortable" onclick="setSovSort('count')">Product Count</th>
+      <th class="sortable" onclick="setSovSort('sov')">Brand SOV</th>
+      <th class="sortable" onclick="setSovSort('ads')">Ads SOV</th>
+      <th class="sortable" onclick="setSovSort('product')">Product pin SOV</th>
+      <th class="sortable" onclick="setSovSort('top10')">Top 10 SOV</th>
+    </tr></thead><tbody>
+    ${pageRows.map(r=>`<tr><td>${r.name}</td><td>${r.productCount.toLocaleString()}</td><td>${r.sov.toFixed(1)}%</td><td>${r.ads.toFixed(1)}%</td><td>${r.product.toFixed(1)}%</td><td>${r.top10.toFixed(1)}%</td></tr>`).join('')}
+    </tbody></table>
+    <div class="pagination">
+      <button class="btn-secondary" ${sov.page===0?'disabled':''} onclick="sovPage(-1)">‹ Prev</button>
+      <span>Page ${sov.page+1} of ${totalPages}</span>
+      <button class="btn-secondary" ${sov.page>=totalPages-1?'disabled':''} onclick="sovPage(1)">Next ›</button>
+    </div>`;
+}
+function renderBrandSov(){ loadSov(); renderSovChart(); renderSovTable(); }
+
+/* ===================== keyboard ===================== */
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  if(document.getElementById('campaignModal').classList.contains('show')){ closeModal('campaignModal'); return; }
+  if(document.getElementById('groupFormModal').classList.contains('show')){ closeModal('groupFormModal'); return; }
+  if(document.getElementById('deleteModal').classList.contains('show')){ closeModal('deleteModal'); return; }
+  if(document.getElementById('campDrawerBackdrop').classList.contains('show')){ closeCampDrawer(); return; }
+});
+
+/* ===================== init ===================== */
+renderHeader();
+populateSovKeywordSelect();
+setDetailTab('keyword_analysis');
+</script>
+</body>
+</html>
