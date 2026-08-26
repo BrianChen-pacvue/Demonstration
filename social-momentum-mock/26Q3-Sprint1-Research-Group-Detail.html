@@ -75,6 +75,8 @@
   .tag-core{font-size:10px;font-weight:600;background:#E4F9F5;color:#068C71;padding:2px 8px;border-radius:20px;margin-left:6px}
   .tag-extended{font-size:10px;font-weight:600;background:var(--grey);color:var(--text-muted);padding:2px 8px;border-radius:20px;margin-left:6px}
   .tag-hot{font-size:10px;font-weight:600;background:#FFF0E8;color:#C4571A;padding:2px 8px;border-radius:20px}
+  .tag-highopp{font-size:10px;font-weight:600;background:#E9F1FF;color:var(--blue);padding:2px 8px;border-radius:20px}
+  .tag-potential{font-size:10px;font-weight:600;background:#E4F9F5;color:#068C71;padding:2px 8px;border-radius:20px}
   .tag-longtail{font-size:10px;font-weight:600;background:#EEF0F2;color:var(--text-muted);padding:2px 8px;border-radius:20px}
   .tag-tentpole{font-size:10px;font-weight:600;background:#F1ECFF;color:#5B3FD6;padding:2px 8px;border-radius:20px}
   .tag-new{font-size:10px;font-weight:700;background:var(--orange);color:#fff;padding:2px 8px;border-radius:20px}
@@ -214,7 +216,7 @@
       <div class="module-head">
         <h2>Active Keywords Optimization <span class="fcode">F010 · F011</span></h2>
       </div>
-      <p class="module-sub">Keywords already live on Amazon where Pinterest signal is rising and ROAS is beating your category average — click a keyword to see campaign-level performance.</p>
+      <p class="module-sub">Keywords already live on Amazon where Pinterest signal is rising fast and ROAS is beating your account's overall average — click a keyword to see campaign-level performance.</p>
       <div id="activeOptTableWrap"></div>
     </section>
 
@@ -223,7 +225,7 @@
       <div class="module-head">
         <h2>New Keyword Recommendations <span class="fcode">F012</span></h2>
       </div>
-      <p class="module-sub">Hot, Long-tail and Tentpole Event opportunities not yet in your Amazon account.</p>
+      <p class="module-sub">Hot, High Opportunity, Potential and Long-tail opportunities not yet in your Amazon account.</p>
       <div id="newRecsTableWrap"></div>
       <div class="floating-bar" id="floatingBar">
         <span id="floatingCount"></span>
@@ -457,7 +459,7 @@ function buildKeywordPerf(){
     const rnd = mulberry32(seedFromString(group.id+'-'+item.term+'-perf'));
     const mentions = Math.round(500 + rnd()*300000);
     const trend = gen30DaySeries(group.id+'-'+item.term);
-    const growthRate = Math.round(((rnd()*100)-30)*10)/10;
+    const growthRate = Math.round(((rnd()*160)-30)*10)/10;
     const svTrend = rnd()>0.66?'up':(rnd()>0.33?'flat':'down');
     return {...item, mentions, bucket: mentionsToBucket(mentions), trend, growthRate, svTrend};
   });
@@ -470,54 +472,97 @@ function genCampaignsForKeyword(term){
   const rnd = mulberry32(seedFromString(term+'-campaigns'));
   const n = 2+Math.floor(rnd()*3);
   const names = ['Auto Campaign','Manual - Exact','Manual - Broad','Brand Defense','Category Expansion'];
-  return Array.from({length:n},(_,i)=>({
-    name: names[i%names.length],
-    dailyBudget: Math.round(20+rnd()*180),
-    spendTrend: gen30DaySeries(term+'-spend-'+i, 40, 8).map(v=>Math.round(v*3)),
-    salesTrend: gen30DaySeries(term+'-sales-'+i, 40, 8).map(v=>Math.round(v*12)),
-    roasTrend: gen30DaySeries(term+'-roas-'+i, 40, 8).map(v=>+(v/25).toFixed(2)),
-  }));
-}
-function buildActiveOptimization(perf){
-  const candidates = perf.filter(p=>p.growthRate>15).slice(0,8);
-  return candidates.slice(0,6).map(p=>{
-    const rnd = mulberry32(seedFromString(group.id+'-'+p.term+'-active'));
-    const spend = Math.round(200+rnd()*4800);
-    const roas = +(1.5+rnd()*4).toFixed(2);
-    const suggested = p.growthRate>30 ? 'Aggressive' : 'Conservative';
-    return { term:p.term, spend, roas, svTrend:p.svTrend, pinterestGrowth:p.growthRate, pinterestTrend:p.trend.slice(-14), suggested };
-  }).sort((a,b)=>{
-    const pa=a.suggested==='Aggressive'?1:0, pb=b.suggested==='Aggressive'?1:0;
-    if(pa!==pb) return pb-pa;
-    return b.pinterestGrowth-a.pinterestGrowth;
+  return Array.from({length:n},(_,i)=>{
+    const status = rnd()>0.25 ? 'Active' : 'Paused';
+    const dailyBudget = Math.round(20+rnd()*180);
+    const spend = Math.round(150+rnd()*2200);
+    const sales = Math.round(spend*(1.2+rnd()*3.5));
+    const roas = +(sales/spend).toFixed(2);
+    const acos = +((spend/sales)*100).toFixed(1);
+    const impressions = Math.round(3000+rnd()*60000);
+    const clicks = Math.round(impressions*(0.005+rnd()*0.03));
+    const orders = Math.round(clicks*(0.03+rnd()*0.12));
+    return { name: names[i%names.length], status, dailyBudget, spend, sales, roas, acos, impressions, clicks, orders };
   });
 }
+const PROFILE_ROAS = 2.5; // mock baseline: Profile（广告账号）整体 ROAS
+function buildActiveOptCandidatePool(){
+  // ① SV Top 100 candidate pool: Core + Extended keywords -> Keyword Research -> rank by Search Volume, take top 100
+  const rnd = mulberry32(seedFromString(group.id+'-activeopt-pool'));
+  const pool = genExtendedKeywords(group.keywords, 150).map(term=>{
+    const searchVolume = Math.round(200+rnd()*80000);
+    const svTrend = rnd()>0.66?'up':(rnd()>0.33?'flat':'down');
+    const pinterestGrowth = Math.round(((rnd()*160)-30)*10)/10;
+    const trend = gen30DaySeries(group.id+'-'+term+'-activetrend');
+    const inFlight = rnd()>0.75; // ~25% of the SV Top 100 pool happens to already be advertised
+    return {term, searchVolume, svTrend, pinterestGrowth, trend, inFlight};
+  });
+  return [...pool].sort((a,b)=>b.searchVolume-a.searchVolume).slice(0,100);
+}
+function buildActiveOptimization(){
+  // ① SV Top 100 pool  ② In-flight  ③ Pinterest signal rising (>+50%)  ④ ROAS > Profile ROAS x1.2
+  return buildActiveOptCandidatePool()
+    .filter(c=>c.inFlight)
+    .filter(c=>c.pinterestGrowth>50)
+    .map(c=>{
+      const rnd = mulberry32(seedFromString(group.id+'-'+c.term+'-active'));
+      const spend = Math.round(200+rnd()*4800);
+      const roas = +(1.5+rnd()*4).toFixed(2);
+      return { term:c.term, spend, roas, svTrend:c.svTrend, pinterestGrowth:c.pinterestGrowth, pinterestTrend:c.trend.slice(-14) };
+    })
+    .filter(r=>r.roas>PROFILE_ROAS*1.2)
+    .slice(0,6)
+    .map(r=>({...r, suggested: r.pinterestGrowth>100 ? 'Aggressive' : 'Conservative'}))
+    .sort((a,b)=>{
+      const pa=a.suggested==='Aggressive'?1:0, pb=b.suggested==='Aggressive'?1:0;
+      if(pa!==pb) return pb-pa;
+      return b.pinterestGrowth-a.pinterestGrowth;
+    });
+}
+const TAG_PRIORITY = {'Hot':0, 'High Opportunity':1, 'Potential':2, 'Long-tail':3};
+const TENTPOLE_ENABLED = false; // Tentpole Event 本期暂缓不开发，保留生成逻辑代码待后续启用
 function buildNewRecommendations(){
   const rnd = mulberry32(seedFromString(group.id+'-newrecs'));
-  const hotLongtail = genExtendedKeywords(group.keywords, 20).map((term)=>{
-    const isLongtail = term.split(' ').length>=3 && rnd()>0.4;
-    const iq = Math.round(40+rnd()*59);
+  const pool = genExtendedKeywords(group.keywords, 150).map((term)=>{
+    const iq = Math.round(20+rnd()*580);
     const searchVolume = Math.round(200+rnd()*80000);
     const svTrend = rnd()>0.5?'up':'down';
     const competing = Math.round(50+rnd()*4000);
+    const pinterestGrowth = Math.round(((rnd()*80)-10)*10)/10;
+    const wordCount = term.split(' ').length;
     const firstSeenDaysAgo = Math.floor(rnd()*30);
-    return {term, type: isLongtail?'Long-tail':'Hot', iq, searchVolume, svTrend, competing, isNew: firstSeenDaysAgo<=14, mentionsRank: rnd()*100000, tentpole:null};
+    return {term, iq, searchVolume, svTrend, competing, pinterestGrowth, wordCount, isNew: firstSeenDaysAgo<=14};
   });
-  const tentpole = TENTPOLE_EVENTS.filter(e=>e.groupId===group.id).map(e=>{
+  const ranked = [...pool].sort((a,b)=>b.searchVolume-a.searchVolume);
+  const tagged = [];
+  ranked.forEach((item,idx)=>{
+    const rank = idx+1;
+    let tag = null;
+    if(rank<=10) tag='Hot';
+    else if(rank<=40){ if(item.iq>500) tag='High Opportunity'; }
+    else if(rank<=75){ if(item.pinterestGrowth>20) tag='Potential'; }
+    else if(rank<=100){ if(item.wordCount>=3 && item.iq>100) tag='Long-tail'; }
+    if(tag) tagged.push({...item, tag, tentpole:null});
+  });
+  const tentpole = TENTPOLE_ENABLED ? TENTPOLE_EVENTS.filter(e=>e.groupId===group.id).map(e=>{
     const r2 = mulberry32(seedFromString(e.keyword));
-    return {term:e.keyword, type:'Tentpole', iq: Math.round(60+r2()*30),
+    return {term:e.keyword, tag:'Tentpole', iq: Math.round(60+r2()*30),
       searchVolume: Math.round(5000+r2()*40000), svTrend:'up', competing: Math.round(200+r2()*2000),
-      isNew:false, mentionsRank: 999999, tentpole:e};
-  });
-  return [...tentpole, ...hotLongtail].slice(0,50);
+      isNew:false, tentpole:e};
+  }) : [];
+  return [...tentpole, ...tagged].slice(0,50);
 }
 function sortedNewRecs(list){
   return [...list].sort((a,b)=>{
-    const ta=a.type==='Tentpole'?1:0, tb=b.type==='Tentpole'?1:0;
+    const ta=a.tag==='Tentpole'?1:0, tb=b.tag==='Tentpole'?1:0;
     if(ta!==tb) return tb-ta;
+    if(a.tag!=='Tentpole' && b.tag!=='Tentpole'){
+      const pa=TAG_PRIORITY[a.tag]??9, pb=TAG_PRIORITY[b.tag]??9;
+      if(pa!==pb) return pa-pb;
+    }
     const na=a.isNew?1:0, nb=b.isNew?1:0;
     if(na!==nb) return nb-na;
-    return b.mentionsRank-a.mentionsRank;
+    return b.searchVolume-a.searchVolume;
   });
 }
 
@@ -630,7 +675,7 @@ function renderPerfTable(){
 
 /* ===================== Module B1: Active Keywords Optimization ===================== */
 function renderActiveOpt(){
-  const rows = buildActiveOptimization(perf.rows);
+  const rows = buildActiveOptimization();
   document.getElementById('activeOptTableWrap').innerHTML = rows.length===0 ? `<div class="empty-block">No optimization suggestions available at this time.</div>` : `
     <table class="dtable"><thead><tr>
       <th>Keyword</th><th>30-Day Spend</th><th>30-Day ROAS</th><th>Amazon SV Trend</th><th>Pinterest Signal</th><th>Suggested Increase</th>
@@ -641,29 +686,50 @@ function renderActiveOpt(){
       <td>${r.roas.toFixed(2)}x</td>
       <td class="${r.svTrend==='up'?'pos':(r.svTrend==='down'?'neg':'flat')}">${r.svTrend==='up'?'▲':(r.svTrend==='down'?'▼':'—')}</td>
       <td>${sparklineSVG(r.pinterestTrend, '#08C5A2')} <span class="pos">${formatPct(r.pinterestGrowth)}</span></td>
-      <td><span class="suggested-badge ${r.suggested.toLowerCase()}">${r.suggested} (${r.suggested==='Aggressive'?'+50%':'+20%'})</span></td>
+      <td><span class="suggested-badge ${r.suggested.toLowerCase()}">${r.suggested}</span></td>
     </tr>`).join('')}
     </tbody></table>`;
 }
+function genKeywordAdTrend(term){
+  const spend = gen30DaySeries(term+'-kwadspend', 40, 8).slice(-14).map(v=>Math.round(v*3));
+  const sales = gen30DaySeries(term+'-kwadsales', 40, 8).slice(-14).map(v=>Math.round(v*11));
+  const roas = spend.map((s,i)=> +(sales[i]/Math.max(1,s)).toFixed(2));
+  return {spend, sales, roas};
+}
 function openCampDrawer(term){
   const campaigns = genCampaignsForKeyword(term);
-  const series = gen30DaySeries(term+'-signal14').slice(-14);
+  const trend = genKeywordAdTrend(term);
+  const totalSpend = trend.spend.reduce((a,b)=>a+b,0);
+  const totalSales = trend.sales.reduce((a,b)=>a+b,0);
+  const blendedRoas = (totalSales/Math.max(1,totalSpend)).toFixed(2);
   document.getElementById('campDrawerContent').innerHTML = `
     <div class="modal-head">
-      <div><h2>${term}</h2><p class="modal-sub">Pinterest signal (last 14 days) &amp; campaign performance</p></div>
+      <div><h2>${term}</h2><p class="modal-sub">Amazon ad performance (last 14 days)</p></div>
       <button class="icon-btn" onclick="closeCampDrawer()">✕</button>
     </div>
-    ${svgLineChart({series, months: series.map((_,i)=>'D'+(i+1))})}
+    <div class="campaign-metrics" style="margin-bottom:18px">
+      <div class="campaign-metric"><label>Spend</label>${sparklineSVG(trend.spend, '#0A6FE8')}<div style="font-size:13px;font-weight:600;margin-top:4px">$${totalSpend.toLocaleString()}</div></div>
+      <div class="campaign-metric"><label>Sales</label>${sparklineSVG(trend.sales, '#08C5A2')}<div style="font-size:13px;font-weight:600;margin-top:4px">$${totalSales.toLocaleString()}</div></div>
+      <div class="campaign-metric"><label>ROAS</label>${sparklineSVG(trend.roas, '#FF8041')}<div style="font-size:13px;font-weight:600;margin-top:4px">${blendedRoas}x</div></div>
+    </div>
     <div class="section-label">Campaigns</div>
-    ${campaigns.map(c=>`
-      <div class="campaign-card">
-        <div class="campaign-card-head"><b>${c.name}</b><span style="font-size:11.5px;color:var(--text-muted)">Daily Budget: $${c.dailyBudget}</span></div>
-        <div class="campaign-metrics">
-          <div class="campaign-metric"><label>Spend Trend</label>${sparklineSVG(c.spendTrend, '#0A6FE8')}</div>
-          <div class="campaign-metric"><label>Sales Trend</label>${sparklineSVG(c.salesTrend, '#08C5A2')}</div>
-          <div class="campaign-metric"><label>ROAS Trend</label>${sparklineSVG(c.roasTrend, '#FF8041')}</div>
-        </div>
-      </div>`).join('')}
+    <div style="overflow-x:auto">
+    <table class="dtable"><thead><tr>
+      <th>Campaign</th><th>Daily Budget</th><th>Spend</th><th>Sales</th><th>ROAS</th><th>ACOS</th><th>Impr.</th><th>Clicks</th><th>Orders</th>
+    </tr></thead><tbody>
+    ${campaigns.map(c=>`<tr>
+      <td>${c.name} <span class="status-badge ${c.status==='Active'?'active':'paused'}" style="margin-left:6px">${c.status}</span></td>
+      <td>$${c.dailyBudget}</td>
+      <td>$${c.spend.toLocaleString()}</td>
+      <td>$${c.sales.toLocaleString()}</td>
+      <td>${c.roas.toFixed(2)}x</td>
+      <td>${c.acos}%</td>
+      <td>${c.impressions.toLocaleString()}</td>
+      <td>${c.clicks.toLocaleString()}</td>
+      <td>${c.orders.toLocaleString()}</td>
+    </tr>`).join('')}
+    </tbody></table>
+    </div>
   `;
   document.getElementById('campDrawerBackdrop').classList.add('show');
   document.body.style.overflow='hidden';
@@ -671,6 +737,13 @@ function openCampDrawer(term){
 function closeCampDrawer(){ document.getElementById('campDrawerBackdrop').classList.remove('show'); refreshBodyLock(); }
 
 /* ===================== Module B2: New Keyword Recommendations ===================== */
+function tagClass(tag){
+  if(tag==='Hot') return 'tag-hot';
+  if(tag==='High Opportunity') return 'tag-highopp';
+  if(tag==='Potential') return 'tag-potential';
+  if(tag==='Long-tail') return 'tag-longtail';
+  return 'tag-tentpole';
+}
 function renderNewRecs(){
   const rows = sortedNewRecs(buildNewRecommendations());
   const canSelect = currentRole!=='Viewer';
@@ -682,7 +755,7 @@ function renderNewRecs(){
     ${rows.map(r=>`<tr class="${selectedKeywords.has(r.term)?'row-selected':''}">
       ${canSelect?`<td><input type="checkbox" ${selectedKeywords.has(r.term)?'checked':''} onchange="toggleSelect('${r.term.replace(/'/g,"\\'")}')"></td>`:''}
       <td>${r.term}
-        <span class="${r.type==='Hot'?'tag-hot':(r.type==='Long-tail'?'tag-longtail':'tag-tentpole')}">${r.type}</span>
+        <span class="${tagClass(r.tag)}">${r.tag}</span>
         ${r.isNew?'<span class="tag-new">New</span>':''}
         ${r.tentpole?`<div class="event-peak">${r.tentpole.name} · Peak ${r.tentpole.peakWindow} · <span class="days-until">Starts in ${r.tentpole.daysUntilPeak} days</span></div>`:''}
       </td>

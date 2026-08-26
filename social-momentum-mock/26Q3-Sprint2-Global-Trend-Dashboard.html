@@ -26,8 +26,6 @@
   .topnav{display:flex;gap:4px;margin-left:22px}
   .topnav a{font-size:13px;color:var(--text-muted);text-decoration:none;padding:8px 14px;border-radius:8px}
   .topnav a.active{background:var(--grey);color:var(--navy);font-weight:600}
-  .role-wrap{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted)}
-  .role-wrap select{font-family:var(--font);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--text)}
   .page{max-width:1180px;margin:0 auto;padding:24px 24px 80px}
   .page-head{margin-bottom:20px}
   .crumbs{font-size:12.5px;color:var(--text-muted);margin-bottom:6px}
@@ -66,9 +64,6 @@
   .tab-group{display:flex;gap:6px;background:var(--grey);padding:4px;border-radius:10px}
   .tab-btn{border:none;background:none;font-family:var(--font);font-size:13px;color:var(--text-muted);padding:7px 14px;border-radius:8px;cursor:pointer}
   .tab-btn.active{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 3px rgba(0,56,115,.12)}
-  .time-group{display:flex;gap:4px}
-  .time-pill{border:1px solid var(--border);background:#fff;font-family:var(--font);font-size:12.5px;color:var(--text-muted);padding:6px 12px;border-radius:20px;cursor:pointer}
-  .time-pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
   .toggle-switch{width:36px;height:20px;border-radius:20px;background:#C7D0DA;position:relative;cursor:pointer;flex:none}
   .toggle-switch .knob{position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.15s}
   .toggle-switch.on{background:var(--blue)}
@@ -96,7 +91,6 @@
   .growth-pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
   .growth-pill.pos{background:#E4F9F5;color:#068C71}
   .growth-pill.neg{background:#FCEAEA;color:#B23237}
-  .relvol{font-size:12px;color:var(--text-muted)}
 
   /* Trending Keyword — two-level list (v3.3) */
   .kw-list{display:flex;flex-direction:column}
@@ -158,7 +152,6 @@
 
   .pin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
   .pin-card{aspect-ratio:1/1;border-radius:10px;position:relative;cursor:pointer;overflow:hidden}
-  .pin-overlay{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,20,45,.55),transparent);color:#fff;font-size:10.5px;padding:6px 8px;display:flex;gap:8px}
   .pin-credit{font-size:11px;color:var(--text-muted);margin-top:8px}
   .pin-note{font-size:11.5px;color:var(--text-muted);background:var(--grey);border-radius:8px;padding:8px 12px;margin-top:14px}
   .text-btn{background:none;border:none;color:var(--blue);font-family:var(--font);font-size:12.5px;cursor:pointer;padding:8px 0 0;display:block}
@@ -248,7 +241,7 @@
 </head>
 <body>
 
-<div class="proto-banner">原型对照 <b>26Q3-Sprint2-Global-Trend-Dashboard.md v3.5</b> · 可点击交互 Prototype，全部数据为模拟数据（不连接真实接口）</div>
+<div class="proto-banner">原型对照 <b>26Q3-Sprint2-Global-Trend-Dashboard.md v3.7</b> · 可点击交互 Prototype，全部数据为模拟数据（不连接真实接口）</div>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -257,14 +250,6 @@
       <a href="26Q3-Sprint2-Global-Trend-Dashboard.html" class="active">Global Trend</a>
       <a href="26Q3-Sprint1-Research-Group-List.html">Research Group</a>
     </div>
-  </div>
-  <div class="role-wrap">
-    <span>Viewing as:</span>
-    <select id="roleSelect" onchange="setRole(this.value)">
-      <option>Account Admin</option>
-      <option selected>Editor</option>
-      <option>Viewer</option>
-    </select>
   </div>
 </div>
 
@@ -310,9 +295,9 @@
   <!-- Trending Keyword F007-F011, F019 -->
   <section class="module" id="trendingKeyword">
     <div class="module-head">
-      <h2>Trending Keyword <span class="fcode">F007–F011 · F019</span></h2>
+      <h2>Trending Keyword <span class="fcode">F007–F010 · F019</span></h2>
     </div>
-    <p class="module-sub">Pinterest trending keywords with at least one personalized Amazon recommendation (out of 50 per sub-filter). Expand a row to see the recommendations and add them to a Campaign.</p>
+    <p class="module-sub">Pinterest trending keywords with at least one personalized Amazon recommendation (out of 50 per sub-filter, fixed 30-day data window). Expand a row to see the recommendations and add them to a Campaign.</p>
     <div class="control-row">
       <div class="tab-group">
         <button class="tab-btn" data-tab="top_rank" onclick="setTab('top_rank')">Top Rank</button>
@@ -326,13 +311,6 @@
           <option value="weekly">Weekly Change</option>
           <option value="monthly">Monthly Change</option>
         </select>
-      </div>
-      <div class="control-group">
-        <div class="time-group" id="timeGroup">
-          <button class="time-pill" data-range="7D" onclick="setTimeRange('7D')">7D</button>
-          <button class="time-pill" data-range="30D" onclick="setTimeRange('30D')">30D</button>
-          <button class="time-pill" data-range="90D" onclick="setTimeRange('90D')">90D</button>
-        </div>
       </div>
     </div>
     <div class="empty-block" id="keywordEmpty" style="display:none">No trending keywords matched your Amazon products at this time</div>
@@ -445,11 +423,6 @@ function monthLabels(n){
   for(let i=n-1;i>=0;i--){ const d=new Date(now.getFullYear(), now.getMonth()-i, 1); out.push(d.toLocaleString('en-US',{month:'short'})+' '+d.getFullYear()); }
   return out;
 }
-function futureMonthLabels(n){
-  const out=[]; const now=new Date();
-  for(let i=1;i<=n;i++){ const d=new Date(now.getFullYear(), now.getMonth()+i, 1); out.push(d.toLocaleString('en-US',{month:'short'})+' '+d.getFullYear()); }
-  return out;
-}
 function genSeries(seedStr, months=12, base=50, volatility=18){
   const rnd = mulberry32(seedFromString(seedStr));
   let v = base + (rnd()*20-10);
@@ -460,15 +433,16 @@ function genSeries(seedStr, months=12, base=50, volatility=18){
 function fixRoundTo100(arr){ const diff = 100 - arr.reduce((a,b)=>a+b,0); arr[0]+=diff; return arr; }
 function genDemographics(seedStr){
   const rnd = mulberry32(seedFromString(seedStr+'-demo'));
-  let age = [rnd(),rnd(),rnd(),rnd(),rnd()]; const asum=age.reduce((a,b)=>a+b,0);
+  // v3.6: 7 official Pinterest age brackets (18-24/25-34/35-44/45-49/50-54/55-64/65+), not the old 5-bucket merge
+  let age = [rnd(),rnd(),rnd(),rnd(),rnd(),rnd(),rnd()]; const asum=age.reduce((a,b)=>a+b,0);
   age = fixRoundTo100(age.map(v=>Math.round(v/asum*100)));
   let gender=[rnd(),rnd(),rnd()*0.3]; const gsum=gender.reduce((a,b)=>a+b,0);
   gender = fixRoundTo100(gender.map(v=>Math.round(v/gsum*100)));
   return {age, gender};
 }
-function genPins(seedStr,count){
-  const rnd = mulberry32(seedFromString(seedStr+'-pins'));
-  return Array.from({length:count},()=>({ saves: Math.round(200+rnd()*4000), clicks: rnd()>0.3? Math.round(20+rnd()*900): null }));
+function genPins(count){
+  // v3.6: Pinterest doesn't expose per-Pin interaction data (saves/clicks) to third parties — thumbnails only
+  return Array.from({length:count},()=>({}));
 }
 function growthFor(seedStr, negBias=0.3){
   const rnd = mulberry32(seedFromString(seedStr+'-growth'));
@@ -479,39 +453,27 @@ const PALETTE_PAIRS = [['#0A6FE8','#AEDFFF'],['#08C5A2','#AEDFFF'],['#FF8041','#
 function thumbGradient(seed){ const [a,b]=PALETTE_PAIRS[seedFromString(seed)%PALETTE_PAIRS.length]; return `linear-gradient(135deg, ${a}, ${b})`; }
 
 /* ===================== chart builders ===================== */
-function svgLineChart({series, predicted=[], months, highlightFrom=null, uid, width=640, height=190}){
+function svgLineChart({series, months, uid, width=640, height=190}){
   const padding={top:14,right:14,bottom:24,left:10};
   const innerW = width-padding.left-padding.right, innerH = height-padding.top-padding.bottom;
-  const total = series.length + predicted.length;
-  const stepX = innerW/(total-1);
+  const stepX = innerW/(series.length-1);
   const xFor = i => padding.left + i*stepX;
   const yFor = v => padding.top + innerH - (v/100)*innerH;
   const histPts = series.map((v,i)=>[xFor(i), yFor(v)]);
   const pathHist = 'M'+histPts.map(p=>p.join(',')).join(' L');
   const areaPath = pathHist + ` L${xFor(series.length-1)},${padding.top+innerH} L${xFor(0)},${padding.top+innerH} Z`;
-  let predPath='';
-  if(predicted.length){
-    const predPts=[histPts[histPts.length-1], ...predicted.map((v,i)=>[xFor(series.length+i), yFor(v)])];
-    predPath = 'M'+predPts.map(p=>p.join(',')).join(' L');
-  }
-  let highlightRect='';
-  if(highlightFrom!=null){
-    const x1=xFor(highlightFrom), x2=xFor(series.length-1);
-    highlightRect = `<rect x="${x1}" y="${padding.top}" width="${Math.max(2,x2-x1)}" height="${innerH}" fill="#0A6FE8" opacity="0.09"/>`;
-  }
   let grid='';
   for(let g=0; g<=3; g++){ const yy=padding.top+innerH*g/3; grid += `<line x1="${padding.left}" y1="${yy}" x2="${width-padding.right}" y2="${yy}" stroke="#E7ECF2" stroke-width="1"/>`; }
   const dots = histPts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#0A6FE8"><title>${months[i]}: ${series[i]}</title></circle>`).join('');
-  let xLabels=''; const every=Math.ceil(total/6);
+  let xLabels=''; const every=Math.ceil(series.length/6);
   months.forEach((m,i)=>{ if(i%every===0){ xLabels += `<text x="${xFor(i)}" y="${height-6}" font-size="9" fill="#8896A6" text-anchor="middle">${m}</text>`; } });
   return `<svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" class="chart-svg">
     <defs><linearGradient id="grad-${uid}" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#0A6FE8" stop-opacity="0.18"/><stop offset="100%" stop-color="#0A6FE8" stop-opacity="0"/>
     </linearGradient></defs>
-    ${grid}${highlightRect}
+    ${grid}
     <path d="${areaPath}" fill="url(#grad-${uid})" stroke="none"/>
     <path d="${pathHist}" fill="none" stroke="#0A6FE8" stroke-width="2.5"/>
-    ${predPath?`<path d="${predPath}" fill="none" stroke="#08C5A2" stroke-width="2.5" stroke-dasharray="5,4"/>`:''}
     ${dots}${xLabels}
   </svg>`;
 }
@@ -534,7 +496,7 @@ function svgMultiLineChart({seriesList, labels, width=640, height=220}){
   return `<svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" class="chart-svg">${grid}${paths}${xLabels}</svg>`;
 }
 function ageBarsHTML(ageArr){
-  const labels=['18–24','25–34','35–44','45–54','55+'];
+  const labels=['18–24','25–34','35–44','45–49','50–54','55–64','65+'];
   return `<div class="age-bars">${labels.map((l,i)=>`
     <div class="age-row"><span>${l}</span><div class="age-track"><div class="age-fill" style="width:${ageArr[i]}%"></div></div><span>${ageArr[i]}%</span></div>`).join('')}</div>`;
 }
@@ -550,11 +512,10 @@ function genderDonutHTML(g){
   </div>`;
 }
 function pinGridHTML(pins){
+  // v3.6: thumbnails only — Pinterest doesn't expose Saves/Clicks for third-party Pin display
   const colors=['#0A6FE8','#08C5A2','#FF8041','#AEDFFF','#003873','#7C9CBF','#0A6FE8','#08C5A2'];
   return pins.map((p,i)=>`
-    <div class="pin-card" style="background:linear-gradient(135deg, ${colors[i%colors.length]}, ${colors[(i+2)%colors.length]})" onclick="mockPinClick()">
-      <div class="pin-overlay">${p.saves?`<span>❤ ${formatK(p.saves)}</span>`:''}${p.clicks?`<span>🔗 ${formatK(p.clicks)}</span>`:''}</div>
-    </div>`).join('');
+    <div class="pin-card" style="background:linear-gradient(135deg, ${colors[i%colors.length]}, ${colors[(i+2)%colors.length]})" onclick="mockPinClick()"></div>`).join('');
 }
 function mockPinClick(){ toast('Would open this Pin on Pinterest in a new tab (mocked).', 'info'); }
 function sparklineSVG(seriesArr, width=100, height=28){
@@ -624,7 +585,7 @@ function buildKeywordDataset(tab, count=42){
   return items;
 }
 function metricsFor(item){
-  // Fixed 7-day/30-day windows — independent of the page's 7D/30D/90D time-range selector (§5.11)
+  // Fixed 7-day/30-day windows — independent of the page's 7D/30D/1Y time-range selector (§5.11)
   const weeklyChange = growthFor(item.term+'-weekly', 0.35);
   const monthlyChange = growthFor(item.term+'-monthly', 0.3);
   return {weeklyChange, monthlyChange};
@@ -644,10 +605,11 @@ function genRecoRows(seedStr){
   for(let i=0;i<n;i++){
     const mod = RECO_MODIFIERS[Math.floor(rnd()*RECO_MODIFIERS.length)];
     const keyword = rnd()>0.5 ? `${seedStr.toLowerCase()} ${mod}` : `${mod} ${seedStr.toLowerCase()}`;
+    // v3.6: no Suggested Bid / Match Type here — bid data source unavailable, Match Type set in Add to Campaign Step 3
     rows.push({
       keyword, iq: Math.round(40+rnd()*59), searchVolume: Math.round(500+rnd()*250000),
-      svTrendUp: rnd()>0.4, competing: Math.round(50+rnd()*5000), bid: +(0.35+rnd()*2.85).toFixed(2),
-      matchType:'Broad', reason:`Strong overlap with your catalog — clear commercial intent for "${seedStr}".`
+      svTrendUp: rnd()>0.4, competing: Math.round(50+rnd()*5000),
+      reason:`Strong overlap with your catalog — clear commercial intent for "${seedStr}".`
     });
   }
   return rows;
@@ -686,7 +648,8 @@ function sortedCampaigns(){
   return [...CAMPAIGNS].sort((a,b)=> a.status!==b.status ? (a.status==='Active'?-1:1) : a.name.localeCompare(b.name));
 }
 function buildCategoriesFromClusters(){
-  return clusters.map(c=>({ id:c.id, clusterId:c.id, label:c.catLabel, growth: growthFor(c.catLabel+'-cat',0.15), relVolume: Math.round(30+mulberry32(seedFromString(c.catLabel+'-vol'))()*70) }));
+  // v3.6: negBias 0.47 mirrors the real API test finding (47% of 383 sampled categories showed negative growth)
+  return clusters.map(c=>({ id:c.id, clusterId:c.id, label:c.catLabel, growth: growthFor(c.catLabel+'-cat',0.47) }));
 }
 
 /* Brand SOV mock data (F018, adapted from 26Q3-Sprint3-Brand-SOV.md) */
@@ -727,11 +690,11 @@ function sovLabelsFor(range){
 }
 
 /* ===================== state ===================== */
-let currentRole = 'Editor';
+const currentRole = 'Editor'; // role switcher removed from the prototype UI (test-only tool); §2.2 permission model in the PRD is unchanged
 let spotlightView = 'relevant';
 let lastSpotlightList = [];
-let tk = { tab:'top_rank', timeRange:'30D', sortBy:'svr', page:0, pageSize:20, dataset:[] };
-let expandedRows = {}; // term -> { rows, selected:Set(index), matchOverrides:{} } — F019 inline二级列表, aggregates into the page-level floating bar
+let tk = { tab:'top_rank', sortBy:'svr', page:0, pageSize:20, dataset:[] }; // v3.7: no user-facing time range — fixed 30-day data window
+let expandedRows = {}; // term -> { rows, selected:Set(index) } — F019 inline二级列表, aggregates into the page-level floating bar
 let camp = { step:1, campaignId:null, adGroupId:null, minBid:0.10, rows:[] };
 const addedTracker = {};
 let drawerStack = [];
@@ -740,8 +703,6 @@ let sov = { timeRange:'4W', rows:[], sortBy:'sov', filterText:'', page:0, pageSi
 let sovInitializedFor = null;
 let currentCategoryForSov = null;
 let bpEditDraft = null;
-
-function setRole(v){ currentRole=v; updatePageFloatingBar(); }
 
 /* ===================== overlay / scroll-lock plumbing ===================== */
 function anyOverlayVisible(){
@@ -837,7 +798,6 @@ function renderMyCategory(){
         <div class="cat-name">${c.label}</div>
         <div class="cat-metrics">
           <span class="growth-pill ${c.growth>=0?'pos':'neg'}">${c.growth>=0?'▲':'▼'} ${Math.abs(c.growth).toFixed(1)}%</span>
-          <span class="relvol">Relative volume: ${c.relVolume}</span>
         </div>
       </div>`).join('');
 }
@@ -861,7 +821,6 @@ function currentFilteredSorted(){
 }
 function renderKeywordControls(){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tk.tab));
-  document.querySelectorAll('.time-pill').forEach(b=>b.classList.toggle('active', b.dataset.range===tk.timeRange));
   document.getElementById('sortSelect').value = tk.sortBy;
 }
 function kwListHeadHTML(){
@@ -904,7 +863,6 @@ function renderKeywordList(reset){
   updatePageFloatingBar();
 }
 function setTab(tab){ tk.tab=tab; tk.sortBy = tab==='growing'?'monthly':'svr'; loadTabDataset(); renderKeywordControls(); renderKeywordList(true); }
-function setTimeRange(r){ tk.timeRange=r; renderKeywordControls(); renderKeywordList(true); }
 function setSort(v){ tk.sortBy=v; renderKeywordList(true); }
 function setupInfiniteScroll(){
   const el = document.getElementById('kwSentinel');
@@ -916,7 +874,7 @@ function setupInfiniteScroll(){
 /* ===================== Trending Keyword — inline二级列表 & page-level Add to Campaign (F015, F019) ===================== */
 function toggleRowExpand(term){
   if(expandedRows[term]){ delete expandedRows[term]; }
-  else { expandedRows[term] = { rows: getRecoRows(term).map(r=>({...r})), selected:new Set(), matchOverrides:{} }; }
+  else { expandedRows[term] = { rows: getRecoRows(term).map(r=>({...r})), selected:new Set() }; }
   renderKeywordList(false);
 }
 function renderExpandPanel(term){
@@ -933,8 +891,6 @@ function renderExpandPanel(term){
       <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"searchVolume")'>Search Volume</th>
       <th>SV Trend</th>
       <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"competing")'>Competing Products</th>
-      <th class="sortable" onclick='sortExpandReco(${JSON.stringify(term)},"bid")'>Suggested Bid</th>
-      <th>Match Type</th>
     </tr></thead><tbody>
     ${state.rows.map((r,i)=>`
       <tr class="${state.selected.has(i)?'row-selected':''}">
@@ -944,10 +900,6 @@ function renderExpandPanel(term){
         <td>${formatK(r.searchVolume)}</td>
         <td class="${r.svTrendUp?'pos':'neg'}">${r.svTrendUp?'▲':'▼'}</td>
         <td>${r.competing.toLocaleString()}</td>
-        <td>$${r.bid.toFixed(2)}</td>
-        <td><select onchange='setExpandRecoMatch(${JSON.stringify(term)}, ${i}, this.value)'>
-          ${['Broad','Phrase','Exact'].map(mt=>`<option ${(state.matchOverrides[i]||'Broad')===mt?'selected':''}>${mt}</option>`).join('')}
-        </select></td>
       </tr>`).join('')}
     </tbody></table>
   </div>`;
@@ -962,13 +914,14 @@ function toggleExpandRecoRow(term, i){
   st.selected.has(i) ? st.selected.delete(i) : st.selected.add(i);
   renderKeywordList(false);
 }
-function setExpandRecoMatch(term, i, v){ const st=expandedRows[term]; if(st) st.matchOverrides[i]=v; }
 function aggregatedSelection(){
+  // v3.6: Match Type / Bid are no longer sourced from the recommendation table — both are set fresh in
+  // Add to Campaign Step 3 (Match Type defaults to Broad there; Bid starts blank, no suggested value)
   const out=[];
   Object.entries(expandedRows).forEach(([term, st])=>{
     st.selected.forEach(i=>{
       const r = st.rows[i];
-      out.push({ seedTerm:term, keyword:r.keyword, matchType: st.matchOverrides[i]||r.matchType||'Broad', bid:r.bid });
+      out.push({ seedTerm:term, keyword:r.keyword });
     });
   });
   return out;
@@ -1040,7 +993,7 @@ function renderTopicDrawerContent(entry){
   const growth = growthFor(t.title);
   const series = genSeries(t.title, 12, 50, 20);
   const months = monthLabels(12);
-  const pins = genPins(t.title, 6);
+  const pins = genPins(6);
   const related = genRelatedKeywords(t.title);
   document.getElementById('drawerContent').innerHTML = `
     ${renderTopicNav(entry)}
@@ -1061,13 +1014,12 @@ function renderTopicDrawerContent(entry){
 function renderKeywordDrawerContent(entry){
   const term = entry.term;
   const item = tk.dataset.find(x=>x.term===term) || {term, cluster:'', tab:tk.tab};
-  const metrics = metricsFor(item, tk.timeRange);
+  const metrics = metricsFor(item);
   const recommendedCount = recommendedCountFor(term);
   const series = genSeries(term, 12, 50, 20);
   const months = monthLabels(12);
-  const highlightFrom = tk.timeRange==='7D' ? 11 : (tk.timeRange==='30D' ? 10 : 9);
   const demo = genDemographics(term);
-  const pins4 = genPins(term, 4);
+  const pins4 = genPins(4);
   document.getElementById('drawerContent').innerHTML = `
     ${renderDrawerBackLink(entry)}
     <div class="modal-head">
@@ -1076,19 +1028,18 @@ function renderKeywordDrawerContent(entry){
     </div>
     <div class="growth-line">Weekly Change <b class="${metrics.weeklyChange>=0?'pos':'neg'}">${formatPct(metrics.weeklyChange)}</b> · Monthly Change <b class="${metrics.monthlyChange>=0?'pos':'neg'}">${formatPct(metrics.monthlyChange)}</b></div>
     <div class="section-label">Trend (12 Months)</div>
-    ${svgLineChart({series, months, highlightFrom, uid:'kw-'+seedFromString(term)})}
-    <div class="chart-caption">Shaded area approximates the selected ${tk.timeRange} range within the fixed 12-month view.</div>
+    ${svgLineChart({series, months, uid:'kw-'+seedFromString(term)})}
     <div class="section-label">Audience</div>
     <div class="demo-grid">${ageBarsHTML(demo.age)}${genderDonutHTML(demo.gender)}</div>
     <div class="section-label">Top Pins</div>
     <div class="pin-grid" id="kwPinGrid">${pinGridHTML(pins4)}</div>
-    <button class="text-btn" id="pinShowMoreBtn" onclick='expandPins(${JSON.stringify(term)})'>Show more (up to 8)</button>
+    <button class="text-btn" id="pinShowMoreBtn" onclick='expandPins()'>Show more (up to 8)</button>
     <div class="pin-credit">Powered by Pinterest</div>
     <div class="info-note">ⓘ To view recommendations or add this keyword to a Campaign, close this drawer and expand this term's row in the Trending Keyword list below (F019). If this term isn't in the current 50-keyword list, that isn't possible yet — see PRD open item 16.</div>
   `;
 }
-function expandPins(term){
-  document.getElementById('kwPinGrid').innerHTML = pinGridHTML(genPins(term, 8));
+function expandPins(){
+  document.getElementById('kwPinGrid').innerHTML = pinGridHTML(genPins(8));
   document.getElementById('pinShowMoreBtn').style.display='none';
 }
 
@@ -1116,15 +1067,14 @@ function renderCategoryPage(){
   if(categoryPageState.tab==='overview') renderCategoryOverviewTab(c); else renderCategoryBrandSovTab(c);
 }
 function renderCategoryOverviewTab(c){
+  // v3.6: predicted_time_series dropped — real API testing on 700+ samples found it always empty
   const series = genSeries(c.label, 12, 55, 16);
-  const predicted = genSeries(c.label+'-pred', 3, series[series.length-1], 10);
-  const months = [...monthLabels(12), ...futureMonthLabels(3)];
+  const months = monthLabels(12);
   const demo = FORCE_NO_DEMO.has(c.label) ? null : genDemographics(c.label);
   const related = genRelatedKeywords(c.label);
   document.getElementById('categoryOverviewTab').innerHTML = `
-    <div class="section-label">Trend &amp; Forecast</div>
-    ${svgLineChart({series, predicted, months, uid:'catpg-'+c.id})}
-    <div class="chart-legend"><span><i style="border-color:var(--blue)"></i>Historical</span><span><i style="border-color:var(--teal);border-style:dashed"></i>Predicted (next 90 days)</span></div>
+    <div class="section-label">Trend (12 Months)</div>
+    ${svgLineChart({series, months, uid:'catpg-'+c.id})}
     <div class="section-label">Audience</div>
     ${demo ? `<div class="demo-grid">${ageBarsHTML(demo.age)}${genderDonutHTML(demo.gender)}</div>` : `<div class="empty-block">No audience data available for this category.</div>`}
     <div class="pin-note">ⓘ Pin samples aren't shown here — pending confirmation that the Pinterest category-details API returns a pins field (see PRD open item #5).</div>
@@ -1213,8 +1163,10 @@ function exportSov(){ toast(`Exported ${sovFilteredSorted().length} rows as CSV 
 function openCampaignModal(){
   const items = aggregatedSelection();
   if(currentRole==='Viewer' || items.length===0) return;
+  // v3.6: Match Type defaults to Broad here (not carried over from the reco table); Bid starts null —
+  // no Suggested Bid to pre-fill, user must enter it manually before Confirm is enabled
   camp = { step:1, campaignId:null, adGroupId:null, minBid:0.10,
-    rows: items.map(it=>({ keyword:it.keyword, matchType:it.matchType, bid:it.bid })) };
+    rows: items.map(it=>({ keyword:it.keyword, matchType:'Broad', bid:null })) };
   renderCampaignStep();
   openModal('campaignModal');
 }
@@ -1260,8 +1212,8 @@ function renderCampaignStep(){
             <td><select onchange="camp.rows[${i}].matchType=this.value; renderCampaignStep()">
               ${['Broad','Phrase','Exact'].map(mt=>`<option ${r.matchType===mt?'selected':''}>${mt}</option>`).join('')}
             </select></td>
-            <td><input type="number" step="0.01" value="${r.bid.toFixed(2)}" onchange="setRowBid(${i}, this.value)">
-              ${r.bid<camp.minBid?`<span class="bid-error">Bid must be at least $${camp.minBid.toFixed(2)}</span>`:''}</td>
+            <td><input type="number" step="0.01" min="0" placeholder="0.00" value="${r.bid==null?'':r.bid.toFixed(2)}" onchange="setRowBid(${i}, this.value)">
+              ${(r.bid==null||r.bid<camp.minBid)?`<span class="bid-error">Bid must be at least $${camp.minBid.toFixed(2)}</span>`:''}</td>
           </tr>`).join('')}
       </tbody></table>`;
   }
